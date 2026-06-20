@@ -332,7 +332,6 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
       <button class="ap-tab" onclick="switchTab('history',this)">📜 تاریخ روانکاوی</button>
       <button class="ap-tab" onclick="switchTab('workshops',this)">🛠️ کارگاه‌ها</button>
       <button class="ap-tab" onclick="switchTab('grief',this)">💬 سوگ</button>
-      <button class="ap-tab" onclick="switchTab('quest',this)">📋 پرسشنامه‌ها</button>
       <button class="ap-tab" onclick="switchTab('site',this)">🌐 تنظیمات</button>
     </div>
     <!-- BOOKS -->
@@ -394,14 +393,6 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
     <!-- GRIEF -->
     <div id="tab-grief" class="hidden">
       <div class="aps"><h3>تجربیات</h3><div class="ap-items" id="ap-grief-list"></div></div>
-    </div>
-    <!-- QUESTIONNAIRES -->
-    <div id="tab-quest" class="hidden">
-      <div class="aps"><h3>افزودن پرسشنامه جدید</h3><div class="af">
-        <label class="req">عنوان</label><input id="q-title" placeholder="نام پرسشنامه"/>
-        <label>توضیح برای بازدیدکننده</label><textarea id="q-desc" placeholder="توضیح کوتاه درباره هدف این پرسشنامه..."></textarea>
-      </div><button class="abtn" onclick="addQuestionnaire()">+ افزودن</button></div>
-      <div class="aps"><h3>پرسشنامه‌های موجود و پاسخ‌ها</h3><div class="ap-items" id="ap-quest-list"></div></div>
     </div>
     <!-- SITE -->
     <div id="tab-site" class="hidden">
@@ -573,28 +564,6 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
   </section>
 </div>
 
-<!-- QUESTIONNAIRES PAGE -->
-<div id="questionnaires-page" class="overlay hidden">
-  <div class="ov-header">
-    <div class="ov-back" onclick="closeOv('questionnaires-page')">← بازگشت</div>
-    <span style="font-size:.82rem;color:var(--mid)">پرسشنامه‌ها</span>
-  </div>
-  <section class="books" style="padding-top:3rem">
-    <div class="section-header"><h2 class="section-title">پرسشنامه‌ها</h2></div>
-    <div class="page-notes-box"><textarea id="notes-quest" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.quest=this.value"></textarea></div>
-    <div class="books-grid" id="questionnaires-grid"></div>
-  </section>
-</div>
-
-<!-- QUESTIONNAIRE FILL-IN PAGE -->
-<div id="quest-fill-page" class="overlay hidden">
-  <div class="ov-header">
-    <div class="ov-back" onclick="closeOv('quest-fill-page');openOv('questionnaires-page')">← بازگشت</div>
-    <span style="font-size:.82rem;color:var(--mid)">پرسشنامه</span>
-  </div>
-  <div id="quest-fill-body"></div>
-</div>
-
 <!-- WORKSHOP REGISTRATION FORM PAGE -->
 <div id="register-page" class="overlay hidden">
   <div class="ov-header">
@@ -630,7 +599,6 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
       <a href="#" onclick="openOv('articles-page');return false;">مقالات</a>
       <a href="#" onclick="openOv('workshops-page');return false;">کارگاه‌ها</a>
       <a href="#" onclick="openOv('grief-page');return false;">اشتراک‌گذاری</a>
-      <a href="#" onclick="openOv('questionnaires-page');return false;">پرسشنامه‌ها</a>
       <a href="#" onclick="openStatusPage();return false;">پیگیری ثبت‌نام</a>
     </div>
     <div class="nav-links-left">
@@ -704,7 +672,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
 /* ======= DATA ======= */
 const PASS='pangool';
 let isAdmin=false, editTarget=null, dpCurrent=null;
-let pageNotes={history:'',books:'',articles:'',workshops:'',quest:''};
+let pageNotes={history:'',books:'',articles:'',workshops:''};
 
 const S={
   eyebrow:'روان‌درمانگر و روانشناس بالینی',h1:'درمان از آنجا آغاز می‌شود که ',hem:'سکوت',h2:' صدا پیدا می‌کند.',
@@ -747,9 +715,6 @@ let grief=[
   {id:1,name:'ناشناس',text:'سه سال از رفتن مادرم می‌گذره.',reply:'سوگ زمان‌بند نیست.',replied:true,showPending:false},
   {id:2,name:'سارا',text:'پدرم رو تازه از دست دادم.',reply:'',replied:false,showPending:false}
 ];
-/* questionnaires: each has {id,title,desc,questions:[{id,label,type:'text'|'choice',options:[]}],responses:[{id,name,answers:[{q,a}],submittedAt}]} */
-let questionnaires=[];
-
 let registerCurrentWorkshopId=null;
 let qBuilderDraft=[]; // working copy while editing questions in admin modal
 
@@ -769,12 +734,12 @@ function doLogin(){
 function doLogout(){isAdmin=false;gi('admin-bar').classList.add('hidden');gi('admin-panel').classList.add('hidden');document.body.classList.remove('admin-mode');renderAll();}
 function openPanel(){
   gi('admin-panel').classList.remove('hidden');
-  renderAPBooks();renderAPArticles();renderAPPsychoHistory();renderAPWorkshops();renderAPGrief();renderAPQuestionnaires();
+  renderAPBooks();renderAPArticles();renderAPPsychoHistory();renderAPWorkshops();renderAPGrief();
   loadSiteForm();
 }
 function closePanel(){gi('admin-panel').classList.add('hidden')}
 function switchTab(n,el){
-  ['books','articles','history','workshops','grief','quest','site'].forEach(t=>gi('tab-'+t).classList.add('hidden'));
+  ['books','articles','history','workshops','grief','site'].forEach(t=>gi('tab-'+t).classList.add('hidden'));
   document.querySelectorAll('.ap-tab').forEach(b=>b.classList.remove('active'));
   gi('tab-'+n).classList.remove('hidden');el.classList.add('active');
 }
@@ -1289,25 +1254,6 @@ saveEdit=function(){
     closeModal();
     return;
   }
-  if(editTarget&&editTarget.t==='questqbuilder'){
-    const q=questionnaires.find(x=>x.id===editTarget.qid);
-    if(q){
-      q.questions=qBuilderDraft.filter(qq=>qq.label&&qq.label.trim()).map(qq=>({...qq,options:(qq.options||[]).filter(o=>o&&o.trim())}));
-    }
-    renderQuestionnaires();renderAPQuestionnaires();
-    closeModal();
-    return;
-  }
-  if(editTarget&&editTarget.t==='quest'){
-    const q=questionnaires.find(x=>x.id===editTarget.id);
-    if(q){
-      q.title=gv('mv-title')||q.title;
-      q.desc=gv('mv-desc');
-      renderQuestionnaires();renderAPQuestionnaires();
-    }
-    closeModal();
-    return;
-  }
   _origSaveEdit();
 };
 
@@ -1326,142 +1272,6 @@ function submitGrief(){const name=gi('grief-name').value||'ناشناس';const t
 function replyGrief(id){const rep=gi('rep-'+id).value.trim();if(!rep){alert('پاسخ را وارد کنید');return}const g=grief.find(x=>x.id===id);g.reply=rep;g.replied=true;renderAPGrief();renderGrief();}
 function delGrief(id){if(confirm('حذف شود؟')){grief=grief.filter(g=>g.id!==id);renderAPGrief();renderGrief();}}
 
-/* ======= QUESTIONNAIRES (admin: create/manage; public: fill in) ======= */
-function addQuestionnaire(){
-  const t=gv('q-title'),d=gv('q-desc');if(!t){alert('عنوان الزامی است');return}
-  questionnaires.push({id:Date.now(),title:t,desc:d,questions:[],responses:[]});
-  ['q-title','q-desc'].forEach(id=>{const el=gi(id);if(el)el.value='';});
-  renderQuestionnaires();renderAPQuestionnaires();alert('پرسشنامه اضافه شد!');
-}
-function delQuestionnaire(id){if(confirm('حذف شود؟ تمام پاسخ‌های ثبت‌شده نیز حذف می‌شوند.')){questionnaires=questionnaires.filter(q=>q.id!==id);renderQuestionnaires();renderAPQuestionnaires();}}
-function editQuestionnaireInfo(id){
-  const q=questionnaires.find(x=>x.id===id);if(!q)return;
-  editTarget={t:'quest',id};
-  gi('m-title').textContent='ویرایش پرسشنامه';gi('m-sub').textContent=q.title;
-  gi('m-body').innerHTML=`<label class="req">عنوان</label><input id="mv-title" value="${esc(q.title)}"/>
-  <label>توضیح برای بازدیدکننده</label><textarea id="mv-desc">${esc(q.desc)}</textarea>`;
-  gi('edit-modal').classList.remove('hidden');
-}
-function renderAPQuestionnaires(){
-  const l=gi('ap-quest-list');if(!l)return;
-  if(!questionnaires.length){l.innerHTML='<p style="color:var(--mid)">پرسشنامه‌ای ثبت نشده.</p>';return}
-  l.innerHTML=questionnaires.map(q=>{
-    const newCount=(q.responses||[]).length;
-    return `<div class="ap-item" style="flex-direction:column;align-items:stretch">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem">
-        <div class="ap-it"><strong>${esc(q.title)}</strong><span>${(q.questions||[]).length} سوال ${newCount?` · <b style="color:#92400e">${newCount} پاسخ</b>`:''}</span></div>
-        <div class="ap-ia">
-          <button class="edit-b" onclick="editQuestionnaireInfo(${q.id})">ویرایش</button>
-          <button class="blue-b" style="border-color:var(--blue);color:var(--blue)" onclick="openQuestQBuilder(${q.id})">سوالات</button>
-          <button class="del" onclick="delQuestionnaire(${q.id})">حذف</button>
-        </div>
-      </div>
-      <div style="margin-top:.8rem">
-        <button class="abtn gold" style="padding:.4rem 1rem;font-size:.74rem;margin-top:0" onclick="toggleQuestRespList(${q.id})">مشاهده پاسخ‌ها (${(q.responses||[]).length})</button>
-        <div id="questresp-${q.id}" class="hidden" style="margin-top:.8rem;display:flex;flex-direction:column;gap:.6rem"></div>
-      </div>
-    </div>`;
-  }).join('');
-}
-function toggleQuestRespList(qid){
-  const box=gi('questresp-'+qid);if(!box)return;
-  if(box.classList.contains('hidden')){box.classList.remove('hidden');renderQuestRespList(qid);}
-  else box.classList.add('hidden');
-}
-function renderQuestRespList(qid){
-  const q=questionnaires.find(x=>x.id===qid);if(!q)return;
-  const box=gi('questresp-'+qid);if(!box)return;
-  const resps=q.responses||[];
-  if(!resps.length){box.innerHTML='<p style="color:var(--mid);font-size:.8rem">هنوز پاسخی ثبت نشده.</p>';return;}
-  box.innerHTML=resps.slice().reverse().map(r=>{
-    const answersHtml=(r.answers||[]).map(a=>`<div><b>${esc(a.q)}:</b> ${esc(a.a)||'—'}</div>`).join('');
-    return `<div style="border:1px solid var(--light);border-radius:4px;padding:.8rem;background:#fff">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
-        <span style="font-size:.83rem"><strong>${esc(r.name||'ناشناس')}</strong></span>
-        <span style="font-size:.72rem;color:var(--mid)">${esc(r.submittedAt||'')}</span>
-      </div>
-      ${answersHtml?`<div class="answers-view">${answersHtml}</div>`:''}
-      <div class="ap-ia" style="margin-top:.6rem"><button class="del" onclick="deleteQuestResponse(${qid},${r.id})">حذف</button></div>
-    </div>`;
-  }).join('');
-}
-function deleteQuestResponse(qid,rid){
-  const q=questionnaires.find(x=>x.id===qid);if(!q)return;
-  if(!confirm('این پاسخ حذف شود؟'))return;
-  q.responses=(q.responses||[]).filter(x=>x.id!==rid);
-  renderQuestRespList(qid);renderAPQuestionnaires();
-}
-
-/* question builder (reuses qBuilderDraft, same pattern as workshop registration questions) */
-function openQuestQBuilder(qid){
-  const q=questionnaires.find(x=>x.id===qid);if(!q)return;
-  editTarget={t:'questqbuilder',qid};
-  qBuilderDraft=JSON.parse(JSON.stringify(q.questions||[]));
-  gi('m-title').textContent='سوالات پرسشنامه';
-  gi('m-sub').textContent=q.title;
-  gi('m-body').innerHTML=`<div id="qb-list"></div>
-    <button type="button" class="abtn blue" style="margin-top:.6rem" onclick="qbAddQuestion()">+ افزودن سوال</button>
-    <p style="font-size:.74rem;color:var(--mid);margin-top:.8rem">نام بازدیدکننده همیشه پرسیده می‌شود و نیازی به افزودن آن نیست.</p>`;
-  renderQBuilderDraft();
-  gi('edit-modal').classList.remove('hidden');
-}
-
-/* public: questionnaires grid */
-function renderQuestionnaires(){
-  const g=gi('questionnaires-grid');if(!g)return;
-  let html=questionnaires.map(q=>`<div class="book-card reveal" onclick="${isAdmin?`openQuestQBuilder(${q.id})`:`openQuestionnaireFill(${q.id})`}">
-    <div class="book-cover" style="background:${bkBg(q.id)}"><div class="book-cover-ph">📋</div>${isAdmin?`<button class="card-del-btn" onclick="event.stopPropagation();delQuestionnaire(${q.id})" title="حذف">✕</button>`:''}</div>
-    <div class="book-body"><p class="book-tag">${(q.questions||[]).length} سوال</p><h3 class="book-title">${esc(q.title)}</h3><p class="book-desc">${esc(q.desc)}</p></div>
-  </div>`).join('');
-  g.innerHTML=html||'<p style="color:var(--mid);grid-column:1/-1">هنوز پرسشنامه‌ای منتشر نشده.</p>';
-  g.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
-}
-function openQuestionnaireFill(qid){
-  renderQuestFillForm(qid);
-  openOv('quest-fill-page');
-}
-function renderQuestFillForm(qid){
-  const q=questionnaires.find(x=>x.id===qid);
-  if(!q){gi('quest-fill-body').innerHTML='<div class="reg-form-wrap"><p>پرسشنامه مورد نظر پیدا نشد.</p></div>';return;}
-  const qs=q.questions||[];
-  const qHtml=qs.map(qq=>{
-    if(qq.type==='choice'){
-      return `<div class="reg-field"><label>${esc(qq.label)}</label><div class="reg-options">${(qq.options||[]).map(o=>`<label class="reg-option"><input type="radio" name="qq-${qq.id}" value="${esc(o)}"/> ${esc(o)}</label>`).join('')}</div></div>`;
-    }
-    return `<div class="reg-field"><label>${esc(qq.label)}</label><textarea id="qq-${qq.id}"></textarea></div>`;
-  }).join('');
-  const qSection=qs.length?qHtml:'<p style="font-size:.8rem;color:var(--mid);margin:.5rem 0 1.3rem">سوالی برای این پرسشنامه تعریف نشده.</p>';
-  gi('quest-fill-body').innerHTML=`<div class="reg-form-wrap">
-    <h2>${esc(q.title)}</h2>
-    <p class="reg-sub">${esc(q.desc)}</p>
-    <div class="reg-field"><label>نام شما (اختیاری)</label><input id="qq-name"/></div>
-    ${qSection}
-    <button class="reg-submit-btn" onclick="submitQuestResponse(${qid})">ارسال پاسخ</button>
-  </div>`;
-}
-function submitQuestResponse(qid){
-  const q=questionnaires.find(x=>x.id===qid);if(!q)return;
-  const name=gv('qq-name');
-  const answers=(q.questions||[]).map(qq=>{
-    let a='';
-    if(qq.type==='choice'){
-      const sel=document.querySelector(`input[name="qq-${qq.id}"]:checked`);
-      a=sel?sel.value:'';
-    } else {
-      a=gv('qq-'+qq.id);
-    }
-    return {q:qq.label,a};
-  });
-  if(!q.responses)q.responses=[];
-  q.responses.push({id:Date.now(),name,answers,submittedAt:new Date().toLocaleString('fa-IR')});
-  gi('quest-fill-body').innerHTML=`<div class="reg-success">
-    <div class="ico">✓</div>
-    <h2>پاسخ شما ثبت شد</h2>
-    <p>از وقتی که برای تکمیل «${esc(q.title)}» گذاشتید سپاسگزاریم.</p>
-  </div>`;
-  renderAPQuestionnaires();
-}
-
 /* ======= WORKSHOP REGISTRATION (public form + submit) ======= */
 function openRegisterForm(){
   if(!dpCurrent||dpCurrent.type!=='workshop'){alert('خطا: کارگاهی انتخاب نشده است.');return;}
@@ -1476,9 +1286,9 @@ function renderRegisterForm(){
   const qs=w.regQuestions||[];
   const qHtml=qs.map(q=>{
     if(q.type==='choice'){
-      return `<div class="reg-field"><label>${esc(q.label)}</label><div class="reg-options">${(q.options||[]).map((o,oi)=>`<label class="reg-option"><input type="radio" name="rq-${q.id}" value="${esc(o)}"/> ${esc(o)}</label>`).join('')}</div></div>`;
+      return `<div class="reg-field"><label class="req">${esc(q.label)}</label><div class="reg-options">${(q.options||[]).map((o,oi)=>`<label class="reg-option"><input type="radio" name="rq-${q.id}" value="${esc(o)}"/> ${esc(o)}</label>`).join('')}</div></div>`;
     }
-    return `<div class="reg-field"><label>${esc(q.label)}</label><textarea id="rq-${q.id}"></textarea></div>`;
+    return `<div class="reg-field"><label class="req">${esc(q.label)}</label><textarea id="rq-${q.id}"></textarea></div>`;
   }).join('');
   const qSection=qs.length?qHtml:'<p style="font-size:.8rem;color:var(--mid);margin:.5rem 0 1.3rem">سوال اضافه‌ای برای این کارگاه تعریف نشده — فقط اطلاعات تماس کافی است.</p>';
   gi('register-page-body').innerHTML=`<div class="reg-form-wrap">
@@ -1495,7 +1305,8 @@ function submitRegistration(){
   const w=workshops.find(x=>x.id===registerCurrentWorkshopId);if(!w)return;
   const name=gv('rg-name'),email=gv('rg-email'),phone=gv('rg-phone');
   if(!name||!email||!phone){alert('لطفاً نام، ایمیل و شماره تلفن را وارد کنید');return;}
-  const answers=(w.regQuestions||[]).map(q=>{
+  const answers=[];
+  for(const q of (w.regQuestions||[])){
     let a='';
     if(q.type==='choice'){
       const sel=document.querySelector(`input[name="rq-${q.id}"]:checked`);
@@ -1503,8 +1314,9 @@ function submitRegistration(){
     } else {
       a=gv('rq-'+q.id);
     }
-    return {q:q.label,a};
-  });
+    if(!a){alert('لطفاً به همه سوالات پاسخ دهید: «'+q.label+'»');return;}
+    answers.push({q:q.label,a});
+  }
   if(!w.registrations)w.registrations=[];
   w.registrations.push({id:Date.now(),name,email,phone,answers,status:'pending',payInfo:''});
   gi('register-page-body').innerHTML=`<div class="reg-success">
@@ -1563,7 +1375,7 @@ function saveAbout(){S['about-h']=gv('s-about-h');S['about-p1']=gv('s-about-p1')
 function saveFooter(){S['footer-desc']=gv('s-fdesc');S.ig=gv('s-ig');S.tg=gv('s-tg');S.li=gv('s-li');setText('footer-desc',S['footer-desc']);gi('lnk-ig').href=S.ig||'#';gi('lnk-tg').href=S.tg||'#';alert('ذخیره شد!');}
 
 /* ======= HELPERS ======= */
-function renderAll(){renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();renderGrief();renderQuestionnaires();}
+function renderAll(){renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();renderGrief();}
 function gi(id){return document.getElementById(id)}
 function gv(id){const el=gi(id);return el?el.value.trim():''}
 function setText(id,v){const el=gi(id);if(el)el.textContent=v}
