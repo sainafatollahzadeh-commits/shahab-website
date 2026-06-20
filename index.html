@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--black:#0a0a0a;--white:#fff;--mid:#718096;--light:#e2e8f0;--bg:#f7f7f5;--gold:#c9a96e;--blue:#3b82f6}
+body{font-family:'Vazirmatn',sans-serif;background:var(--white);color:var(--black);overflow-x:hidden;direction:rtl}
+a{text-decoration:none;color:inherit}
+.hidden{display:none!important}
+/* scroll reveal */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s ease}
+.reveal.visible{opacity:1;transform:none}
+/* editable */
+.admin-mode .editable{outline:2px dashed transparent;border-radius:3px;cursor:pointer;transition:outline .2s,background .2s;position:relative}
+.admin-mode .editable:hover{outline:2px dashed var(--blue);background:rgba(59,130,246,.06)}
+.admin-mode .editable:hover::after{content:'✏️';position:absolute;top:-18px;right:0;background:var(--blue);color:#fff;font-size:11px;padding:1px 6px;border-radius:3px;z-index:20;white-space:nowrap}
+.eimg{position:relative}
+.admin-mode .eimg:hover .eimg-badge{display:flex}
+.eimg-badge{display:none;position:absolute;inset:0;background:rgba(59,130,246,.5);align-items:center;justify-content:center;flex-direction:column;gap:4px;z-index:5;cursor:pointer;border-radius:inherit}
+.eimg-badge span{color:#fff;font-size:.8rem}
+/* quick add/remove controls on cards */
+.card-del-btn{display:none;position:absolute;top:.5rem;left:.5rem;width:28px;height:28px;border-radius:50%;background:rgba(229,62,62,.92);color:#fff;align-items:center;justify-content:center;font-size:.85rem;cursor:pointer;z-index:6;border:none;line-height:1}
+.card-del-btn:hover{background:#c53030}
+.admin-mode .card-del-btn{display:flex}
+.add-tile{display:flex;align-items:center;justify-content:center;border:2px dashed var(--light);cursor:pointer;background:#fafafa;transition:border-color .2s,background .2s}
+.add-tile:hover{border-color:var(--gold);background:#fffdf8}
+.add-tile-inner{text-align:center;color:var(--mid)}
+.add-tile-inner .ico{font-size:2rem;margin-bottom:.5rem;display:block}
+.add-tile-inner span{font-size:.85rem}
+/* page notes box */
+.page-notes-box{margin-bottom:2.4rem}
+.page-notes-box textarea{width:100%;min-height:90px;padding:.9rem 1.1rem;border:1px solid var(--light);border-radius:6px;font-family:'Vazirmatn',sans-serif;font-size:.88rem;line-height:1.9;direction:rtl;text-align:right;resize:vertical;background:#fff;color:#4a5568}
+.page-notes-box textarea::placeholder{color:var(--mid)}
+.page-notes-box textarea:focus{outline:none;border-color:var(--blue)}
+/* overlays */
+.overlay{position:fixed;inset:0;background:#fff;z-index:300;overflow-y:auto;direction:rtl}
+.ov-header{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 3rem;border-bottom:1px solid var(--light);position:sticky;top:0;background:#fff;z-index:10}
+.ov-back{display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:var(--mid);cursor:pointer;transition:color .2s}
+.ov-back:hover{color:var(--black)}
+/* admin bar */
+#admin-bar{background:#1a1a2e;color:#fff;padding:.5rem 2rem;display:flex;align-items:center;justify-content:space-between;font-size:.8rem;position:sticky;top:0;z-index:200}
+#admin-bar em{color:var(--gold);font-style:normal;font-weight:500}
+#admin-bar button{background:var(--gold);color:#000;border:none;padding:.28rem .9rem;border-radius:2px;cursor:pointer;font-family:'Vazirmatn',sans-serif;font-size:.75rem;margin-right:.4rem}
+#admin-bar .btn-out{background:#555;color:#fff}
+/* login */
+#login-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:600;display:flex;align-items:center;justify-content:center}
+.lbox{background:#fff;padding:2.5rem;border-radius:6px;width:310px;text-align:center}
+.lbox h3{font-size:1.05rem;margin-bottom:1.4rem;font-weight:600}
+.lbox input{width:100%;padding:.72rem 1rem;border:1px solid var(--light);border-radius:3px;font-family:'Vazirmatn',sans-serif;font-size:.9rem;margin-bottom:.9rem;text-align:right;direction:rtl}
+.lbox button{width:100%;background:var(--black);color:#fff;border:none;padding:.78rem;border-radius:3px;font-family:'Vazirmatn',sans-serif;font-size:.9rem;cursor:pointer}
+.lerr{color:#e53e3e;font-size:.8rem;margin-top:.4rem}
+/* admin panel */
+#admin-panel{position:fixed;inset:0;background:#f0f0f0;z-index:400;overflow-y:auto;direction:rtl}
+.aph{background:#1a1a2e;color:#fff;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between}
+.aph h2{font-size:.95rem;font-weight:500}
+.aph button{background:var(--gold);color:#000;border:none;padding:.38rem 1.1rem;border-radius:2px;cursor:pointer;font-family:'Vazirmatn',sans-serif;font-size:.78rem}
+.apb{max-width:960px;margin:2rem auto;padding:0 1.5rem}
+.ap-tabs{display:flex;gap:.5rem;margin-bottom:2rem;flex-wrap:wrap}
+.ap-tab{padding:.48rem 1.1rem;border:1px solid #ccc;border-radius:3px;cursor:pointer;font-family:'Vazirmatn',sans-serif;font-size:.82rem;background:#fff}
+.ap-tab.active{background:var(--black);color:#fff;border-color:var(--black)}
+.aps{background:#fff;border-radius:6px;padding:1.4rem;margin-bottom:1.4rem}
+.aps h3{font-size:.92rem;font-weight:600;margin-bottom:1.1rem;padding-bottom:.7rem;border-bottom:1px solid var(--light)}
+.af label{font-size:.78rem;color:var(--mid);display:block;margin:.8rem 0 .28rem;font-weight:500}
+.af label.req::after{content:' *';color:#e53e3e}
+.af input,.af textarea,.af select{width:100%;padding:.62rem .88rem;border:1px solid var(--light);border-radius:3px;font-family:'Vazirmatn',sans-serif;font-size:.87rem;direction:rtl;text-align:right}
+.af input:focus,.af textarea:focus{outline:none;border-color:var(--blue)}
+.af textarea{min-height:85px;resize:vertical}
+.abtn{background:var(--black);color:#fff;border:none;padding:.62rem 1.7rem;border-radius:3px;cursor:pointer;font-family:'Vazirmatn',sans-serif;font-size:.84rem;margin-top:.9rem}
+.abtn.gold{background:var(--gold);color:#000}
+.abtn.red{background:#e53e3e;color:#fff}
+.abtn.green{background:#22c55e;color:#fff}
+.abtn.blue{background:var(--blue);color:#fff}
+.ap-items{margin-top:1rem;display:flex;flex-direction:column;gap:.7rem}
+.ap-item{border:1px solid var(--light);border-radius:4px;padding:.9rem;font-size:.84rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
+.ap-thumb{width:52px;height:52px;border-radius:3px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;overflow:hidden}
+.ap-thumb img{width:100%;height:100%;object-fit:cover}
+.ap-it{flex:1}.ap-it strong{display:block;margin-bottom:.25rem}.ap-it span{color:var(--mid);font-size:.76rem}
+.ap-ia{display:flex;gap:.4rem;flex-shrink:0;flex-wrap:wrap}
+.ap-ia button{padding:.28rem .75rem;border:1px solid #ccc;border-radius:2px;cursor:pointer;font-family:'Vazirmatn',sans-serif;font-size:.73rem;background:#fff}
+.ap-ia button.del{border-color:#e53e3e;color:#e53e3e}
+.ap-ia button.edit-b{border-color:var(--blue);color:var(--blue)}
+.ap-ia button.ok{border-color:#22c55e;color:#22c55e}
+.ap-ia button.rej{border-color:#e53e3e;color:#e53e3e}
+.badge{display:inline-block;padding:.12rem .55rem;border-radius:10px;font-size:.67rem;font-weight:500}
+.badge.new{background:#fef3c7;color:#92400e}
+.badge.replied{background:#d1fae5;color:#065f46}
+.badge.pending{background:#fef9c3;color:#854d0e}
+.badge.confirmed{background:#dcfce7;color:#166534}
+.badge.rejected{background:#fee2e2;color:#991b1b}
+.iup{width:100%;height:130px;border:2px dashed var(--light);border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;background:#fafafa;margin-top:.4rem}
+.iup:hover{border-color:var(--blue)}
+.iup img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.iup-lbl{display:flex;flex-direction:column;align-items:center;gap:.35rem;pointer-events:none}
+.iup-lbl span{font-size:.76rem;color:var(--mid)}.iup-lbl .ico{font-size:1.7rem}
+/* modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem}
+.mbox{background:#fff;border-radius:6px;padding:2rem;width:100%;max-width:560px;max-height:88vh;overflow-y:auto}
+.mbox h3{font-size:.98rem;font-weight:600;margin-bottom:.35rem}
+.msub{font-size:.76rem;color:var(--mid);margin-bottom:1.1rem;padding-bottom:.75rem;border-bottom:1px solid var(--light)}
+.mac{display:flex;gap:.7rem;margin-top:1.1rem;flex-direction:row-reverse}
+.mac button{padding:.62rem 1.3rem;border:none;border-radius:3px;cursor:pointer;font-family:'Vazirmatn',sans-serif;font-size:.84rem}
+.mac .save{background:var(--black);color:#fff}.mac .cancel{background:#f0f0f0}
+/* nav */
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.05rem 3.5rem;border-bottom:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.97);backdrop-filter:blur(8px)}
+.nav-logo{font-size:1.02rem;font-weight:600}
+.nav-links{display:flex;gap:1.8rem;align-items:center}
+.nav-links-right{display:flex;gap:1.8rem;align-items:center;flex-wrap:wrap}
+.nav-links-right a{font-size:.84rem;color:var(--mid);transition:color .2s}
+.nav-links-right a:hover{color:var(--black)}
+.nav-links-left{display:flex;gap:1rem;align-items:center}
+.nav-cta{background:var(--black);color:#fff!important;padding:.48rem 1.2rem;border-radius:2px;font-size:.84rem;cursor:pointer;border:none;font-family:'Vazirmatn',sans-serif}
+.nav-login{font-size:.78rem;color:var(--gold)!important;cursor:pointer}
+/* hero */
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:0 3.5rem;padding-top:4rem;gap:3.5rem}
+.hero-eyebrow{font-size:.77rem;color:var(--gold);margin-bottom:1.4rem;font-weight:500}
+.hero-headline{font-size:clamp(2rem,3.5vw,3.2rem);line-height:1.45;font-weight:700;margin-bottom:1.6rem}
+.hero-headline em{font-style:normal;color:var(--mid);font-weight:300}
+.hero-sub{font-size:.97rem;line-height:2;color:var(--mid);max-width:430px;margin-bottom:2.4rem;font-weight:300}
+.hero-actions{display:flex;gap:1rem;flex-direction:row-reverse}
+.btn-primary{background:var(--black);color:#fff;padding:.82rem 1.9rem;font-size:.84rem;border-radius:2px;font-family:'Vazirmatn',sans-serif;cursor:pointer;border:none}
+.btn-ghost{font-size:.84rem;color:var(--black);border-bottom:1px solid var(--black);padding-bottom:2px;cursor:pointer;background:none;border-left:none;border-top:none;border-right:none;font-family:'Vazirmatn',sans-serif}
+.hero-img-col{position:relative;height:78vh;max-height:660px;margin-bottom:4rem}
+.img-frame{width:100%;height:100%;border-radius:4px;position:relative;overflow:hidden}
+#hero-photo{width:100%;height:100%;object-fit:cover;object-position:center 30%;display:none;cursor:grab;user-select:none}
+#hero-photo.dragging{cursor:grabbing}
+#hero-photo-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#e8e4dc,#d4c9b8);gap:1rem}
+.photo-upload-btn{position:absolute;bottom:1rem;left:1rem;background:rgba(255,255,255,.92);border:1px solid var(--light);padding:.45rem .9rem;border-radius:3px;font-size:.75rem;cursor:pointer;font-family:'Vazirmatn',sans-serif;z-index:5;display:none}
+.admin-mode .photo-upload-btn{display:block}
+.name-badge{position:absolute;bottom:-3.4rem;left:50%;transform:translateX(-50%);width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.96);border:2.5px solid var(--light);box-shadow:0 6px 24px rgba(0,0,0,.14);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2;gap:3px}
+.name-badge span{font-size:1.12rem;font-weight:700;color:var(--black);line-height:1.3}
+/* marquee */
+.marquee-bar{background:var(--black);color:#fff;padding:1rem 0;overflow:hidden;white-space:nowrap;direction:ltr}
+.marquee-track{display:inline-flex;animation:marquee 25s linear infinite}
+.marquee-track span{font-size:.77rem;padding:0 2.2rem;opacity:.7;font-family:'Vazirmatn',sans-serif}
+.marquee-track .dot{color:var(--gold);opacity:1;padding:0}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* intro */
+.intro{padding:6.5rem 3.5rem;display:grid;grid-template-columns:1fr 2fr;gap:5rem;background:var(--bg)}
+.intro-label{font-size:.77rem;color:var(--gold);font-weight:500;padding-top:.3rem}
+.intro-text h2{font-size:clamp(1.7rem,2.4vw,2.2rem);line-height:1.5;font-weight:700;margin-bottom:1.1rem}
+.intro-text p{font-size:.94rem;line-height:2;color:var(--mid);font-weight:300;margin-bottom:.75rem}
+/* topics (legacy, unused styles kept harmlessly) */
+.topics{padding:5.5rem 3.5rem;background:var(--white)}
+.section-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2.8rem}
+.section-title{font-size:clamp(1.45rem,2.1vw,1.9rem);font-weight:700}
+.topics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem}
+.topic-card{border:1px solid var(--light);padding:1.8rem;border-radius:4px;transition:all .25s;position:relative;overflow:hidden}
+.topic-card::after{content:'';position:absolute;bottom:0;right:0;width:0;height:2px;background:var(--gold);transition:width .3s}
+.topic-card:hover::after{width:100%}
+.topic-num{font-size:.7rem;color:var(--gold);margin-bottom:.9rem;font-weight:500}
+.topic-name{font-size:1.05rem;font-weight:500;margin-bottom:.45rem}
+.topic-desc{font-size:.81rem;line-height:1.9;color:var(--mid);font-weight:300}
+/* sessions (legacy, unused styles kept harmlessly) */
+.sessions{padding:5.5rem 3.5rem;background:var(--black);color:#fff}
+.sessions .section-title{color:#fff}
+.sessions-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.1);margin-top:2.8rem}
+.session-item{background:var(--black);padding:2.3rem 1.8rem;transition:background .2s}
+.session-item:hover{background:#111}
+.session-type{font-size:.7rem;color:var(--gold);margin-bottom:.9rem;font-weight:500}
+.session-name{font-size:1.1rem;font-weight:500;margin-bottom:.7rem;line-height:1.5}
+.session-desc{font-size:.81rem;line-height:2;color:rgba(255,255,255,.5);font-weight:300;margin-bottom:1.3rem}
+.session-link{font-size:.76rem;color:var(--gold);border-bottom:1px solid rgba(201,169,110,.4);padding-bottom:2px}
+/* books (also used for "کارگاه‌ها") */
+.books{padding:5.5rem 3.5rem;background:var(--bg)}
+.books-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.8rem;margin-top:2.8rem}
+.book-card{background:#fff;border-radius:4px;overflow:hidden;border:1px solid var(--light);transition:transform .2s,box-shadow .2s;cursor:pointer;position:relative}
+.book-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.09)}
+.book-cover{height:200px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.book-cover img{width:100%;height:100%;object-fit:cover}
+.book-cover-ph{font-size:2.5rem;color:rgba(100,80,60,.3)}
+.book-body{padding:1.4rem}
+.book-tag{font-size:.67rem;color:var(--gold);font-weight:500;margin-bottom:.45rem}
+.book-title{font-size:.97rem;font-weight:600;margin-bottom:.35rem;line-height:1.4}
+.book-author{font-size:.73rem;color:var(--gold);margin-bottom:.55rem}
+.book-desc{font-size:.8rem;line-height:1.9;color:var(--mid);font-weight:300}
+/* articles (also used for "تاریخ روانکاوی") */
+.articles{padding:5.5rem 3.5rem;background:var(--white)}
+.articles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.8rem;margin-top:2.8rem}
+.article-card{overflow:hidden;border-radius:4px;border:1px solid var(--light);transition:box-shadow .2s;cursor:pointer;position:relative}
+.article-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.08)}
+.art-img{height:148px;background:#e8e4dc;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.art-img img{width:100%;height:100%;object-fit:cover}
+.art-img-ph{font-size:2rem;color:rgba(100,80,60,.3)}
+.art-body{padding:1.2rem}
+.art-date{font-size:.7rem;color:var(--mid);margin-bottom:.45rem}
+.art-title{font-size:.93rem;font-weight:600;margin-bottom:.55rem;line-height:1.5}
+.art-summary{font-size:.8rem;line-height:1.9;color:var(--mid);font-weight:300}
+/* grief */
+.grief-section{padding:5.5rem 3.5rem;background:var(--bg)}
+.grief-intro p{font-size:.93rem;line-height:2;color:var(--mid);font-weight:300;margin-top:.7rem;max-width:580px}
+.grief-form-box{background:#fff;border-radius:6px;padding:1.8rem;border:1px solid var(--light);margin:1.8rem 0}
+.grief-form-box h3{font-size:.92rem;font-weight:600;margin-bottom:1.1rem}
+.grief-form-box input,.grief-form-box textarea{width:100%;padding:.72rem 1rem;border:1px solid var(--light);border-radius:3px;font-family:'Vazirmatn',sans-serif;font-size:.87rem;margin-bottom:.7rem;direction:rtl;text-align:right}
+.grief-form-box textarea{min-height:95px;resize:vertical}
+.grief-form-box button{background:var(--black);color:#fff;border:none;padding:.72rem 1.8rem;border-radius:3px;font-family:'Vazirmatn',sans-serif;font-size:.84rem;cursor:pointer}
+.grief-posts{display:flex;flex-direction:column;gap:1.3rem}
+.grief-post{background:#fff;border-radius:6px;padding:1.6rem;border:1px solid var(--light)}
+.grief-post-name{font-weight:600;font-size:.92rem;margin-bottom:.7rem}
+.grief-post-text{font-size:.88rem;line-height:2;color:#4a5568;font-weight:300}
+.grief-reply{background:#f7f7f5;border-right:3px solid var(--gold);padding:.9rem 1.1rem;margin-top:1.1rem;border-radius:0 4px 4px 0}
+.grief-reply-label{font-size:.7rem;color:var(--gold);font-weight:600;margin-bottom:.45rem}
+.grief-reply-text{font-size:.86rem;line-height:1.9;color:#4a5568;font-weight:300}
+.grief-success{background:#d1fae5;color:#065f46;padding:.75rem 1.1rem;border-radius:3px;font-size:.84rem;margin-top:.5rem}
+/* cta/footer etc */
+.cta-strip{padding:5.5rem 3.5rem;background:var(--white);display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:center}
+.cta-left h2{font-size:clamp(1.7rem,2.3vw,2.2rem);font-weight:700;line-height:1.5;margin-bottom:.9rem}
+.cta-left p{font-size:.93rem;line-height:2;color:var(--mid);font-weight:300}
+.cta-right{display:flex;flex-direction:column;gap:.9rem}
+.cta-item{display:flex;align-items:center;gap:1.1rem;padding:1.3rem;border:1px solid var(--light);border-radius:4px;transition:border-color .2s;cursor:pointer}
+.cta-item:hover{border-color:var(--black)}
+.cta-icon{width:40px;height:40px;background:var(--bg);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.cta-item-text small{font-size:.68rem;color:var(--gold);display:block;font-weight:500}
+.cta-item-text strong{font-size:.86rem;font-weight:400}
+.press{padding:2.8rem 3.5rem;border-top:1px solid var(--light);border-bottom:1px solid var(--light);display:flex;align-items:center;gap:3.5rem}
+.press-label{font-size:.7rem;color:var(--mid);white-space:nowrap;flex-shrink:0;font-weight:500}
+.press-logos{display:flex;gap:2.5rem;flex-wrap:wrap}
+.press-logo{font-size:.78rem;color:var(--light);font-weight:500}
+.newsletter{padding:4.5rem 3.5rem;background:var(--black);color:#fff;text-align:center}
+.newsletter h3{font-size:clamp(1.45rem,2.3vw,1.95rem);font-weight:700;margin-bottom:.7rem}
+.newsletter p{font-size:.88rem;color:rgba(255,255,255,.5);margin-bottom:1.8rem;font-weight:300}
+.nl-form{display:flex;max-width:400px;margin:0 auto;flex-direction:row-reverse}
+.nl-form input{flex:1;padding:.82rem 1.1rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-left:none;color:#fff;font-size:.84rem;border-radius:0 2px 2px 0;outline:none;font-family:'Vazirmatn',sans-serif;text-align:right}
+.nl-form input::placeholder{color:rgba(255,255,255,.3)}
+.nl-form button{background:var(--gold);color:#000;border:none;padding:0 1.3rem;cursor:pointer;border-radius:2px 0 0 2px;font-family:'Vazirmatn',sans-serif;font-weight:500}
+footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.8rem;margin-bottom:2.8rem}
+.footer-brand .logo{font-size:.98rem;font-weight:600;margin-bottom:.7rem}
+.footer-brand p{font-size:.78rem;line-height:2;color:var(--mid);font-weight:300;max-width:230px}
+.footer-col h4{font-size:.7rem;color:var(--black);margin-bottom:1.1rem;font-weight:600}
+.footer-col a{display:block;font-size:.8rem;color:var(--mid);margin-bottom:.55rem}
+.footer-bottom{border-top:1px solid var(--light);padding-top:1.4rem;display:flex;justify-content:space-between;align-items:center}
+.footer-bottom p{font-size:.7rem;color:var(--mid)}
+.social-links{display:flex;gap:1.4rem;flex-direction:row-reverse}
+.social-links a{font-size:.76rem;color:var(--mid)}
+
+/* DETAIL PAGE */
+.dp-body{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 62px)}
+.dp-img-side{background:var(--bg);display:flex;align-items:center;justify-content:center;padding:3rem;position:relative;min-height:400px}
+.dp-img-side img{max-width:380px;max-height:500px;object-fit:cover;border-radius:6px;box-shadow:0 16px 48px rgba(0,0,0,.12);width:100%}
+.dp-img-ph{width:280px;height:360px;background:linear-gradient(160deg,#e8e4dc,#d4c9b8);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:4rem;color:rgba(100,80,60,.3)}
+.dp-text-side{padding:4rem 3.5rem;overflow-y:auto}
+.dp-tag{font-size:.72rem;color:var(--gold);font-weight:600;margin-bottom:1rem}
+.dp-title{font-size:clamp(1.6rem,2.5vw,2.2rem);font-weight:700;line-height:1.4;margin-bottom:.6rem}
+.dp-author,.dp-date{font-size:.85rem;color:var(--mid);margin-bottom:.5rem}
+.dp-divider{width:40px;height:2px;background:var(--gold);margin:1.5rem 0}
+.dp-desc{font-size:.95rem;line-height:2.1;color:#4a5568;font-weight:300}
+#detail-page{z-index:310}
+.dp-register-box{margin-top:2.2rem;padding-top:2rem;border-top:1px solid var(--light)}
+.dp-register-btn{background:var(--gold);color:#000;border:none;padding:.9rem 2.1rem;border-radius:3px;font-family:'Vazirmatn',sans-serif;font-size:.92rem;font-weight:600;cursor:pointer}
+.dp-register-btn:hover{filter:brightness(.95)}
+
+/* BIO PAGE */
+.bio-body{display:grid;grid-template-columns:1fr 2fr;min-height:calc(100vh - 62px)}
+.bio-label-side{background:var(--bg);padding:4rem 3rem;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:1rem}
+.bio-label-side h2{font-size:1.8rem;font-weight:700;color:var(--black);line-height:1.4}
+.bio-label-side p{font-size:.82rem;color:var(--mid);line-height:1.9;font-weight:300}
+.bio-text-side{padding:4rem 3.5rem;overflow-y:auto}
+.bio-section{margin-bottom:2rem}
+.bio-section-title{font-size:1rem;font-weight:600;color:var(--gold);margin-bottom:.8rem}
+.bio-section-text{font-size:.93rem;line-height:2;color:#4a5568;font-weight:300}
+
+/* REGISTRATION FORM */
+.reg-form-wrap{max-width:560px;margin:0 auto;padding:3rem 1.5rem}
+.reg-form-wrap h2{font-size:1.25rem;font-weight:700;margin-bottom:.4rem}
+.reg-form-wrap .reg-sub{font-size:.85rem;color:var(--mid);margin-bottom:2rem}
+.reg-field{margin-bottom:1.3rem}
+.reg-field label{display:block;font-size:.84rem;font-weight:500;margin-bottom:.5rem}
+.reg-field label.req::after{content:' *';color:#e53e3e}
+.reg-field input,.reg-field textarea{width:100%;padding:.78rem 1rem;border:1px solid var(--light);border-radius:4px;font-family:'Vazirmatn',sans-serif;font-size:.88rem;direction:rtl;text-align:right}
+.reg-field textarea{min-height:90px;resize:vertical}
+.reg-field input:focus,.reg-field textarea:focus{outline:none;border-color:var(--blue)}
+.reg-options{display:flex;flex-direction:column;gap:.6rem}
+.reg-option{display:flex;align-items:center;gap:.7rem;padding:.7rem .9rem;border:1px solid var(--light);border-radius:4px;cursor:pointer;font-size:.86rem}
+.reg-option:hover{border-color:var(--gold)}
+.reg-option input{width:auto;margin:0}
+.reg-submit-btn{width:100%;background:var(--black);color:#fff;border:none;padding:.95rem;border-radius:4px;font-family:'Vazirmatn',sans-serif;font-size:.92rem;cursor:pointer;margin-top:.5rem}
+.reg-success{text-align:center;padding:4rem 1.5rem;max-width:480px;margin:0 auto}
+.reg-success .ico{font-size:3rem;margin-bottom:1.2rem}
+.reg-success h2{font-size:1.2rem;font-weight:700;margin-bottom:.9rem}
+.reg-success p{font-size:.9rem;line-height:2;color:var(--mid)}
+
+/* STATUS LOOKUP PAGE */
+.status-wrap{max-width:560px;margin:0 auto;padding:3rem 1.5rem}
+.status-wrap h2{font-size:1.25rem;font-weight:700;margin-bottom:.4rem}
+.status-wrap .reg-sub{font-size:.85rem;color:var(--mid);margin-bottom:2rem}
+.status-result{margin-top:2rem;display:flex;flex-direction:column;gap:1.1rem}
+.status-card{border:1px solid var(--light);border-radius:6px;padding:1.4rem}
+.status-card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem}
+.status-card-top strong{font-size:.95rem}
+.status-pay-box{margin-top:1rem;padding:1.1rem;background:var(--bg);border-radius:4px;border:1px dashed var(--gold)}
+.status-pay-box h4{font-size:.82rem;color:var(--gold);margin-bottom:.6rem;font-weight:600}
+.status-pay-box p{font-size:.85rem;line-height:2;color:#4a5568;white-space:pre-wrap}
+.reg-q-builder{border:1px solid var(--light);border-radius:5px;padding:1rem;margin-top:.7rem}
+.reg-q-builder-item{border:1px solid var(--light);border-radius:4px;padding:.8rem;margin-bottom:.7rem;background:#fafafa}
+.reg-q-builder-item .qhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
+.reg-q-builder-item .qhead strong{font-size:.8rem}
+.opt-row{display:flex;gap:.4rem;margin-bottom:.4rem}
+.opt-row input{flex:1}
+.opt-row button{flex-shrink:0;background:#fff;border:1px solid #e53e3e;color:#e53e3e;border-radius:3px;cursor:pointer;font-size:.75rem;padding:0 .6rem}
+.answers-view{font-size:.82rem;line-height:1.9;color:#4a5568;background:var(--bg);padding:.8rem;border-radius:4px;margin-top:.5rem}
+.answers-view b{color:var(--black)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-overlay" class="hidden">
+  <div class="lbox">
+    <h3>ورود به پنل مدیریت</h3>
+    <input type="password" id="pw-input" placeholder="رمز عبور" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button onclick="doLogin()">ورود</button>
+    <p class="lerr hidden" id="login-err">رمز عبور اشتباه است</p>
+  </div>
+</div>
+
+<!-- ADMIN BAR -->
+<div id="admin-bar" class="hidden">
+  <em>🔧 حالت ویرایش فعال</em>
+  <div><button onclick="openPanel()">پنل محتوا</button><button class="btn-out" onclick="doLogout()">خروج</button></div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel" class="hidden">
+  <div class="aph"><h2>پنل مدیریت محتوا</h2><button onclick="closePanel()">بستن</button></div>
+  <div class="apb">
+    <div class="ap-tabs">
+      <button class="ap-tab active" onclick="switchTab('books',this)">📚 کتاب‌ها</button>
+      <button class="ap-tab" onclick="switchTab('articles',this)">📝 مقالات</button>
+      <button class="ap-tab" onclick="switchTab('history',this)">📜 تاریخ روانکاوی</button>
+      <button class="ap-tab" onclick="switchTab('workshops',this)">🛠️ کارگاه‌ها</button>
+      <button class="ap-tab" onclick="switchTab('grief',this)">💬 سوگ</button>
+      <button class="ap-tab" onclick="switchTab('quest',this)">📋 پرسشنامه‌ها</button>
+      <button class="ap-tab" onclick="switchTab('site',this)">🌐 تنظیمات</button>
+    </div>
+    <!-- BOOKS -->
+    <div id="tab-books">
+      <div class="aps"><h3>افزودن کتاب جدید</h3><div class="af">
+        <label class="req">تصویر جلد</label>
+        <div class="iup" onclick="gi('b-img-f').click()"><img id="b-img-prev" src="" style="display:none"/><div id="b-img-ph" class="iup-lbl"><span class="ico">🖼️</span><span>آپلود تصویر جلد</span></div></div>
+        <input type="file" id="b-img-f" accept="image/*" style="display:none" onchange="prevImg(this,'b-img-prev','b-img-ph','b-img-d')"/><input type="hidden" id="b-img-d"/>
+        <label class="req">عنوان</label><input id="b-title" placeholder="نام کتاب"/>
+        <label>نویسنده</label><input id="b-author" placeholder="نام نویسنده"/>
+        <label>دسته‌بندی</label><input id="b-cat" placeholder="سوگ، تروما ..."/>
+        <label class="req">خلاصه (کارت)</label><textarea id="b-desc" placeholder="خلاصه کوتاه..."></textarea>
+        <label>متن کامل (صفحه جزئیات)</label><textarea id="b-full" placeholder="متن کامل‌تر..." style="min-height:100px"></textarea>
+      </div><button class="abtn" onclick="addBook()">+ افزودن</button></div>
+      <div class="aps"><h3>کتاب‌های موجود</h3><div class="ap-items" id="ap-books-list"></div></div>
+    </div>
+    <!-- ARTICLES -->
+    <div id="tab-articles" class="hidden">
+      <div class="aps"><h3>افزودن مقاله جدید</h3><div class="af">
+        <label>تصویر</label>
+        <div class="iup" onclick="gi('a-img-f').click()"><img id="a-img-prev" src="" style="display:none"/><div id="a-img-ph" class="iup-lbl"><span class="ico">🖼️</span><span>آپلود تصویر</span></div></div>
+        <input type="file" id="a-img-f" accept="image/*" style="display:none" onchange="prevImg(this,'a-img-prev','a-img-ph','a-img-d')"/><input type="hidden" id="a-img-d"/>
+        <label class="req">عنوان</label><input id="a-title" placeholder="عنوان مقاله"/>
+        <label>تاریخ</label><input id="a-date" placeholder="۱۴۰۵/۰۳/۱۷"/>
+        <label class="req">خلاصه (کارت)</label><textarea id="a-summary" placeholder="خلاصه..."></textarea>
+        <label>متن کامل (صفحه جزئیات)</label><textarea id="a-full" placeholder="متن کامل مقاله..." style="min-height:100px"></textarea>
+        <label>لینک خارجی</label><input id="a-link" placeholder="https://..."/>
+      </div><button class="abtn" onclick="addArticle()">+ افزودن</button></div>
+      <div class="aps"><h3>مقالات موجود</h3><div class="ap-items" id="ap-articles-list"></div></div>
+    </div>
+    <!-- PSYCHO HISTORY -->
+    <div id="tab-history" class="hidden">
+      <div class="aps"><h3>افزودن رویداد تاریخی جدید</h3><div class="af">
+        <label>تصویر</label>
+        <div class="iup" onclick="gi('h-img-f').click()"><img id="h-img-prev" src="" style="display:none"/><div id="h-img-ph" class="iup-lbl"><span class="ico">🖼️</span><span>آپلود تصویر</span></div></div>
+        <input type="file" id="h-img-f" accept="image/*" style="display:none" onchange="prevImg(this,'h-img-prev','h-img-ph','h-img-d')"/><input type="hidden" id="h-img-d"/>
+        <label class="req">عنوان</label><input id="h-title" placeholder="عنوان رویداد"/>
+        <label>تاریخ</label><input id="h-date" placeholder="۱۸۹۶"/>
+        <label class="req">خلاصه (کارت)</label><textarea id="h-summary" placeholder="خلاصه..."></textarea>
+        <label>متن کامل (صفحه جزئیات)</label><textarea id="h-full" placeholder="متن کامل..." style="min-height:100px"></textarea>
+        <label>لینک خارجی</label><input id="h-link" placeholder="https://..."/>
+      </div><button class="abtn" onclick="addPsychoHistory()">+ افزودن</button></div>
+      <div class="aps"><h3>رویدادهای موجود</h3><div class="ap-items" id="ap-history-list"></div></div>
+    </div>
+    <!-- WORKSHOPS -->
+    <div id="tab-workshops" class="hidden">
+      <div class="aps"><h3>افزودن کارگاه جدید</h3><div class="af">
+        <label class="req">تصویر کارگاه</label>
+        <div class="iup" onclick="gi('w-img-f').click()"><img id="w-img-prev" src="" style="display:none"/><div id="w-img-ph" class="iup-lbl"><span class="ico">🖼️</span><span>آپلود تصویر کارگاه</span></div></div>
+        <input type="file" id="w-img-f" accept="image/*" style="display:none" onchange="prevImg(this,'w-img-prev','w-img-ph','w-img-d')"/><input type="hidden" id="w-img-d"/>
+        <label class="req">عنوان</label><input id="w-title" placeholder="نام کارگاه"/>
+        <label>مدرس</label><input id="w-author" placeholder="نام مدرس"/>
+        <label>دسته‌بندی</label><input id="w-cat" placeholder="سوگ، تروما ..."/>
+        <label class="req">خلاصه (کارت)</label><textarea id="w-desc" placeholder="خلاصه کوتاه..."></textarea>
+        <label>متن کامل (صفحه جزئیات)</label><textarea id="w-full" placeholder="متن کامل‌تر..." style="min-height:100px"></textarea>
+      </div><button class="abtn" onclick="addWorkshop()">+ افزودن</button></div>
+      <div class="aps"><h3>کارگاه‌های موجود و ثبت‌نام‌ها</h3><div class="ap-items" id="ap-workshops-list"></div></div>
+    </div>
+    <!-- GRIEF -->
+    <div id="tab-grief" class="hidden">
+      <div class="aps"><h3>تجربیات</h3><div class="ap-items" id="ap-grief-list"></div></div>
+    </div>
+    <!-- QUESTIONNAIRES -->
+    <div id="tab-quest" class="hidden">
+      <div class="aps"><h3>افزودن پرسشنامه جدید</h3><div class="af">
+        <label class="req">عنوان</label><input id="q-title" placeholder="نام پرسشنامه"/>
+        <label>توضیح برای بازدیدکننده</label><textarea id="q-desc" placeholder="توضیح کوتاه درباره هدف این پرسشنامه..."></textarea>
+      </div><button class="abtn" onclick="addQuestionnaire()">+ افزودن</button></div>
+      <div class="aps"><h3>پرسشنامه‌های موجود و پاسخ‌ها</h3><div class="ap-items" id="ap-quest-list"></div></div>
+    </div>
+    <!-- SITE -->
+    <div id="tab-site" class="hidden">
+      <div class="aps"><h3>🖼️ عکس پروفایل</h3><div class="af">
+        <div class="iup" style="height:160px" onclick="gi('hero-f-ap').click()"><img id="hero-prev-ap" src="" style="display:none"/><div id="hero-ph-ap" class="iup-lbl"><span class="ico">👤</span><span>آپلود عکس</span></div></div>
+        <input type="file" id="hero-f-ap" accept="image/*" style="display:none" onchange="handleHeroPanel(event)"/>
+      </div></div>
+      <div class="aps"><h3>📝 بخش هرو</h3><div class="af">
+        <label>تخصص</label><input id="s-eyebrow"/>
+        <label>تیتر خط اول</label><input id="s-h1"/>
+        <label>کلمه برجسته</label><input id="s-hem"/>
+        <label>ادامه تیتر</label><input id="s-h2"/>
+        <label>متن زیر تیتر</label><textarea id="s-sub"></textarea>
+        <label>متن دکمه رزرو</label><input id="s-cta"/>
+      </div><button class="abtn" onclick="saveHero()">ذخیره</button></div>
+      <div class="aps"><h3>👤 درباره من</h3><div class="af">
+        <label>عنوان</label><input id="s-about-h"/>
+        <label>پاراگراف اول</label><textarea id="s-about-p1"></textarea>
+        <label>پاراگراف دوم</label><textarea id="s-about-p2"></textarea>
+      </div><button class="abtn" onclick="saveAbout()">ذخیره</button></div>
+      <div class="aps"><h3>📄 صفحه بیوگرافی کامل</h3><div class="af">
+        <label>بخش ۱ — عنوان</label><input id="bio-t1" placeholder="تحصیلات"/>
+        <label>بخش ۱ — متن</label><textarea id="bio-p1" placeholder="..."></textarea>
+        <label>بخش ۲ — عنوان</label><input id="bio-t2" placeholder="تجربه بالینی"/>
+        <label>بخش ۲ — متن</label><textarea id="bio-p2" placeholder="..."></textarea>
+        <label>بخش ۳ — عنوان</label><input id="bio-t3" placeholder="رویکرد درمانی"/>
+        <label>بخش ۳ — متن</label><textarea id="bio-p3" placeholder="..."></textarea>
+      </div><button class="abtn" onclick="saveBio()">ذخیره بیوگرافی</button></div>
+      <div class="aps"><h3>📬 فوتر</h3><div class="af">
+        <label>توضیح</label><textarea id="s-fdesc"></textarea>
+        <label>اینستاگرام</label><input id="s-ig"/>
+        <label>تلگرام</label><input id="s-tg"/>
+        <label>لینکدین</label><input id="s-li"/>
+      </div><button class="abtn" onclick="saveFooter()">ذخیره</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="edit-modal" class="modal-overlay hidden">
+  <div class="mbox">
+    <h3 id="m-title">ویرایش</h3><p class="msub" id="m-sub"></p>
+    <div class="af" id="m-body"></div>
+    <div class="mac"><button class="save" onclick="saveEdit()">💾 ذخیره</button><button class="cancel" onclick="closeModal()">انصراف</button></div>
+  </div>
+</div>
+
+<!-- DETAIL PAGE -->
+<div id="detail-page" class="overlay hidden">
+  <div class="ov-header">
+    <div class="ov-back" onclick="closeOv('detail-page')">← بازگشت</div>
+    <span id="dp-breadcrumb" style="font-size:.82rem;color:var(--mid)"></span>
+  </div>
+  <div class="dp-body">
+    <div class="dp-img-side eimg" id="dp-img-wrap">
+      <img id="dp-img" src="" style="display:none"/>
+      <div id="dp-img-ph" class="dp-img-ph">📚</div>
+      <div class="eimg-badge" onclick="gi('dp-img-file').click()"><span style="font-size:1.5rem">📷</span><span>تغییر تصویر</span></div>
+    </div>
+    <div class="dp-text-side">
+      <p class="dp-tag editable" id="dp-tag" onclick="dpInlineEdit('tag')"></p>
+      <h1 class="dp-title editable" id="dp-title" onclick="dpInlineEdit('title')"></h1>
+      <p class="dp-author editable" id="dp-author" onclick="dpInlineEdit('author')"></p>
+      <p class="dp-date editable" id="dp-date" onclick="dpInlineEdit('date')"></p>
+      <div class="dp-divider"></div>
+      <p class="dp-desc editable" id="dp-desc" onclick="dpInlineEdit('desc')"></p>
+      <div class="dp-register-box hidden" id="dp-register-box">
+        <button class="dp-register-btn" onclick="openRegisterForm()">ثبت‌نام در کارگاه</button>
+      </div>
+    </div>
+  </div>
+  <input type="file" id="dp-img-file" accept="image/*" style="display:none" onchange="dpImgUpload(event)"/>
+</div>
+
+<!-- BIO PAGE -->
+<div id="bio-page" class="overlay hidden">
+  <div class="ov-header">
+    <div class="ov-back" onclick="closeOv('bio-page')">← بازگشت</div>
+    <span style="font-size:.82rem;color:var(--mid)">بیوگرافی کامل</span>
+  </div>
+  <div class="bio-body">
+    <div class="bio-label-side">
+      <h2>درباره<br/>دکتر شهاب<br/>یوسفی</h2>
+      <p>روان‌درمانگر و روانشناس بالینی با بیش از ۱۵ سال تجربه</p>
+    </div>
+    <div class="bio-text-side" id="bio-content"></div>
+  </div>
+</div>
+
+<!-- BOOK A SESSION PAGE (points to Telegram contact) -->
+<div id="telegram-page" class="overlay hidden">
+  <div class="ov-header">
+    <div class="ov-back" onclick="closeOv('telegram-page')">← بازگشت</div>
+    <span style="font-size:.82rem;color:var(--mid)">رزرو جلسه</span>
+  </div>
+  <div style="max-width:520px;margin:4rem auto;padding:0 1.5rem;text-align:center">
+    <div style="font-size:3rem;margin-bottom:1.2rem">📲</div>
+    <h2 style="font-size:1.25rem;font-weight:700;margin-bottom:1rem">رزرو جلسه از طریق تلگرام</h2>
+    <p style="font-size:.92rem;line-height:2.1;color:var(--mid);margin-bottom:1.8rem">لطفاً اطلاعات خود — شامل نام، نوع جلسه (داخل یا خارج از کشور) و زمان پیشنهادی — را به آیدی تلگرام زیر ارسال کنید. دکتر یوسفی پس از بررسی با شما هماهنگ خواهد کرد.</p>
+    <div style="background:var(--bg);border:2px dashed var(--gold);border-radius:6px;padding:1.3rem;font-size:1.15rem;font-weight:700;color:var(--black);direction:ltr">@shahab_yousefii</div>
+  </div>
+</div>
+
+<!-- HISTORY PAGE -->
+<div id="history-page" class="overlay hidden">
+  <div class="ov-header">
+    <div class="ov-back" onclick="closeOv('history-page')">← بازگشت</div>
+    <div style="display:flex;align-items:center;gap:1.2rem">
+      <span id="ov-auth-history"></span>
+      <span style="font-size:.82rem;color:var(--mid)">تاریخ روانکاوی</span>
+    </div>
+  </div>
+  <section class="articles" style="padding-top:3rem">
+    <div class="section-header"><h2 class="section-title">تاریخ روانکاوی</h2></div>
+    <div class="page-notes-box"><textarea id="notes-history" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.history=this.value"></textarea></div>
+    <div class="articles-grid" id="psycho-history-grid"></div>
+  </section>
+</div>
+
+<!-- BOOKS PAGE -->
+<div id="books-page" class="overlay hidden">
+  <div class="ov-header">
+    <div class="ov-back" onclick="closeOv('books-page')">← بازگشت</div>
+    <span style="font-size:.82rem;color:var(--mid)">کتاب‌ها</span>
+  </div>
+  <section class="books" style="padding-top:3rem">
+    <div class="section-header"><h2 class="section-title">خلاصه کتاب‌ها</h2></div>
+    <div class="page-notes-box"><textarea id="notes-books" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.books=this.value"></textarea></div>
+    <div class="books-grid" id="books-grid"></div>
+  </section>
+</div>
+
+<!-- ARTICLES PAGE -->
+<div id="articles-page" class="overlay hidden">
+  <div class="ov-header">
+    <div class="ov-back" onclick="closeOv('articles-page')">← بازگشت</div>
+    <span style="font-size:.82rem;color:var(--mid)">مقالات</span>
+  </div>
+  <section class="articles" style="padding-top:3rem">
+    <div class="section-header"><h2 class="section-title">مقالات و یادداشت‌ها</h2></div>
+    <div class="page-notes-box"><textarea id="notes-articles" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.articles=this.value"></textarea></div>
+    <div class="articles-grid" id="articles-grid"></div>
+  </section>
+</div>
+
+<!-- WORKSHOPS PAGE -->
+<div id="workshops-page" class="overlay hidden">
+  <div class="ov-header">
+    <div class="ov-back" onclick="closeOv('workshops-page')">← بازگشت</div>
+    <span style="font-size:.82rem;color:var(--mid)">کارگاه‌ها</span>
+  </div>
+  <section class="books" style="padding-top:3rem">
+    <div class="section-header"><h2 class="section-title">کارگاه‌ها</h2></div>
+    <div class="page-notes-box"><textarea id="notes-workshops" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.workshops=this.value"></textarea></div>
+    <div class="books-grid" id="workshops-grid"></div>
+  </section>
+</div>
+
+<!-- GRIEF PAGE -->
+<div id="grief-page" class="overlay hidden">
+  <div class="ov-header">
+    <div class="ov-back" onclick="closeOv('grief-page')">← بازگشت</div>
+    <span style="font-size:.82rem;color:var(--mid)">اشتراک‌گذاری تجربه سوگ</span>
+  </div>
+  <section class="grief-section" style="padding-top:3rem">
+    <div class="grief-intro"><h2 class="section-title">اشتراک‌گذاری تجربه سوگ</h2><p>اگر تجربه‌ای از دست دادن داشته‌اید، این فضا برای شماست. دکتر یوسفی شخصاً هر پیام را می‌خواند و پاسخ می‌دهد.</p></div>
+    <div class="grief-form-box"><h3>تجربه خود را بنویسید</h3><input type="text" id="grief-name" placeholder="نام شما"/><textarea id="grief-text" placeholder="تجربه‌ای از سوگ یا فقدان..."></textarea><button onclick="submitGrief()">ارسال</button><div id="grief-ok" class="grief-success hidden">✓ پیام شما دریافت شد.</div></div>
+    <div class="grief-posts" id="grief-posts"></div>
+  </section>
+</div>
+
+<!-- QUESTIONNAIRES PAGE -->
+<div id="questionnaires-page" class="overlay hidden">
+  <div class="ov-header">
+    <div class="ov-back" onclick="closeOv('questionnaires-page')">← بازگشت</div>
+    <span style="font-size:.82rem;color:var(--mid)">پرسشنامه‌ها</span>
+  </div>
+  <section class="books" style="padding-top:3rem">
+    <div class="section-header"><h2 class="section-title">پرسشنامه‌ها</h2></div>
+    <div class="page-notes-box"><textarea id="notes-quest" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.quest=this.value"></textarea></div>
+    <div class="books-grid" id="questionnaires-grid"></div>
+  </section>
+</div>
+
+<!-- QUESTIONNAIRE FILL-IN PAGE -->
+<div id="quest-fill-page" class="overlay hidden">
+  <div class="ov-header">
+    <div class="ov-back" onclick="closeOv('quest-fill-page');openOv('questionnaires-page')">← بازگشت</div>
+    <span style="font-size:.82rem;color:var(--mid)">پرسشنامه</span>
+  </div>
+  <div id="quest-fill-body"></div>
+</div>
+
+<!-- WORKSHOP REGISTRATION FORM PAGE -->
+<div id="register-page" class="overlay hidden">
+  <div class="ov-header">
+    <div class="ov-back" onclick="closeOv('register-page');openDp('workshop',registerCurrentWorkshopId)">← بازگشت</div>
+    <span style="font-size:.82rem;color:var(--mid)">ثبت‌نام در کارگاه</span>
+  </div>
+  <div id="register-page-body"></div>
+</div>
+
+<!-- STATUS LOOKUP PAGE -->
+<div id="status-page" class="overlay hidden">
+  <div class="ov-header">
+    <div class="ov-back" onclick="closeOv('status-page')">← بازگشت</div>
+    <span style="font-size:.82rem;color:var(--mid)">پیگیری وضعیت ثبت‌نام</span>
+  </div>
+  <div class="status-wrap">
+    <h2>پیگیری وضعیت ثبت‌نام</h2>
+    <p class="reg-sub">شماره تلفنی که هنگام ثبت‌نام وارد کرده‌اید را وارد کنید تا وضعیت درخواست خود را ببینید.</p>
+    <div class="reg-field"><label>شماره تلفن</label><input type="text" id="status-phone" placeholder="مثلاً 09123456789" onkeydown="if(event.key==='Enter')lookupStatus()"/></div>
+    <button class="reg-submit-btn" onclick="lookupStatus()">بررسی وضعیت</button>
+    <div class="status-result" id="status-result"></div>
+  </div>
+</div>
+
+<!-- ===== SITE ===== -->
+<nav>
+  <div class="nav-logo">دکتر شهاب یوسفی</div>
+  <div class="nav-links" style="width:100%;justify-content:space-between">
+    <div class="nav-links-right">
+      <a href="#about">درباره من</a>
+      <a href="#" onclick="openOv('history-page');return false;">تاریخ روانکاوی</a>
+      <a href="#" onclick="openOv('books-page');return false;">کتاب‌ها</a>
+      <a href="#" onclick="openOv('articles-page');return false;">مقالات</a>
+      <a href="#" onclick="openOv('workshops-page');return false;">کارگاه‌ها</a>
+      <a href="#" onclick="openOv('grief-page');return false;">اشتراک‌گذاری</a>
+      <a href="#" onclick="openOv('questionnaires-page');return false;">پرسشنامه‌ها</a>
+      <a href="#" onclick="openStatusPage();return false;">پیگیری ثبت‌نام</a>
+    </div>
+    <div class="nav-links-left">
+      <button class="nav-cta" onclick="scrollToNextStep()">رزرو جلسه</button>
+      <a href="#" onclick="showLogin()" class="nav-login">ورود</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-text">
+    <p class="hero-eyebrow editable" onclick="inlineEdit('eyebrow')" id="hero-eyebrow">روان‌درمانگر و روانشناس بالینی</p>
+    <h1 class="hero-headline editable" onclick="inlineEdit('headline')" id="hero-headline">
+      <span id="h-l1">درمان از آنجا آغاز می‌شود که </span><em id="h-em">سکوت</em><span id="h-l2"> صدا پیدا می‌کند.</span>
+    </h1>
+    <p class="hero-sub editable" onclick="inlineEdit('sub')" id="hero-sub">با تخصص در غم، تروما، و اختلالات شخصیت — فضایی دلسوزانه برای کشف، درک، و تحول دنیای درونی شما.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="scrollToNextStep()" id="hero-cta-btn">رزرو جلسه</button>
+      <button class="btn-ghost" onclick="openBio()">بیوگرافی کامل</button>
+    </div>
+  </div>
+  <div class="hero-img-col">
+    <div class="img-frame">
+      <img id="hero-photo" src="" alt="دکتر شهاب یوسفی"/>
+      <div id="hero-photo-ph"><div style="font-size:3rem;color:rgba(100,80,60,.25)">👤</div><p style="font-size:.8rem;color:rgba(80,60,40,.4)">عکس دکتر یوسفی</p></div>
+      <button class="photo-upload-btn" onclick="gi('hero-file').click()">📷 تغییر عکس</button>
+    </div>
+    <input type="file" id="hero-file" accept="image/*" style="display:none" onchange="handleHero(event)"/>
+    <div class="name-badge"><span>شهاب</span><span>یوسفی</span></div>
+  </div>
+</section>
+
+<div class="marquee-bar"><div class="marquee-track"><span>درمان غم و اندوه</span><span class="dot">·</span><span>بهبودی از تروما</span><span class="dot">·</span><span>اختلالات شخصیت</span><span class="dot">·</span><span>مراقبت دلسوزانه</span><span class="dot">·</span><span>جلسات فردی</span><span class="dot">·</span><span>آنلاین و حضوری</span><span class="dot">·</span><span>درمان غم و اندوه</span><span class="dot">·</span><span>بهبودی از تروما</span><span class="dot">·</span><span>اختلالات شخصیت</span><span class="dot">·</span><span>مراقبت دلسوزانه</span><span class="dot">·</span><span>جلسات فردی</span><span class="dot">·</span><span>آنلاین و حضوری</span><span class="dot">·</span></div></div>
+
+<section class="intro reveal" id="about">
+  <div class="intro-label">درباره من</div>
+  <div class="intro-text">
+    <h2 class="editable" onclick="inlineEdit('about-h')" id="about-heading">فضایی برای باری که سال‌هاست با خود حمل می‌کنید.</h2>
+    <p class="editable" onclick="inlineEdit('about-p1')" id="about-p1">دکتر شهاب یوسفی روان‌درمانگر دارای مجوز با بیش از ۱۵ سال تجربه در کمک به افراد برای گذر از فقدان عمیق، تروما، و پیچیدگی‌های شخصیت است.</p>
+    <p class="editable" onclick="inlineEdit('about-p2')" id="about-p2">او معتقد است هر انسانی داستانی دارد که ارزش شنیدن دارد — و با حمایت درست، حتی سخت‌ترین فصل‌های زندگی می‌توانند منبع رشد و معنا شوند.</p>
+    <button class="btn-ghost" onclick="openBio()" style="margin-top:1rem">بیوگرافی کامل</button>
+  </div>
+</section>
+
+<section class="cta-strip reveal" id="next-step">
+  <div class="cta-left"><h2 class="editable" onclick="inlineEdit('cta-h')" id="cta-h">قدم بعدی شما با یک مکالمه آغاز می‌شود.</h2><p class="editable" onclick="inlineEdit('cta-p')" id="cta-p">چه در آغاز مسیر درمان باشید چه پس از یک دوره سخت بازگشته باشید، در دکتر یوسفی باز است.</p></div>
+  <div class="cta-right">
+    <div class="cta-item" onclick="openOv('telegram-page')"><div class="cta-icon">📅</div><div class="cta-item-text"><small>زمان‌بندی</small><strong>رزرو جلسه</strong></div></div>
+  </div>
+</section>
+
+<div class="press reveal"><span class="press-label">رسانه‌ها</span><div class="press-logos"><span class="press-logo">روزنامه همشهری</span><span class="press-logo">مجله روان‌پزشکی ایران</span><span class="press-logo">شبکه درمان تهران</span><span class="press-logo">ذهن و سلامت</span></div></div>
+
+<section class="newsletter reveal">
+  <h3 class="editable" onclick="inlineEdit('nl-h')" id="nl-h">بینش‌هایی درباره درمان، مستقیم برای شما.</h3>
+  <p class="editable" onclick="inlineEdit('nl-p')" id="nl-p">تأملاتی درباره غم، تروما، و معنای زندگی.</p>
+  <div class="nl-form"><input type="email" placeholder="آدرس ایمیل شما"/><button>عضویت</button></div>
+</section>
+
+<footer class="reveal">
+  <div class="footer-top">
+    <div class="footer-brand"><div class="logo">دکتر شهاب یوسفی</div><p class="editable" onclick="inlineEdit('footer-desc')" id="footer-desc">فضایی دلسوزانه برای غم، تروما، و شخصیت.</p></div>
+    <div class="footer-col"><h4>تخصص‌ها</h4><a href="#">غم و فقدان</a><a href="#">تروما</a><a href="#">اختلالات شخصیت</a></div>
+    <div class="footer-col"><h4>خدمات</h4><a href="#">درمان فردی</a><a href="#" onclick="scrollToNextStep()">رزرو جلسه</a></div>
+    <div class="footer-col"><h4>ارتباط</h4><a href="#about">درباره من</a><a href="#" id="lnk-tg">تلگرام</a><a href="#" id="lnk-ig">اینستاگرام</a></div>
+  </div>
+  <div class="footer-bottom"><p>© ۱۴۰۵ دکتر شهاب یوسفی.</p><div class="social-links"><a href="#" id="lnk2-tg">تلگرام</a><a href="#" id="lnk2-li">لینکدین</a><a href="#" id="lnk2-ig">اینستاگرام</a></div></div>
+</footer>
+
+<script>
+/* ======= DATA ======= */
+const PASS='pangool';
+let isAdmin=false, editTarget=null, dpCurrent=null;
+let pageNotes={history:'',books:'',articles:'',workshops:'',quest:''};
+
+const S={
+  eyebrow:'روان‌درمانگر و روانشناس بالینی',h1:'درمان از آنجا آغاز می‌شود که ',hem:'سکوت',h2:' صدا پیدا می‌کند.',
+  sub:'با تخصص در غم، تروما، و اختلالات شخصیت — فضایی دلسوزانه برای کشف، درک، و تحول دنیای درونی شما.',
+  cta:'رزرو جلسه','about-h':'فضایی برای باری که سال‌هاست با خود حمل می‌کنید.',
+  'about-p1':'دکتر شهاب یوسفی روان‌درمانگر دارای مجوز با بیش از ۱۵ سال تجربه.',
+  'about-p2':'او معتقد است هر انسانی داستانی دارد که ارزش شنیدن دارد.',
+  'cta-h':'قدم بعدی شما با یک مکالمه آغاز می‌شود.','cta-p':'چه در آغاز مسیر درمان باشید، در دکتر یوسفی باز است.',
+  'nl-h':'بینش‌هایی درباره درمان، مستقیم برای شما.','nl-p':'تأملاتی درباره غم، تروما، و معنای زندگی.',
+  'footer-desc':'فضایی دلسوزانه برای غم، تروما، و شخصیت.',
+  ig:'#',tg:'#',li:'#'
+};
+let bioSections=[
+  {t:'تحصیلات',p:'دکترای روان‌شناسی بالینی از دانشگاه تهران. کارشناسی ارشد روان‌پزشکی از دانشگاه علوم پزشکی ایران.'},
+  {t:'تجربه بالینی',p:'بیش از ۱۵ سال تجربه در حوزه سوگ، تروما، و اختلالات شخصیت. همکاری با مراکز مشاوره معتبر تهران.'},
+  {t:'رویکرد درمانی',p:'رویکرد دکتر یوسفی ترکیبی از روان‌شناسی عمق، CBT، و DBT است. هر درمان بر اساس نیازهای منحصربه‌فرد مراجع طراحی می‌شود.'}
+];
+let books=[
+  {id:1,title:'سوگ بدون ترس',author:'دیوید کسلر',cat:'سوگ',desc:'راهنمایی عمیق برای درک مراحل سوگواری.',full:'این کتاب راهنمایی عمیق برای مراحل سوگواری و یافتن معنا در پس از فقدان است.',img:''},
+  {id:2,title:'بدن حساب می‌کند',author:'بسل ون در کولک',cat:'تروما',desc:'پژوهشی درباره تروما در بدن.',full:'چگونه تروما در بدن ذخیره می‌شود و چطور می‌توان به بهبودی رسید.',img:''},
+  {id:3,title:'مرز بین من و تو',author:'نجمه دهقانی',cat:'اختلالات شخصیت',desc:'راهنمای اختلال شخصیت مرزی.',full:'راهنمای عملی برای اختلال شخصیت مرزی و ایجاد ثبات عاطفی.',img:''}
+];
+let articles=[
+  {id:1,title:'وقتی غم نمی‌رود',date:'۱۴۰۵/۰۲/۱۰',summary:'سوگ پیچیده زمانی رخ می‌دهد که فرآیند طبیعی اندوه متوقف می‌شود.',full:'سوگ پیچیده وضعیتی جدی است که نیاز به درمان تخصصی دارد.',img:'',link:''},
+  {id:2,title:'تروما و حافظه',date:'۱۴۰۵/۰۱/۲۵',summary:'تروما در سیستم عصبی و بدن ذخیره می‌شود.',full:'تحقیقات نوروبیولوژی اثرات عمیق تروما بر مغز را نشان می‌دهند.',img:'',link:''},
+  {id:3,title:'BPD و روابط',date:'۱۴۰۵/۰۱/۰۵',summary:'چرخه‌های آسیب‌زا در روابط افراد مبتلا به BPD.',full:'DBT موثرترین روش درمان BPD است.',img:'',link:''}
+];
+let psychoHistory=[
+  {id:1,title:'آغاز روانکاوی به دست فروید',date:'۱۸۹۶',summary:'زیگموند فروید اصطلاح «روانکاوی» را برای روش جدید خود در درمان ذهن معرفی کرد.',full:'در سال ۱۸۹۶ زیگموند فروید برای نخستین بار اصطلاح روانکاوی را به کار برد و بنیان نظریه ضمیر ناخودآگاه را گذاشت.',img:'',link:''},
+  {id:2,title:'یونگ و روانشناسی تحلیلی',date:'۱۹۱۳',summary:'کارل گوستاو یونگ از فروید جدا شد و مسیر مستقل روانشناسی تحلیلی را بنا نهاد.',full:'اختلاف نظر یونگ و فروید درباره ماهیت ناخودآگاه به شکل‌گیری مکتب روانشناسی تحلیلی یونگ منجر شد.',img:'',link:''},
+  {id:3,title:'ورود روانکاوی به ایران',date:'۱۳۴۰',summary:'آشنایی نخستین نسل روان‌پزشکان ایرانی با مفاهیم روانکاوی و تأثیر آن بر طب روانی نوین کشور.',full:'از دهه ۱۳۴۰ به بعد، مفاهیم روانکاوی به‌تدریج وارد آموزش روان‌پزشکی در ایران شد.',img:'',link:''}
+];
+/* workshops now carry: regQuestions (array of {id,label,type:'text'|'choice',options:[]}), registrations (array) */
+let workshops=[
+  {id:1,title:'کارگاه مواجهه با سوگ',author:'دکتر شهاب یوسفی',cat:'سوگ',desc:'کارگاهی نیم‌روزه برای آشنایی با مراحل سوگواری و مهارت‌های مقابله.',full:'این کارگاه به‌صورت گروهی برگزار می‌شود و شرکت‌کنندگان با تمرین‌های عملی برای عبور از سوگ آشنا می‌شوند.',img:'',regQuestions:[],registrations:[]},
+  {id:2,title:'کارگاه تنظیم هیجان در تروما',author:'دکتر شهاب یوسفی',cat:'تروما',desc:'آموزش تکنیک‌های تنظیم هیجان برای بازماندگان تروما.',full:'در این کارگاه، تکنیک‌های عملی تنظیم هیجان و آرام‌سازی سیستم عصبی آموزش داده می‌شود.',img:'',regQuestions:[],registrations:[]},
+  {id:3,title:'کارگاه مرزهای سالم در روابط',author:'دکتر شهاب یوسفی',cat:'روابط',desc:'یادگیری نحوه تعیین مرز در روابط صمیمی و خانوادگی.',full:'شرکت‌کنندگان می‌آموزند چگونه بدون احساس گناه، مرزهای سالم در روابط خود برقرار کنند.',img:'',regQuestions:[],registrations:[]}
+];
+let grief=[
+  {id:1,name:'ناشناس',text:'سه سال از رفتن مادرم می‌گذره.',reply:'سوگ زمان‌بند نیست.',replied:true,showPending:false},
+  {id:2,name:'سارا',text:'پدرم رو تازه از دست دادم.',reply:'',replied:false,showPending:false}
+];
+/* questionnaires: each has {id,title,desc,questions:[{id,label,type:'text'|'choice',options:[]}],responses:[{id,name,answers:[{q,a}],submittedAt}]} */
+let questionnaires=[];
+
+let registerCurrentWorkshopId=null;
+let qBuilderDraft=[]; // working copy while editing questions in admin modal
+
+/* ======= SCROLL REVEAL ======= */
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.07});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+/* ======= AUTH ======= */
+function showLogin(){gi('login-overlay').classList.remove('hidden');setTimeout(()=>gi('pw-input').focus(),80)}
+function doLogin(){
+  if(gi('pw-input').value===PASS){
+    isAdmin=true;gi('login-overlay').classList.add('hidden');gi('admin-bar').classList.remove('hidden');
+    gi('pw-input').value='';gi('login-err').classList.add('hidden');
+    document.body.classList.add('admin-mode');renderAll();
+  } else gi('login-err').classList.remove('hidden');
+}
+function doLogout(){isAdmin=false;gi('admin-bar').classList.add('hidden');gi('admin-panel').classList.add('hidden');document.body.classList.remove('admin-mode');renderAll();}
+function openPanel(){
+  gi('admin-panel').classList.remove('hidden');
+  renderAPBooks();renderAPArticles();renderAPPsychoHistory();renderAPWorkshops();renderAPGrief();renderAPQuestionnaires();
+  loadSiteForm();
+}
+function closePanel(){gi('admin-panel').classList.add('hidden')}
+function switchTab(n,el){
+  ['books','articles','history','workshops','grief','quest','site'].forEach(t=>gi('tab-'+t).classList.add('hidden'));
+  document.querySelectorAll('.ap-tab').forEach(b=>b.classList.remove('active'));
+  gi('tab-'+n).classList.remove('hidden');el.classList.add('active');
+}
+
+/* ======= OVERLAYS ======= */
+function openOv(id){gi(id).classList.remove('hidden');document.body.style.overflow='hidden'}
+function closeOv(id){gi(id).classList.add('hidden');document.body.style.overflow=''}
+
+/* ======= BOOK A SESSION TRIGGER ======= */
+function scrollToNextStep(){
+  const el=gi('next-step');
+  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ======= QUICK ADD TILE (used in Books/Articles/History/Workshops grids) ======= */
+function addTileHtml(type,label,cardClass,minH){
+  return `<div class="${cardClass} reveal add-tile" onclick="openNewItemModal('${type}')" style="min-height:${minH}px">
+    <div class="add-tile-inner"><span class="ico">➕</span><span>${label}</span></div>
+  </div>`;
+}
+function openNewItemModal(type){
+  if(!isAdmin)return;
+  editTarget={t:'new',type};
+  const titles={book:'افزودن کتاب جدید',article:'افزودن مقاله جدید',history:'افزودن رویداد تاریخی جدید',workshop:'افزودن کارگاه جدید'};
+  gi('m-title').textContent=titles[type]||'افزودن مورد جدید';
+  gi('m-sub').textContent='';
+  let fields=`<label>تصویر</label><div class="iup" style="height:100px" onclick="gi('m-n-f').click()"><img id="m-n-prev" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/><div id="m-n-ph" class="iup-lbl"><span class="ico">🖼️</span><span>آپلود</span></div></div><input type="file" id="m-n-f" accept="image/*" style="display:none" onchange="prevImg(this,'m-n-prev','m-n-ph','mv-img')"/><input type="hidden" id="mv-img" value=""/>
+  <label class="req">عنوان</label><input id="mv-title" placeholder="عنوان"/>`;
+  if(type==='book'||type==='workshop'){
+    fields+=`<label>${type==='book'?'نویسنده':'مدرس'}</label><input id="mv-author" placeholder="${type==='book'?'نام نویسنده':'نام مدرس'}"/>
+    <label>دسته‌بندی</label><input id="mv-cat" placeholder="دسته‌بندی"/>`;
+  } else {
+    fields+=`<label>تاریخ</label><input id="mv-date" placeholder="تاریخ"/>`;
+  }
+  fields+=`<label class="req">خلاصه (کارت)</label><textarea id="mv-desc" placeholder="خلاصه کوتاه..."></textarea>
+  <label>متن کامل (صفحه جزئیات)</label><textarea id="mv-full" style="min-height:100px" placeholder="متن کامل..."></textarea>`;
+  if(type==='article'||type==='history'){
+    fields+=`<label>لینک خارجی</label><input id="mv-link" placeholder="https://..."/>`;
+  }
+  gi('m-body').innerHTML=fields;
+  gi('edit-modal').classList.remove('hidden');
+  setTimeout(()=>{const el=gi('mv-title');if(el)el.focus();},80);
+}
+
+/* ======= BIO ======= */
+function openBio(){
+  renderBioContent();openOv('bio-page');
+}
+function renderBioContent(){
+  gi('bio-content').innerHTML=bioSections.map((s,i)=>`
+    <div class="bio-section">
+      <h3 class="bio-section-title editable" onclick="if(isAdmin)editBioSection(${i},'title')">${s.t}</h3>
+      <p class="bio-section-text editable" onclick="if(isAdmin)editBioSection(${i},'text')">${s.p}</p>
+    </div>`).join('');
+}
+function editBioSection(i,field){
+  if(!isAdmin)return;
+  editTarget={t:'bio',i,field};
+  gi('m-title').textContent='ویرایش بیوگرافی';
+  gi('m-sub').textContent=field==='title'?'عنوان بخش':'متن بخش';
+  const val=field==='title'?bioSections[i].t:bioSections[i].p;
+  gi('m-body').innerHTML=`<label>${field==='title'?'عنوان':'متن'}</label>${field==='title'?`<input id="mv" value="${esc(val)}">`:`<textarea id="mv" style="min-height:100px">${esc(val)}</textarea>`}`;
+  gi('edit-modal').classList.remove('hidden');
+}
+function saveBio(){
+  for(let i=0;i<3;i++){
+    const t=gi('bio-t'+(i+1)),p=gi('bio-p'+(i+1));
+    if(t&&t.value.trim())bioSections[i].t=t.value.trim();
+    if(p&&p.value.trim())bioSections[i].p=p.value.trim();
+  }
+  alert('بیوگرافی ذخیره شد!');
+}
+
+/* ======= DETAIL PAGE ======= */
+function getDpItem(type,id){
+  if(type==='book')return books.find(x=>x.id===id);
+  if(type==='article')return articles.find(x=>x.id===id);
+  if(type==='history')return psychoHistory.find(x=>x.id===id);
+  if(type==='workshop')return workshops.find(x=>x.id===id);
+  return null;
+}
+function openDp(type,id){
+  const item=getDpItem(type,id);if(!item)return;
+  dpCurrent={type,id};
+  const breadcrumbs={book:'کتاب‌ها',article:'مقالات',history:'تاریخ روانکاوی',workshop:'کارگاه‌ها'};
+  gi('dp-breadcrumb').textContent=breadcrumbs[type]||'';
+  const img=gi('dp-img'),ph=gi('dp-img-ph');
+  if(item.img){img.src=item.img;img.style.display='block';ph.style.display='none';}
+  else{img.style.display='none';ph.style.display='flex';const icons={book:'📚',article:'📝',history:'📜',workshop:'🛠️'};ph.textContent=icons[type]||'📄';}
+  setText('dp-tag',(type==='book'||type==='workshop')?item.cat:item.date);
+  setText('dp-title',item.title);
+  setText('dp-author',item.author||'');gi('dp-author').style.display=item.author?'block':'none';
+  setText('dp-date',item.date||'');gi('dp-date').style.display='none';
+  setText('dp-desc',item.full||item.desc||item.summary||'');
+  const regBox=gi('dp-register-box');
+  if(type==='workshop'){regBox.classList.remove('hidden');}else{regBox.classList.add('hidden');}
+  openOv('detail-page');
+}
+function dpInlineEdit(field){
+  if(!isAdmin||!dpCurrent)return;
+  const item=getDpItem(dpCurrent.type,dpCurrent.id);if(!item)return;
+  const fieldMap={tag:{k:(dpCurrent.type==='book'||dpCurrent.type==='workshop')?'cat':'date',lbl:'دسته‌بندی/تاریخ',long:false},title:{k:'title',lbl:'عنوان',long:false},author:{k:'author',lbl:'نویسنده/مدرس',long:false},date:{k:'date',lbl:'تاریخ',long:false},desc:{k:'full',lbl:'متن کامل',long:true}};
+  const fm=fieldMap[field];if(!fm)return;
+  editTarget={t:'dp',dpType:dpCurrent.type,dpId:dpCurrent.id,k:fm.k,field};
+  gi('m-title').textContent='ویرایش';gi('m-sub').textContent=fm.lbl;
+  const val=item[fm.k]||'';
+  gi('m-body').innerHTML=`<label>${fm.lbl}</label>${fm.long?`<textarea id="mv" style="min-height:120px">${esc(val)}</textarea>`:`<input id="mv" value="${esc(val)}"/>`}`;
+  gi('edit-modal').classList.remove('hidden');
+  setTimeout(()=>{const el=gi('mv');if(el)el.focus();},80);
+}
+function dpImgUpload(e){
+  const f=e.target.files[0];if(!f||!dpCurrent)return;
+  const r=new FileReader();r.onload=ev=>{
+    const src=ev.target.result;gi('dp-img').src=src;gi('dp-img').style.display='block';gi('dp-img-ph').style.display='none';
+    const item=getDpItem(dpCurrent.type,dpCurrent.id);
+    if(item){item.img=src;renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();}
+  };r.readAsDataURL(f);
+}
+
+/* ======= HERO PHOTO ======= */
+function handleHero(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=ev=>{
+    const img=gi('hero-photo');img.src=ev.target.result;img.style.display='block';gi('hero-photo-ph').style.display='none';
+    enableDrag(img);
+    const ap=gi('hero-prev-ap');if(ap){ap.src=ev.target.result;ap.style.display='block';gi('hero-ph-ap').style.display='none';}
+  };r.readAsDataURL(f);
+}
+function handleHeroPanel(e){handleHero(e)}
+function enableDrag(img){
+  let drag=false,sy=0,sp=30,pos=30;
+  img.style.objectPosition=`center ${pos}%`;
+  img.addEventListener('mousedown',e=>{if(!isAdmin)return;drag=true;sy=e.clientY;sp=pos;img.classList.add('dragging');e.preventDefault();});
+  document.addEventListener('mousemove',e=>{if(!drag)return;const d=(e.clientY-sy)/img.offsetHeight*100;pos=Math.min(100,Math.max(0,sp+d));img.style.objectPosition=`center ${pos}%`;});
+  document.addEventListener('mouseup',()=>{drag=false;img.classList.remove('dragging');});
+}
+function prevImg(input,prevId,phId,dataId){
+  const f=input.files[0];if(!f)return;
+  const r=new FileReader();r.onload=ev=>{
+    const img=gi(prevId);if(img){img.src=ev.target.result;img.style.display='block';}
+    const ph=gi(phId);if(ph)ph.style.display='none';
+    const d=gi(dataId);if(d)d.value=ev.target.result;
+  };r.readAsDataURL(f);
+}
+
+/* ======= INLINE EDIT ======= */
+const EM={
+  eyebrow:{lbl:'تخصص',t:'input',g:()=>S.eyebrow,s:v=>{S.eyebrow=v;setText('hero-eyebrow',v)}},
+  sub:{lbl:'متن زیر تیتر',t:'textarea',g:()=>S.sub,s:v=>{S.sub=v;setText('hero-sub',v)}},
+  cta:{lbl:'متن دکمه',t:'input',g:()=>S.cta,s:v=>{S.cta=v;setText('hero-cta-btn',v)}},
+  'about-h':{lbl:'عنوان درباره من',t:'input',g:()=>S['about-h'],s:v=>{S['about-h']=v;setText('about-heading',v)}},
+  'about-p1':{lbl:'پاراگراف اول',t:'textarea',g:()=>S['about-p1'],s:v=>{S['about-p1']=v;setText('about-p1',v)}},
+  'about-p2':{lbl:'پاراگراف دوم',t:'textarea',g:()=>S['about-p2'],s:v=>{S['about-p2']=v;setText('about-p2',v)}},
+  'cta-h':{lbl:'عنوان CTA',t:'input',g:()=>S['cta-h'],s:v=>{S['cta-h']=v;setText('cta-h',v)}},
+  'cta-p':{lbl:'متن CTA',t:'textarea',g:()=>S['cta-p'],s:v=>{S['cta-p']=v;setText('cta-p',v)}},
+  'nl-h':{lbl:'عنوان خبرنامه',t:'input',g:()=>S['nl-h'],s:v=>{S['nl-h']=v;setText('nl-h',v)}},
+  'nl-p':{lbl:'متن خبرنامه',t:'textarea',g:()=>S['nl-p'],s:v=>{S['nl-p']=v;setText('nl-p',v)}},
+  'footer-desc':{lbl:'توضیح فوتر',t:'textarea',g:()=>S['footer-desc'],s:v=>{S['footer-desc']=v;setText('footer-desc',v)}},
+  headline:{lbl:'تیتر',t:'headline',g:()=>({h1:S.h1,hem:S.hem,h2:S.h2}),s:v=>{S.h1=v.h1;S.hem=v.hem;S.h2=v.h2;setText('h-l1',v.h1);setText('h-em',v.hem);setText('h-l2',v.h2)}}
+};
+function inlineEdit(key){
+  if(!isAdmin)return;
+  const m=EM[key];if(!m)return;
+  editTarget={t:'inline',key};
+  gi('m-title').textContent='ویرایش متن';gi('m-sub').textContent=m.lbl;
+  const val=m.g();
+  if(m.t==='headline')gi('m-body').innerHTML=`<label>خط اول</label><input id="mv-h1" value="${esc(val.h1)}"/><label>کلمه برجسته</label><input id="mv-hem" value="${esc(val.hem)}"/><label>ادامه</label><input id="mv-h2" value="${esc(val.h2)}"/>`;
+  else if(m.t==='textarea')gi('m-body').innerHTML=`<label>${m.lbl}</label><textarea id="mv" style="min-height:110px">${esc(val)}</textarea>`;
+  else gi('m-body').innerHTML=`<label>${m.lbl}</label><input id="mv" value="${esc(val)}"/>`;
+  gi('edit-modal').classList.remove('hidden');
+  setTimeout(()=>{const el=gi('mv')||gi('mv-h1');if(el)el.focus();},80);
+}
+
+/* ======= MODAL SAVE ======= */
+function saveEdit(){
+  if(!editTarget)return;
+  const t=editTarget.t;
+  if(t==='inline'){
+    const m=EM[editTarget.key];
+    if(editTarget.key==='headline')m.s({h1:gv('mv-h1'),hem:gv('mv-hem'),h2:gv('mv-h2')});
+    else m.s(gv('mv'));
+  } else if(t==='dp'){
+    const item=getDpItem(editTarget.dpType,editTarget.dpId);
+    if(item){item[editTarget.k]=gv('mv');setText('dp-'+editTarget.field,item[editTarget.k]);renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();}
+  } else if(t==='bio'){
+    const s=bioSections[editTarget.i];
+    if(editTarget.field==='title')s.t=gv('mv');else s.p=gv('mv');
+    renderBioContent();
+  } else if(t==='book'){
+    const b=books.find(x=>x.id===editTarget.id);
+    b.title=gv('mv-title');b.author=gv('mv-author');b.cat=gv('mv-cat');b.desc=gv('mv-desc');b.full=gv('mv-full');
+    const ni=gv('mv-img');if(ni)b.img=ni;
+    renderBooks();renderAPBooks();
+    if(dpCurrent&&dpCurrent.type==='book'&&dpCurrent.id===b.id)openDp('book',b.id);
+  } else if(t==='article'){
+    const a=articles.find(x=>x.id===editTarget.id);
+    a.title=gv('mv-title');a.date=gv('mv-date');a.summary=gv('mv-desc');a.full=gv('mv-full');a.link=gv('mv-link');
+    const ni=gv('mv-img');if(ni)a.img=ni;
+    renderArticles();renderAPArticles();
+    if(dpCurrent&&dpCurrent.type==='article'&&dpCurrent.id===a.id)openDp('article',a.id);
+  } else if(t==='history'){
+    const a=psychoHistory.find(x=>x.id===editTarget.id);
+    a.title=gv('mv-title');a.date=gv('mv-date');a.summary=gv('mv-desc');a.full=gv('mv-full');a.link=gv('mv-link');
+    const ni=gv('mv-img');if(ni)a.img=ni;
+    renderPsychoHistory();renderAPPsychoHistory();
+    if(dpCurrent&&dpCurrent.type==='history'&&dpCurrent.id===a.id)openDp('history',a.id);
+  } else if(t==='workshop'){
+    const w=workshops.find(x=>x.id===editTarget.id);
+    w.title=gv('mv-title');w.author=gv('mv-author');w.cat=gv('mv-cat');w.desc=gv('mv-desc');w.full=gv('mv-full');
+    const ni=gv('mv-img');if(ni)w.img=ni;
+    renderWorkshops();renderAPWorkshops();
+    if(dpCurrent&&dpCurrent.type==='workshop'&&dpCurrent.id===w.id)openDp('workshop',w.id);
+  } else if(t==='new'){
+    const type=editTarget.type;
+    const title=gv('mv-title'),desc=gv('mv-desc');
+    if(!title||!desc){alert('عنوان و خلاصه الزامی است');return;}
+    const img=gv('mv-img');
+    if(type==='book'){
+      books.push({id:Date.now(),title,author:gv('mv-author'),cat:gv('mv-cat'),desc,full:gv('mv-full'),img});
+      renderBooks();renderAPBooks();
+    } else if(type==='article'){
+      articles.unshift({id:Date.now(),title,date:gv('mv-date'),summary:desc,full:gv('mv-full'),link:gv('mv-link'),img});
+      renderArticles();renderAPArticles();
+    } else if(type==='history'){
+      psychoHistory.unshift({id:Date.now(),title,date:gv('mv-date'),summary:desc,full:gv('mv-full'),link:gv('mv-link'),img});
+      renderPsychoHistory();renderAPPsychoHistory();
+    } else if(type==='workshop'){
+      workshops.push({id:Date.now(),title,author:gv('mv-author'),cat:gv('mv-cat'),desc,full:gv('mv-full'),img,regQuestions:[],registrations:[]});
+      renderWorkshops();renderAPWorkshops();
+    }
+  } else if(t==='qedit'){
+    /* editing a single question's label inside the q-builder draft */
+    const q=qBuilderDraft.find(x=>x.id===editTarget.qid);
+    if(q){q.label=gv('mv');renderQBuilderDraft();}
+  }
+  closeModal();
+}
+function closeModal(){gi('edit-modal').classList.add('hidden');editTarget=null}
+
+/* ======= BOOKS ======= */
+const bkBg=id=>['#e8e4dc','#dce8e4','#dcdce8','#e8dce4'][(id-1)%4];
+function renderBooks(){
+  const g=gi('books-grid');
+  let html=books.map(b=>`<div class="book-card reveal" onclick="${isAdmin?`editBook(${b.id})`:`openDp('book',${b.id})`}">
+    <div class="book-cover eimg" style="background:${bkBg(b.id)}">${b.img?`<img src="${b.img}"/>`:`<div class="book-cover-ph">📚</div>`}<div class="eimg-badge" onclick="event.stopPropagation();if(isAdmin)editBook(${b.id})"><span>📷</span><span>ویرایش</span></div>${isAdmin?`<button class="card-del-btn" onclick="event.stopPropagation();delBook(${b.id})" title="حذف">✕</button>`:''}</div>
+    <div class="book-body"><p class="book-tag">${b.cat}</p><h3 class="book-title">${b.title}</h3><p class="book-author">${b.author}</p><p class="book-desc">${b.desc}</p></div>
+  </div>`).join('');
+  if(isAdmin)html+=addTileHtml('book','افزودن کتاب جدید','book-card',240);
+  g.innerHTML=html||'<p style="color:var(--mid);grid-column:1/-1">کتابی ثبت نشده.</p>';
+  g.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+}
+function editBook(id){
+  if(!isAdmin)return;const b=books.find(x=>x.id===id);editTarget={t:'book',id};
+  gi('m-title').textContent='ویرایش کتاب';gi('m-sub').textContent=b.title;
+  gi('m-body').innerHTML=`<label>تصویر جلد</label><div class="iup" style="height:100px" onclick="gi('m-b-f').click()"><img id="m-b-prev" src="${b.img||''}" style="${b.img?'display:block':'display:none'};position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/><div id="m-b-ph" class="iup-lbl" style="${b.img?'display:none':''}"><span class="ico">🖼️</span><span>آپلود</span></div></div><input type="file" id="m-b-f" accept="image/*" style="display:none" onchange="prevImg(this,'m-b-prev','m-b-ph','mv-img')"/><input type="hidden" id="mv-img" value="${b.img}"/>
+  <label>عنوان</label><input id="mv-title" value="${esc(b.title)}"/>
+  <label>نویسنده</label><input id="mv-author" value="${esc(b.author)}"/>
+  <label>دسته‌بندی</label><input id="mv-cat" value="${esc(b.cat)}"/>
+  <label>خلاصه (کارت)</label><textarea id="mv-desc">${esc(b.desc)}</textarea>
+  <label>متن کامل</label><textarea id="mv-full" style="min-height:100px">${esc(b.full)}</textarea>`;
+  gi('edit-modal').classList.remove('hidden');
+}
+function renderAPBooks(){
+  const l=gi('ap-books-list');if(!books.length){l.innerHTML='<p style="color:var(--mid)">کتابی ثبت نشده.</p>';return}
+  l.innerHTML=books.map(b=>`<div class="ap-item"><div class="ap-thumb">${b.img?`<img src="${b.img}"/>`:'📚'}</div><div class="ap-it"><strong>${b.title}</strong><span>${b.author}</span></div><div class="ap-ia"><button class="edit-b" onclick="editBook(${b.id});closePanel()">ویرایش</button><button class="del" onclick="delBook(${b.id})">حذف</button></div></div>`).join('');
+}
+function addBook(){
+  const t=gv('b-title'),d=gv('b-desc'),img=gv('b-img-d');if(!t||!d){alert('عنوان و خلاصه الزامی');return}
+  books.push({id:Date.now(),title:t,author:gv('b-author'),cat:gv('b-cat'),desc:d,full:gv('b-full'),img});
+  ['b-title','b-author','b-cat','b-desc','b-full','b-img-d'].forEach(id=>{const el=gi(id);if(el)el.value='';});
+  gi('b-img-prev').style.display='none';gi('b-img-ph').style.display='flex';
+  renderBooks();renderAPBooks();alert('کتاب اضافه شد!');
+}
+function delBook(id){if(confirm('حذف شود؟')){books=books.filter(b=>b.id!==id);renderBooks();renderAPBooks();}}
+
+/* ======= ARTICLES ======= */
+function renderArticles(){
+  const g=gi('articles-grid');
+  let html=articles.map(a=>`<div class="article-card reveal" onclick="${isAdmin?`editArticle(${a.id})`:`openDp('article',${a.id})`}">
+    <div class="art-img eimg">${a.img?`<img src="${a.img}"/>`:`<div class="art-img-ph">📝</div>`}<div class="eimg-badge" onclick="event.stopPropagation();if(isAdmin)editArticle(${a.id})"><span>📷</span><span>ویرایش</span></div>${isAdmin?`<button class="card-del-btn" onclick="event.stopPropagation();delArticle(${a.id})" title="حذف">✕</button>`:''}</div>
+    <div class="art-body"><p class="art-date">${a.date}</p><h3 class="art-title">${a.title}</h3><p class="art-summary">${a.summary}</p></div>
+  </div>`).join('');
+  if(isAdmin)html+=addTileHtml('article','افزودن مقاله جدید','article-card',220);
+  g.innerHTML=html||'<p style="color:var(--mid);grid-column:1/-1">مقاله‌ای ثبت نشده.</p>';
+  g.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+}
+function editArticle(id){
+  if(!isAdmin)return;const a=articles.find(x=>x.id===id);editTarget={t:'article',id};
+  gi('m-title').textContent='ویرایش مقاله';gi('m-sub').textContent=a.title;
+  gi('m-body').innerHTML=`<label>تصویر</label><div class="iup" style="height:100px" onclick="gi('m-a-f').click()"><img id="m-a-prev" src="${a.img||''}" style="${a.img?'display:block':'display:none'};position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/><div id="m-a-ph" class="iup-lbl" style="${a.img?'display:none':''}"><span class="ico">🖼️</span><span>آپلود</span></div></div><input type="file" id="m-a-f" accept="image/*" style="display:none" onchange="prevImg(this,'m-a-prev','m-a-ph','mv-img')"/><input type="hidden" id="mv-img" value="${a.img}"/>
+  <label>عنوان</label><input id="mv-title" value="${esc(a.title)}"/>
+  <label>تاریخ</label><input id="mv-date" value="${esc(a.date)}"/>
+  <label>خلاصه</label><textarea id="mv-desc">${esc(a.summary)}</textarea>
+  <label>متن کامل</label><textarea id="mv-full" style="min-height:100px">${esc(a.full)}</textarea>
+  <label>لینک خارجی</label><input id="mv-link" value="${esc(a.link)}"/>`;
+  gi('edit-modal').classList.remove('hidden');
+}
+function renderAPArticles(){
+  const l=gi('ap-articles-list');if(!articles.length){l.innerHTML='<p style="color:var(--mid)">مقاله‌ای ثبت نشده.</p>';return}
+  l.innerHTML=articles.map(a=>`<div class="ap-item"><div class="ap-thumb">${a.img?`<img src="${a.img}"/>`:'📝'}</div><div class="ap-it"><strong>${a.title}</strong><span>${a.date}</span></div><div class="ap-ia"><button class="edit-b" onclick="editArticle(${a.id});closePanel()">ویرایش</button><button class="del" onclick="delArticle(${a.id})">حذف</button></div></div>`).join('');
+}
+function addArticle(){
+  const t=gv('a-title'),s=gv('a-summary'),img=gv('a-img-d');if(!t||!s){alert('عنوان و خلاصه الزامی');return}
+  articles.unshift({id:Date.now(),title:t,date:gv('a-date'),summary:s,full:gv('a-full'),link:gv('a-link'),img});
+  ['a-title','a-date','a-summary','a-full','a-link','a-img-d'].forEach(id=>{const el=gi(id);if(el)el.value='';});
+  gi('a-img-prev').style.display='none';gi('a-img-ph').style.display='flex';
+  renderArticles();renderAPArticles();alert('مقاله اضافه شد!');
+}
+function delArticle(id){if(confirm('حذف شود؟')){articles=articles.filter(a=>a.id!==id);renderArticles();renderAPArticles();}}
+
+/* ======= PSYCHO HISTORY ======= */
+function renderPsychoHistory(){
+  const g=gi('psycho-history-grid');
+  let html=psychoHistory.map(a=>`<div class="article-card reveal" onclick="${isAdmin?`editPsychoHistory(${a.id})`:`openDp('history',${a.id})`}">
+    <div class="art-img eimg">${a.img?`<img src="${a.img}"/>`:`<div class="art-img-ph">📜</div>`}<div class="eimg-badge" onclick="event.stopPropagation();if(isAdmin)editPsychoHistory(${a.id})"><span>📷</span><span>ویرایش</span></div>${isAdmin?`<button class="card-del-btn" onclick="event.stopPropagation();delPsychoHistory(${a.id})" title="حذف">✕</button>`:''}</div>
+    <div class="art-body"><p class="art-date">${a.date}</p><h3 class="art-title">${a.title}</h3><p class="art-summary">${a.summary}</p></div>
+  </div>`).join('');
+  if(isAdmin)html+=addTileHtml('history','افزودن رویداد جدید','article-card',220);
+  g.innerHTML=html||'<p style="color:var(--mid);grid-column:1/-1">موردی ثبت نشده.</p>';
+  g.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+}
+function editPsychoHistory(id){
+  if(!isAdmin)return;const a=psychoHistory.find(x=>x.id===id);editTarget={t:'history',id};
+  gi('m-title').textContent='ویرایش رویداد تاریخی';gi('m-sub').textContent=a.title;
+  gi('m-body').innerHTML=`<label>تصویر</label><div class="iup" style="height:100px" onclick="gi('m-h-f').click()"><img id="m-h-prev" src="${a.img||''}" style="${a.img?'display:block':'display:none'};position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/><div id="m-h-ph" class="iup-lbl" style="${a.img?'display:none':''}"><span class="ico">🖼️</span><span>آپلود</span></div></div><input type="file" id="m-h-f" accept="image/*" style="display:none" onchange="prevImg(this,'m-h-prev','m-h-ph','mv-img')"/><input type="hidden" id="mv-img" value="${a.img}"/>
+  <label>عنوان</label><input id="mv-title" value="${esc(a.title)}"/>
+  <label>تاریخ</label><input id="mv-date" value="${esc(a.date)}"/>
+  <label>خلاصه</label><textarea id="mv-desc">${esc(a.summary)}</textarea>
+  <label>متن کامل</label><textarea id="mv-full" style="min-height:100px">${esc(a.full)}</textarea>
+  <label>لینک خارجی</label><input id="mv-link" value="${esc(a.link)}"/>`;
+  gi('edit-modal').classList.remove('hidden');
+}
+function renderAPPsychoHistory(){
+  const l=gi('ap-history-list');if(!psychoHistory.length){l.innerHTML='<p style="color:var(--mid)">موردی ثبت نشده.</p>';return}
+  l.innerHTML=psychoHistory.map(a=>`<div class="ap-item"><div class="ap-thumb">${a.img?`<img src="${a.img}"/>`:'📜'}</div><div class="ap-it"><strong>${a.title}</strong><span>${a.date}</span></div><div class="ap-ia"><button class="edit-b" onclick="editPsychoHistory(${a.id});closePanel()">ویرایش</button><button class="del" onclick="delPsychoHistory(${a.id})">حذف</button></div></div>`).join('');
+}
+function addPsychoHistory(){
+  const t=gv('h-title'),s=gv('h-summary'),img=gv('h-img-d');if(!t||!s){alert('عنوان و خلاصه الزامی');return}
+  psychoHistory.unshift({id:Date.now(),title:t,date:gv('h-date'),summary:s,full:gv('h-full'),link:gv('h-link'),img});
+  ['h-title','h-date','h-summary','h-full','h-link','h-img-d'].forEach(id=>{const el=gi(id);if(el)el.value='';});
+  gi('h-img-prev').style.display='none';gi('h-img-ph').style.display='flex';
+  renderPsychoHistory();renderAPPsychoHistory();alert('رویداد اضافه شد!');
+}
+function delPsychoHistory(id){if(confirm('حذف شود؟')){psychoHistory=psychoHistory.filter(a=>a.id!==id);renderPsychoHistory();renderAPPsychoHistory();}}
+
+/* ======= WORKSHOPS ======= */
+function renderWorkshops(){
+  const g=gi('workshops-grid');
+  let html=workshops.map(w=>`<div class="book-card reveal" onclick="${isAdmin?`editWorkshop(${w.id})`:`openDp('workshop',${w.id})`}">
+    <div class="book-cover eimg" style="background:${bkBg(w.id)}">${w.img?`<img src="${w.img}"/>`:`<div class="book-cover-ph">🛠️</div>`}<div class="eimg-badge" onclick="event.stopPropagation();if(isAdmin)editWorkshop(${w.id})"><span>📷</span><span>ویرایش</span></div>${isAdmin?`<button class="card-del-btn" onclick="event.stopPropagation();delWorkshop(${w.id})" title="حذف">✕</button>`:''}</div>
+    <div class="book-body"><p class="book-tag">${w.cat}</p><h3 class="book-title">${w.title}</h3><p class="book-author">${w.author}</p><p class="book-desc">${w.desc}</p></div>
+  </div>`).join('');
+  if(isAdmin)html+=addTileHtml('workshop','افزودن کارگاه جدید','book-card',240);
+  g.innerHTML=html||'<p style="color:var(--mid);grid-column:1/-1">کارگاهی ثبت نشده.</p>';
+  g.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+}
+function editWorkshop(id){
+  if(!isAdmin)return;const w=workshops.find(x=>x.id===id);editTarget={t:'workshop',id};
+  gi('m-title').textContent='ویرایش کارگاه';gi('m-sub').textContent=w.title;
+  gi('m-body').innerHTML=`<label>تصویر کارگاه</label><div class="iup" style="height:100px" onclick="gi('m-w-f').click()"><img id="m-w-prev" src="${w.img||''}" style="${w.img?'display:block':'display:none'};position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/><div id="m-w-ph" class="iup-lbl" style="${w.img?'display:none':''}"><span class="ico">🖼️</span><span>آپلود</span></div></div><input type="file" id="m-w-f" accept="image/*" style="display:none" onchange="prevImg(this,'m-w-prev','m-w-ph','mv-img')"/><input type="hidden" id="mv-img" value="${w.img}"/>
+  <label>عنوان</label><input id="mv-title" value="${esc(w.title)}"/>
+  <label>مدرس</label><input id="mv-author" value="${esc(w.author)}"/>
+  <label>دسته‌بندی</label><input id="mv-cat" value="${esc(w.cat)}"/>
+  <label>خلاصه (کارت)</label><textarea id="mv-desc">${esc(w.desc)}</textarea>
+  <label>متن کامل</label><textarea id="mv-full" style="min-height:100px">${esc(w.full)}</textarea>`;
+  gi('edit-modal').classList.remove('hidden');
+}
+function renderAPWorkshops(){
+  const l=gi('ap-workshops-list');if(!workshops.length){l.innerHTML='<p style="color:var(--mid)">کارگاهی ثبت نشده.</p>';return}
+  l.innerHTML=workshops.map(w=>{
+    const pendingCount=(w.registrations||[]).filter(r=>r.status==='pending').length;
+    return `<div class="ap-item" style="flex-direction:column;align-items:stretch">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem">
+        <div style="display:flex;gap:.9rem;align-items:flex-start">
+          <div class="ap-thumb">${w.img?`<img src="${w.img}"/>`:'🛠️'}</div>
+          <div class="ap-it"><strong>${w.title}</strong><span>${w.author||''} ${pendingCount?` · <b style="color:#92400e">${pendingCount} درخواست جدید</b>`:''}</span></div>
+        </div>
+        <div class="ap-ia">
+          <button class="edit-b" onclick="editWorkshop(${w.id});closePanel()">ویرایش</button>
+          <button class="blue-b" style="border-color:var(--blue);color:var(--blue)" onclick="openQBuilder(${w.id})">سوالات ثبت‌نام</button>
+          <button class="del" onclick="delWorkshop(${w.id})">حذف</button>
+        </div>
+      </div>
+      <div style="margin-top:.8rem">
+        <button class="abtn gold" style="padding:.4rem 1rem;font-size:.74rem;margin-top:0" onclick="toggleRegList(${w.id})">مشاهده ثبت‌نام‌ها (${(w.registrations||[]).length})</button>
+        <div id="reglist-${w.id}" class="hidden" style="margin-top:.8rem;display:flex;flex-direction:column;gap:.6rem"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleRegList(wid){
+  const box=gi('reglist-'+wid);
+  if(!box)return;
+  if(box.classList.contains('hidden')){box.classList.remove('hidden');renderRegList(wid);}
+  else box.classList.add('hidden');
+}
+function renderRegList(wid){
+  const w=workshops.find(x=>x.id===wid);if(!w)return;
+  const box=gi('reglist-'+wid);if(!box)return;
+  const regs=w.registrations||[];
+  if(!regs.length){box.innerHTML='<p style="color:var(--mid);font-size:.8rem">هنوز ثبت‌نامی انجام نشده.</p>';return;}
+  box.innerHTML=regs.slice().reverse().map(r=>{
+    const statusBadge=r.status==='approved'?'<span class="badge confirmed">تایید شده</span>':r.status==='rejected'?'<span class="badge rejected">رد شده</span>':'<span class="badge pending">در انتظار بررسی</span>';
+    const answersHtml=(r.answers||[]).map(a=>`<div><b>${esc(a.q)}:</b> ${esc(a.a)||'—'}</div>`).join('');
+    return `<div style="border:1px solid var(--light);border-radius:4px;padding:.8rem;background:#fff">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
+        <span style="font-size:.83rem"><strong>${esc(r.name)}</strong></span>
+        ${statusBadge}
+      </div>
+      <div style="font-size:.78rem;color:var(--mid);margin-bottom:.5rem">${esc(r.email)} · ${esc(r.phone)}</div>
+      ${answersHtml?`<div class="answers-view">${answersHtml}</div>`:''}
+      ${r.status==='approved'&&r.payInfo?`<div style="margin-top:.5rem;font-size:.78rem;color:#166534;background:#f0fdf4;padding:.5rem;border-radius:3px;white-space:pre-wrap">💳 ${esc(r.payInfo)}</div>`:''}
+      <div class="ap-ia" style="margin-top:.6rem">
+        ${r.status!=='approved'?`<button class="ok" onclick="approveReg(${wid},${r.id})">✓ تایید درخواست</button>`:''}
+        ${r.status!=='rejected'?`<button class="rej" onclick="rejectReg(${wid},${r.id})">✕ رد درخواست</button>`:''}
+        <button class="del" onclick="deleteReg(${wid},${r.id})">حذف</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function approveReg(wid,rid){
+  const w=workshops.find(x=>x.id===wid);if(!w)return;
+  const r=(w.registrations||[]).find(x=>x.id===rid);if(!r)return;
+  const pay=prompt('اطلاعات پرداخت (شماره کارت، مبلغ، توضیحات) برای ارسال به این متقاضی:',r.payInfo||'');
+  if(pay===null)return;
+  r.status='approved';r.payInfo=pay;
+  renderRegList(wid);renderAPWorkshops();setTimeout(()=>toggleRegList(wid),0);
+}
+function rejectReg(wid,rid){
+  const w=workshops.find(x=>x.id===wid);if(!w)return;
+  const r=(w.registrations||[]).find(x=>x.id===rid);if(!r)return;
+  if(!confirm('این درخواست رد شود؟'))return;
+  r.status='rejected';
+  renderRegList(wid);renderAPWorkshops();
+}
+function deleteReg(wid,rid){
+  const w=workshops.find(x=>x.id===wid);if(!w)return;
+  if(!confirm('این ثبت‌نام حذف شود؟'))return;
+  w.registrations=(w.registrations||[]).filter(x=>x.id!==rid);
+  renderRegList(wid);renderAPWorkshops();
+}
+function addWorkshop(){
+  const t=gv('w-title'),d=gv('w-desc'),img=gv('w-img-d');if(!t||!d){alert('عنوان و خلاصه الزامی');return}
+  workshops.push({id:Date.now(),title:t,author:gv('w-author'),cat:gv('w-cat'),desc:d,full:gv('w-full'),img,regQuestions:[],registrations:[]});
+  ['w-title','w-author','w-cat','w-desc','w-full','w-img-d'].forEach(id=>{const el=gi(id);if(el)el.value='';});
+  gi('w-img-prev').style.display='none';gi('w-img-ph').style.display='flex';
+  renderWorkshops();renderAPWorkshops();alert('کارگاه اضافه شد!');
+}
+function delWorkshop(id){if(confirm('حذف شود؟ تمام ثبت‌نام‌های این کارگاه نیز حذف می‌شوند.')){workshops=workshops.filter(w=>w.id!==id);renderWorkshops();renderAPWorkshops();}}
+
+/* ======= REGISTRATION QUESTION BUILDER (admin) ======= */
+function openQBuilder(wid){
+  const w=workshops.find(x=>x.id===wid);if(!w)return;
+  editTarget={t:'qbuilder',wid};
+  qBuilderDraft=JSON.parse(JSON.stringify(w.regQuestions||[]));
+  gi('m-title').textContent='سوالات ثبت‌نام';
+  gi('m-sub').textContent=w.title;
+  gi('m-body').innerHTML=`<div id="qb-list"></div>
+    <button type="button" class="abtn blue" style="margin-top:.6rem" onclick="qbAddQuestion()">+ افزودن سوال</button>
+    <p style="font-size:.74rem;color:var(--mid);margin-top:.8rem">نام، ایمیل و شماره تلفن همیشه از متقاضی پرسیده می‌شود و نیازی به افزودن آن‌ها نیست.</p>`;
+  renderQBuilderDraft();
+  gi('edit-modal').classList.remove('hidden');
+}
+function renderQBuilderDraft(){
+  const c=gi('qb-list');if(!c)return;
+  if(!qBuilderDraft.length){c.innerHTML='<p style="color:var(--mid);font-size:.8rem">هنوز سوالی اضافه نشده.</p>';return;}
+  c.innerHTML=qBuilderDraft.map((q,i)=>`<div class="reg-q-builder-item">
+    <div class="qhead">
+      <strong>${i+1}. ${esc(q.label)||'(بدون عنوان)'}</strong>
+      <div style="display:flex;gap:.4rem">
+        <button type="button" style="border:1px solid var(--blue);color:var(--blue);background:#fff;border-radius:3px;font-size:.72rem;padding:.2rem .6rem;cursor:pointer" onclick="qbEditLabel('${q.id}')">ویرایش متن</button>
+        <button type="button" style="border:1px solid #e53e3e;color:#e53e3e;background:#fff;border-radius:3px;font-size:.72rem;padding:.2rem .6rem;cursor:pointer" onclick="qbRemoveQuestion('${q.id}')">حذف</button>
+      </div>
+    </div>
+    <label style="font-size:.74rem">نوع پاسخ</label>
+    <select onchange="qbSetType('${q.id}',this.value)" style="width:100%;padding:.45rem;border:1px solid var(--light);border-radius:3px;font-family:'Vazirmatn',sans-serif;font-size:.8rem">
+      <option value="text" ${q.type==='text'?'selected':''}>متن آزاد</option>
+      <option value="choice" ${q.type==='choice'?'selected':''}>چند گزینه‌ای</option>
+    </select>
+    ${q.type==='choice'?`<div style="margin-top:.6rem">
+      <label style="font-size:.74rem">گزینه‌ها</label>
+      ${q.options.map((o,oi)=>`<div class="opt-row"><input value="${esc(o)}" onchange="qbSetOption('${q.id}',${oi},this.value)"/><button type="button" onclick="qbRemoveOption('${q.id}',${oi})">حذف</button></div>`).join('')}
+      <button type="button" style="font-size:.74rem;border:1px dashed var(--gold);background:#fff;border-radius:3px;padding:.3rem .7rem;cursor:pointer;margin-top:.3rem" onclick="qbAddOption('${q.id}')">+ افزودن گزینه</button>
+    </div>`:''}
+  </div>`).join('');
+}
+function qbAddQuestion(){
+  qBuilderDraft.push({id:'q'+Date.now()+Math.random().toString(36).slice(2,6),label:'سوال جدید',type:'text',options:[]});
+  renderQBuilderDraft();
+}
+function qbRemoveQuestion(qid){qBuilderDraft=qBuilderDraft.filter(q=>q.id!==qid);renderQBuilderDraft();}
+function qbSetType(qid,val){const q=qBuilderDraft.find(x=>x.id===qid);if(q){q.type=val;if(val==='choice'&&!q.options.length)q.options=['گزینه ۱'];renderQBuilderDraft();}}
+function qbAddOption(qid){const q=qBuilderDraft.find(x=>x.id===qid);if(q){q.options.push('گزینه جدید');renderQBuilderDraft();}}
+function qbSetOption(qid,oi,val){const q=qBuilderDraft.find(x=>x.id===qid);if(q)q.options[oi]=val;}
+function qbRemoveOption(qid,oi){const q=qBuilderDraft.find(x=>x.id===qid);if(q){q.options.splice(oi,1);renderQBuilderDraft();}}
+function qbEditLabel(qid){
+  const q=qBuilderDraft.find(x=>x.id===qid);if(!q)return;
+  const val=prompt('متن سوال:',q.label);
+  if(val===null)return;
+  q.label=val.trim()||'سوال';
+  renderQBuilderDraft();
+}
+
+/* override saveEdit's qbuilder branch via wrapping original — handled by adding case above already in saveEdit; need also 'qbuilder' commit case */
+const _origSaveEdit=saveEdit;
+saveEdit=function(){
+  if(editTarget&&editTarget.t==='qbuilder'){
+    const w=workshops.find(x=>x.id===editTarget.wid);
+    if(w){
+      w.regQuestions=qBuilderDraft.filter(q=>q.label&&q.label.trim()).map(q=>({...q,options:(q.options||[]).filter(o=>o&&o.trim())}));
+    }
+    closeModal();
+    return;
+  }
+  if(editTarget&&editTarget.t==='questqbuilder'){
+    const q=questionnaires.find(x=>x.id===editTarget.qid);
+    if(q){
+      q.questions=qBuilderDraft.filter(qq=>qq.label&&qq.label.trim()).map(qq=>({...qq,options:(qq.options||[]).filter(o=>o&&o.trim())}));
+    }
+    renderQuestionnaires();renderAPQuestionnaires();
+    closeModal();
+    return;
+  }
+  if(editTarget&&editTarget.t==='quest'){
+    const q=questionnaires.find(x=>x.id===editTarget.id);
+    if(q){
+      q.title=gv('mv-title')||q.title;
+      q.desc=gv('mv-desc');
+      renderQuestionnaires();renderAPQuestionnaires();
+    }
+    closeModal();
+    return;
+  }
+  _origSaveEdit();
+};
+
+/* ======= GRIEF ======= */
+function renderGrief(){
+  const p=gi('grief-posts');const pub=grief.filter(g=>g.replied||g.showPending);
+  if(!pub.length){p.innerHTML='';return}
+  p.innerHTML=pub.map(g=>`<div class="grief-post reveal"><p class="grief-post-name">${g.name||'ناشناس'}</p><p class="grief-post-text">${g.text}</p>${g.reply?`<div class="grief-reply"><p class="grief-reply-label">پاسخ دکتر یوسفی</p><p class="grief-reply-text">${g.reply}</p></div>`:''}</div>`).join('');
+  p.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+}
+function renderAPGrief(){
+  const l=gi('ap-grief-list');if(!grief.length){l.innerHTML='<p style="color:var(--mid)">پیامی دریافت نشده.</p>';return}
+  l.innerHTML=grief.map(g=>`<div class="ap-item" style="flex-direction:column;gap:.5rem"><div style="display:flex;justify-content:space-between"><span><strong>${g.name}</strong> <span class="badge ${g.replied?'replied':'new'}">${g.replied?'پاسخ داده شد':'جدید'}</span></span><button style="border:none;background:none;cursor:pointer;color:#e53e3e" onclick="delGrief(${g.id})">حذف</button></div><p style="font-size:.83rem;color:#4a5568;line-height:1.8">${g.text}</p>${g.reply?`<div style="background:#f0fdf4;padding:.6rem;border-radius:3px;font-size:.8rem;color:#065f46">↩ ${g.reply}</div>`:''}${!g.replied?`<div><textarea id="rep-${g.id}" style="width:100%;padding:.6rem;border:1px solid var(--light);border-radius:3px;font-family:Vazirmatn,sans-serif;min-height:55px;direction:rtl;text-align:right;margin-top:.4rem" placeholder="پاسخ..."></textarea><button class="abtn gold" onclick="replyGrief(${g.id})" style="padding:.35rem .85rem;font-size:.75rem;margin-top:.3rem">ارسال</button></div>`:''}</div>`).join('');
+}
+function submitGrief(){const name=gi('grief-name').value||'ناشناس';const text=gi('grief-text').value.trim();if(!text){alert('متن را بنویسید');return}grief.push({id:Date.now(),name,text,reply:'',replied:false,showPending:true});gi('grief-name').value='';gi('grief-text').value='';gi('grief-ok').classList.remove('hidden');setTimeout(()=>gi('grief-ok').classList.add('hidden'),4000);renderGrief();}
+function replyGrief(id){const rep=gi('rep-'+id).value.trim();if(!rep){alert('پاسخ را وارد کنید');return}const g=grief.find(x=>x.id===id);g.reply=rep;g.replied=true;renderAPGrief();renderGrief();}
+function delGrief(id){if(confirm('حذف شود؟')){grief=grief.filter(g=>g.id!==id);renderAPGrief();renderGrief();}}
+
+/* ======= QUESTIONNAIRES (admin: create/manage; public: fill in) ======= */
+function addQuestionnaire(){
+  const t=gv('q-title'),d=gv('q-desc');if(!t){alert('عنوان الزامی است');return}
+  questionnaires.push({id:Date.now(),title:t,desc:d,questions:[],responses:[]});
+  ['q-title','q-desc'].forEach(id=>{const el=gi(id);if(el)el.value='';});
+  renderQuestionnaires();renderAPQuestionnaires();alert('پرسشنامه اضافه شد!');
+}
+function delQuestionnaire(id){if(confirm('حذف شود؟ تمام پاسخ‌های ثبت‌شده نیز حذف می‌شوند.')){questionnaires=questionnaires.filter(q=>q.id!==id);renderQuestionnaires();renderAPQuestionnaires();}}
+function editQuestionnaireInfo(id){
+  const q=questionnaires.find(x=>x.id===id);if(!q)return;
+  editTarget={t:'quest',id};
+  gi('m-title').textContent='ویرایش پرسشنامه';gi('m-sub').textContent=q.title;
+  gi('m-body').innerHTML=`<label class="req">عنوان</label><input id="mv-title" value="${esc(q.title)}"/>
+  <label>توضیح برای بازدیدکننده</label><textarea id="mv-desc">${esc(q.desc)}</textarea>`;
+  gi('edit-modal').classList.remove('hidden');
+}
+function renderAPQuestionnaires(){
+  const l=gi('ap-quest-list');if(!l)return;
+  if(!questionnaires.length){l.innerHTML='<p style="color:var(--mid)">پرسشنامه‌ای ثبت نشده.</p>';return}
+  l.innerHTML=questionnaires.map(q=>{
+    const newCount=(q.responses||[]).length;
+    return `<div class="ap-item" style="flex-direction:column;align-items:stretch">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem">
+        <div class="ap-it"><strong>${esc(q.title)}</strong><span>${(q.questions||[]).length} سوال ${newCount?` · <b style="color:#92400e">${newCount} پاسخ</b>`:''}</span></div>
+        <div class="ap-ia">
+          <button class="edit-b" onclick="editQuestionnaireInfo(${q.id})">ویرایش</button>
+          <button class="blue-b" style="border-color:var(--blue);color:var(--blue)" onclick="openQuestQBuilder(${q.id})">سوالات</button>
+          <button class="del" onclick="delQuestionnaire(${q.id})">حذف</button>
+        </div>
+      </div>
+      <div style="margin-top:.8rem">
+        <button class="abtn gold" style="padding:.4rem 1rem;font-size:.74rem;margin-top:0" onclick="toggleQuestRespList(${q.id})">مشاهده پاسخ‌ها (${(q.responses||[]).length})</button>
+        <div id="questresp-${q.id}" class="hidden" style="margin-top:.8rem;display:flex;flex-direction:column;gap:.6rem"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleQuestRespList(qid){
+  const box=gi('questresp-'+qid);if(!box)return;
+  if(box.classList.contains('hidden')){box.classList.remove('hidden');renderQuestRespList(qid);}
+  else box.classList.add('hidden');
+}
+function renderQuestRespList(qid){
+  const q=questionnaires.find(x=>x.id===qid);if(!q)return;
+  const box=gi('questresp-'+qid);if(!box)return;
+  const resps=q.responses||[];
+  if(!resps.length){box.innerHTML='<p style="color:var(--mid);font-size:.8rem">هنوز پاسخی ثبت نشده.</p>';return;}
+  box.innerHTML=resps.slice().reverse().map(r=>{
+    const answersHtml=(r.answers||[]).map(a=>`<div><b>${esc(a.q)}:</b> ${esc(a.a)||'—'}</div>`).join('');
+    return `<div style="border:1px solid var(--light);border-radius:4px;padding:.8rem;background:#fff">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
+        <span style="font-size:.83rem"><strong>${esc(r.name||'ناشناس')}</strong></span>
+        <span style="font-size:.72rem;color:var(--mid)">${esc(r.submittedAt||'')}</span>
+      </div>
+      ${answersHtml?`<div class="answers-view">${answersHtml}</div>`:''}
+      <div class="ap-ia" style="margin-top:.6rem"><button class="del" onclick="deleteQuestResponse(${qid},${r.id})">حذف</button></div>
+    </div>`;
+  }).join('');
+}
+function deleteQuestResponse(qid,rid){
+  const q=questionnaires.find(x=>x.id===qid);if(!q)return;
+  if(!confirm('این پاسخ حذف شود؟'))return;
+  q.responses=(q.responses||[]).filter(x=>x.id!==rid);
+  renderQuestRespList(qid);renderAPQuestionnaires();
+}
+
+/* question builder (reuses qBuilderDraft, same pattern as workshop registration questions) */
+function openQuestQBuilder(qid){
+  const q=questionnaires.find(x=>x.id===qid);if(!q)return;
+  editTarget={t:'questqbuilder',qid};
+  qBuilderDraft=JSON.parse(JSON.stringify(q.questions||[]));
+  gi('m-title').textContent='سوالات پرسشنامه';
+  gi('m-sub').textContent=q.title;
+  gi('m-body').innerHTML=`<div id="qb-list"></div>
+    <button type="button" class="abtn blue" style="margin-top:.6rem" onclick="qbAddQuestion()">+ افزودن سوال</button>
+    <p style="font-size:.74rem;color:var(--mid);margin-top:.8rem">نام بازدیدکننده همیشه پرسیده می‌شود و نیازی به افزودن آن نیست.</p>`;
+  renderQBuilderDraft();
+  gi('edit-modal').classList.remove('hidden');
+}
+
+/* public: questionnaires grid */
+function renderQuestionnaires(){
+  const g=gi('questionnaires-grid');if(!g)return;
+  let html=questionnaires.map(q=>`<div class="book-card reveal" onclick="${isAdmin?`openQuestQBuilder(${q.id})`:`openQuestionnaireFill(${q.id})`}">
+    <div class="book-cover" style="background:${bkBg(q.id)}"><div class="book-cover-ph">📋</div>${isAdmin?`<button class="card-del-btn" onclick="event.stopPropagation();delQuestionnaire(${q.id})" title="حذف">✕</button>`:''}</div>
+    <div class="book-body"><p class="book-tag">${(q.questions||[]).length} سوال</p><h3 class="book-title">${esc(q.title)}</h3><p class="book-desc">${esc(q.desc)}</p></div>
+  </div>`).join('');
+  g.innerHTML=html||'<p style="color:var(--mid);grid-column:1/-1">هنوز پرسشنامه‌ای منتشر نشده.</p>';
+  g.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+}
+function openQuestionnaireFill(qid){
+  renderQuestFillForm(qid);
+  openOv('quest-fill-page');
+}
+function renderQuestFillForm(qid){
+  const q=questionnaires.find(x=>x.id===qid);
+  if(!q){gi('quest-fill-body').innerHTML='<div class="reg-form-wrap"><p>پرسشنامه مورد نظر پیدا نشد.</p></div>';return;}
+  const qs=q.questions||[];
+  const qHtml=qs.map(qq=>{
+    if(qq.type==='choice'){
+      return `<div class="reg-field"><label>${esc(qq.label)}</label><div class="reg-options">${(qq.options||[]).map(o=>`<label class="reg-option"><input type="radio" name="qq-${qq.id}" value="${esc(o)}"/> ${esc(o)}</label>`).join('')}</div></div>`;
+    }
+    return `<div class="reg-field"><label>${esc(qq.label)}</label><textarea id="qq-${qq.id}"></textarea></div>`;
+  }).join('');
+  const qSection=qs.length?qHtml:'<p style="font-size:.8rem;color:var(--mid);margin:.5rem 0 1.3rem">سوالی برای این پرسشنامه تعریف نشده.</p>';
+  gi('quest-fill-body').innerHTML=`<div class="reg-form-wrap">
+    <h2>${esc(q.title)}</h2>
+    <p class="reg-sub">${esc(q.desc)}</p>
+    <div class="reg-field"><label>نام شما (اختیاری)</label><input id="qq-name"/></div>
+    ${qSection}
+    <button class="reg-submit-btn" onclick="submitQuestResponse(${qid})">ارسال پاسخ</button>
+  </div>`;
+}
+function submitQuestResponse(qid){
+  const q=questionnaires.find(x=>x.id===qid);if(!q)return;
+  const name=gv('qq-name');
+  const answers=(q.questions||[]).map(qq=>{
+    let a='';
+    if(qq.type==='choice'){
+      const sel=document.querySelector(`input[name="qq-${qq.id}"]:checked`);
+      a=sel?sel.value:'';
+    } else {
+      a=gv('qq-'+qq.id);
+    }
+    return {q:qq.label,a};
+  });
+  if(!q.responses)q.responses=[];
+  q.responses.push({id:Date.now(),name,answers,submittedAt:new Date().toLocaleString('fa-IR')});
+  gi('quest-fill-body').innerHTML=`<div class="reg-success">
+    <div class="ico">✓</div>
+    <h2>پاسخ شما ثبت شد</h2>
+    <p>از وقتی که برای تکمیل «${esc(q.title)}» گذاشتید سپاسگزاریم.</p>
+  </div>`;
+  renderAPQuestionnaires();
+}
+
+/* ======= WORKSHOP REGISTRATION (public form + submit) ======= */
+function openRegisterForm(){
+  if(!dpCurrent||dpCurrent.type!=='workshop'){alert('خطا: کارگاهی انتخاب نشده است.');return;}
+  registerCurrentWorkshopId=dpCurrent.id;
+  renderRegisterForm();
+  closeOv('detail-page');
+  openOv('register-page');
+}
+function renderRegisterForm(){
+  const w=workshops.find(x=>x.id===registerCurrentWorkshopId);
+  if(!w){gi('register-page-body').innerHTML='<div class="reg-form-wrap"><p>کارگاه مورد نظر پیدا نشد.</p></div>';return;}
+  const qs=w.regQuestions||[];
+  const qHtml=qs.map(q=>{
+    if(q.type==='choice'){
+      return `<div class="reg-field"><label>${esc(q.label)}</label><div class="reg-options">${(q.options||[]).map((o,oi)=>`<label class="reg-option"><input type="radio" name="rq-${q.id}" value="${esc(o)}"/> ${esc(o)}</label>`).join('')}</div></div>`;
+    }
+    return `<div class="reg-field"><label>${esc(q.label)}</label><textarea id="rq-${q.id}"></textarea></div>`;
+  }).join('');
+  const qSection=qs.length?qHtml:'<p style="font-size:.8rem;color:var(--mid);margin:.5rem 0 1.3rem">سوال اضافه‌ای برای این کارگاه تعریف نشده — فقط اطلاعات تماس کافی است.</p>';
+  gi('register-page-body').innerHTML=`<div class="reg-form-wrap">
+    <h2>ثبت‌نام در «${esc(w.title)}»</h2>
+    <p class="reg-sub">پس از تکمیل فرم، دکتر یوسفی درخواست شما را بررسی کرده و از طریق ایمیل یا تماس تلفنی با شما در ارتباط خواهد بود.</p>
+    <div class="reg-field"><label class="req">نام و نام خانوادگی</label><input id="rg-name"/></div>
+    <div class="reg-field"><label class="req">ایمیل</label><input id="rg-email" type="email"/></div>
+    <div class="reg-field"><label class="req">شماره تلفن</label><input id="rg-phone" type="text" placeholder="مثلاً 09123456789"/></div>
+    ${qSection}
+    <button class="reg-submit-btn" onclick="submitRegistration()">ارسال درخواست ثبت‌نام</button>
+  </div>`;
+}
+function submitRegistration(){
+  const w=workshops.find(x=>x.id===registerCurrentWorkshopId);if(!w)return;
+  const name=gv('rg-name'),email=gv('rg-email'),phone=gv('rg-phone');
+  if(!name||!email||!phone){alert('لطفاً نام، ایمیل و شماره تلفن را وارد کنید');return;}
+  const answers=(w.regQuestions||[]).map(q=>{
+    let a='';
+    if(q.type==='choice'){
+      const sel=document.querySelector(`input[name="rq-${q.id}"]:checked`);
+      a=sel?sel.value:'';
+    } else {
+      a=gv('rq-'+q.id);
+    }
+    return {q:q.label,a};
+  });
+  if(!w.registrations)w.registrations=[];
+  w.registrations.push({id:Date.now(),name,email,phone,answers,status:'pending',payInfo:''});
+  gi('register-page-body').innerHTML=`<div class="reg-success">
+    <div class="ico">✓</div>
+    <h2>درخواست شما ثبت شد</h2>
+    <p>درخواست ثبت‌نام شما در «${esc(w.title)}» دریافت شد. دکتر یوسفی پس از بررسی، از طریق ایمیل (${esc(email)}) یا تماس با شماره (${esc(phone)}) نتیجه را به اطلاع شما خواهد رساند.</p>
+    <p style="margin-top:1rem">می‌توانید وضعیت ثبت‌نام خود را در هر زمان از طریق صفحه «پیگیری ثبت‌نام» با شماره تلفن خود بررسی کنید.</p>
+  </div>`;
+  renderAPWorkshops();
+}
+
+/* ======= STATUS LOOKUP (public) ======= */
+function openStatusPage(){
+  gi('status-phone').value='';
+  gi('status-result').innerHTML='';
+  openOv('status-page');
+}
+function lookupStatus(){
+  const phone=gv('status-phone');
+  if(!phone){alert('لطفاً شماره تلفن را وارد کنید');return;}
+  let matches=[];
+  workshops.forEach(w=>{
+    (w.registrations||[]).forEach(r=>{
+      if(r.phone.replace(/\s/g,'')===phone.replace(/\s/g,'')){
+        matches.push({workshop:w,reg:r});
+      }
+    });
+  });
+  const box=gi('status-result');
+  if(!matches.length){
+    box.innerHTML='<p style="color:var(--mid);font-size:.86rem">ثبت‌نامی با این شماره تلفن پیدا نشد.</p>';
+    return;
+  }
+  box.innerHTML=matches.map(m=>{
+    const badge=m.reg.status==='approved'?'<span class="badge confirmed">تایید شده</span>':m.reg.status==='rejected'?'<span class="badge rejected">رد شده</span>':'<span class="badge pending">در انتظار بررسی</span>';
+    return `<div class="status-card">
+      <div class="status-card-top"><strong>${esc(m.workshop.title)}</strong>${badge}</div>
+      <p style="font-size:.82rem;color:var(--mid)">ثبت‌نام به نام ${esc(m.reg.name)}</p>
+      ${m.reg.status==='approved'?`<div class="status-pay-box"><h4>مرحله بعد: پرداخت</h4><p>${esc(m.reg.payInfo||'اطلاعات پرداخت به‌زودی برای شما ارسال خواهد شد.')}</p></div>`:''}
+      ${m.reg.status==='pending'?'<p style="font-size:.8rem;color:var(--mid);margin-top:.5rem">درخواست شما در حال بررسی است. به‌زودی از طریق ایمیل یا تماس تلفنی با شما هماهنگ می‌شود.</p>':''}
+      ${m.reg.status==='rejected'?'<p style="font-size:.8rem;color:var(--mid);margin-top:.5rem">متاسفانه این درخواست در حال حاضر تایید نشد. برای اطلاعات بیشتر می‌توانید با ما تماس بگیرید.</p>':''}
+    </div>`;
+  }).join('');
+}
+
+/* ======= SITE SETTINGS ======= */
+function loadSiteForm(){
+  const sv=(id,v)=>{const el=gi(id);if(el)el.value=v||''};
+  sv('s-eyebrow',S.eyebrow);sv('s-h1',S.h1);sv('s-hem',S.hem);sv('s-h2',S.h2);sv('s-sub',S.sub);sv('s-cta',S.cta);
+  sv('s-about-h',S['about-h']);sv('s-about-p1',S['about-p1']);sv('s-about-p2',S['about-p2']);
+  sv('s-fdesc',S['footer-desc']);sv('s-ig',S.ig);sv('s-tg',S.tg);sv('s-li',S.li);
+  bioSections.forEach((s,i)=>{sv('bio-t'+(i+1),s.t);sv('bio-p'+(i+1),s.p);});
+}
+function saveHero(){S.eyebrow=gv('s-eyebrow');S.h1=gv('s-h1');S.hem=gv('s-hem');S.h2=gv('s-h2');S.sub=gv('s-sub');S.cta=gv('s-cta');setText('hero-eyebrow',S.eyebrow);setText('h-l1',S.h1);setText('h-em',S.hem);setText('h-l2',S.h2);setText('hero-sub',S.sub);setText('hero-cta-btn',S.cta);alert('ذخیره شد!');}
+function saveAbout(){S['about-h']=gv('s-about-h');S['about-p1']=gv('s-about-p1');S['about-p2']=gv('s-about-p2');if(S['about-h'])setText('about-heading',S['about-h']);if(S['about-p1'])setText('about-p1',S['about-p1']);if(S['about-p2'])setText('about-p2',S['about-p2']);alert('ذخیره شد!');}
+function saveFooter(){S['footer-desc']=gv('s-fdesc');S.ig=gv('s-ig');S.tg=gv('s-tg');S.li=gv('s-li');setText('footer-desc',S['footer-desc']);gi('lnk-ig').href=S.ig||'#';gi('lnk-tg').href=S.tg||'#';alert('ذخیره شد!');}
+
+/* ======= HELPERS ======= */
+function renderAll(){renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();renderGrief();renderQuestionnaires();}
+function gi(id){return document.getElementById(id)}
+function gv(id){const el=gi(id);return el?el.value.trim():''}
+function setText(id,v){const el=gi(id);if(el)el.textContent=v}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+/* INIT */
+renderAll();
+</script>
+</body>
+</html>
