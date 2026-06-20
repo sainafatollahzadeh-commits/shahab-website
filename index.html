@@ -1286,27 +1286,51 @@ function renderRegisterForm(){
   const qs=w.regQuestions||[];
   const qHtml=qs.map(q=>{
     if(q.type==='choice'){
-      return `<div class="reg-field"><label class="req">${esc(q.label)}</label><div class="reg-options">${(q.options||[]).map((o,oi)=>`<label class="reg-option"><input type="radio" name="rq-${q.id}" value="${esc(o)}"/> ${esc(o)}</label>`).join('')}</div></div>`;
+      return `<div class="reg-field"><label class="req">${esc(q.label)}</label><div class="reg-options">${(q.options||[]).map((o,oi)=>`<label class="reg-option"><input type="radio" name="rq-${q.id}" value="${esc(o)}" onchange="checkRegFormValid()"/> ${esc(o)}</label>`).join('')}</div></div>`;
     }
-    return `<div class="reg-field"><label class="req">${esc(q.label)}</label><textarea id="rq-${q.id}"></textarea></div>`;
+    return `<div class="reg-field"><label class="req">${esc(q.label)}</label><textarea id="rq-${q.id}" oninput="checkRegFormValid()"></textarea></div>`;
   }).join('');
-  const qSection=qs.length?qHtml:'<p style="font-size:.8rem;color:var(--mid);margin:.5rem 0 1.3rem">سوال اضافه‌ای برای این کارگاه تعریف نشده — فقط اطلاعات تماس کافی است.</p>';
+  const qSection=qs.length?`<div style="margin-top:.5rem;padding-top:1rem;border-top:1px solid var(--light)"><p style="font-size:.78rem;color:var(--mid);margin-bottom:1rem">برای تکمیل ثبت‌نام، لطفاً به سوالات زیر که توسط دکتر یوسفی برای این کارگاه طراحی شده پاسخ دهید.</p>${qHtml}</div>`:'<p style="font-size:.8rem;color:var(--mid);margin:.5rem 0 1.3rem">سوال اضافه‌ای برای این کارگاه تعریف نشده — فقط اطلاعات تماس کافی است.</p>';
   gi('register-page-body').innerHTML=`<div class="reg-form-wrap">
     <h2>ثبت‌نام در «${esc(w.title)}»</h2>
     <p class="reg-sub">پس از تکمیل فرم، دکتر یوسفی درخواست شما را بررسی کرده و از طریق ایمیل یا تماس تلفنی با شما در ارتباط خواهد بود.</p>
-    <div class="reg-field"><label class="req">نام و نام خانوادگی</label><input id="rg-name"/></div>
-    <div class="reg-field"><label class="req">ایمیل</label><input id="rg-email" type="email"/></div>
-    <div class="reg-field"><label class="req">شماره تلفن</label><input id="rg-phone" type="text" placeholder="مثلاً 09123456789"/></div>
+    <div class="reg-field"><label class="req">نام و نام خانوادگی</label><input id="rg-name" oninput="checkRegFormValid()"/></div>
+    <div class="reg-field"><label class="req">ایمیل</label><input id="rg-email" type="email" oninput="checkRegFormValid()"/></div>
+    <div class="reg-field"><label class="req">شماره تلفن</label><input id="rg-phone" type="text" placeholder="مثلاً 09123456789" oninput="checkRegFormValid()"/></div>
     ${qSection}
-    <button class="reg-submit-btn" onclick="submitRegistration()">ارسال درخواست ثبت‌نام</button>
+    <p id="reg-valid-msg" style="color:#e53e3e;font-size:.82rem;margin-top:.3rem;display:none">لطفاً پیش از ارسال، تمام موارد ستاره‌دار (نام، ایمیل، شماره تلفن و سوالات) را تکمیل کنید.</p>
+    <button class="reg-submit-btn" id="reg-submit-btn" onclick="submitRegistration()" disabled style="opacity:.5;cursor:not-allowed">ارسال درخواست ثبت‌نام</button>
   </div>`;
+  checkRegFormValid();
+}
+function isRegFormValid(){
+  const w=workshops.find(x=>x.id===registerCurrentWorkshopId);if(!w)return false;
+  if(!gv('rg-name')||!gv('rg-email')||!gv('rg-phone'))return false;
+  for(const q of (w.regQuestions||[])){
+    if(q.type==='choice'){
+      if(!document.querySelector(`input[name="rq-${q.id}"]:checked`))return false;
+    } else if(!gv('rq-'+q.id)){
+      return false;
+    }
+  }
+  return true;
+}
+function checkRegFormValid(){
+  const btn=gi('reg-submit-btn');if(!btn)return;
+  const ok=isRegFormValid();
+  btn.disabled=!ok;
+  btn.style.opacity=ok?'1':'.5';
+  btn.style.cursor=ok?'pointer':'not-allowed';
+  const msg=gi('reg-valid-msg');if(msg)msg.style.display='none';
 }
 function submitRegistration(){
   const w=workshops.find(x=>x.id===registerCurrentWorkshopId);if(!w)return;
+  if(!isRegFormValid()){
+    const msg=gi('reg-valid-msg');if(msg)msg.style.display='block';
+    return;
+  }
   const name=gv('rg-name'),email=gv('rg-email'),phone=gv('rg-phone');
-  if(!name||!email||!phone){alert('لطفاً نام، ایمیل و شماره تلفن را وارد کنید');return;}
-  const answers=[];
-  for(const q of (w.regQuestions||[])){
+  const answers=(w.regQuestions||[]).map(q=>{
     let a='';
     if(q.type==='choice'){
       const sel=document.querySelector(`input[name="rq-${q.id}"]:checked`);
@@ -1314,9 +1338,8 @@ function submitRegistration(){
     } else {
       a=gv('rq-'+q.id);
     }
-    if(!a){alert('لطفاً به همه سوالات پاسخ دهید: «'+q.label+'»');return;}
-    answers.push({q:q.label,a});
-  }
+    return {q:q.label,a};
+  });
   if(!w.registrations)w.registrations=[];
   w.registrations.push({id:Date.now(),name,email,phone,answers,status:'pending',payInfo:''});
   gi('register-page-body').innerHTML=`<div class="reg-success">
