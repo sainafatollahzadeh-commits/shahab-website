@@ -161,7 +161,8 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .admin-mode .photo-upload-btn{display:block}
 .bio-photo-frame{width:calc(100% - 2cm);aspect-ratio:1/1;border-radius:8px;position:relative;overflow:hidden;margin:1cm;border:1px solid var(--light)}
 .bio-photo-frame .photo-upload-btn{bottom:.4rem;left:.4rem;padding:.3rem .55rem;font-size:.65rem}
-#bio-photo{width:100%;height:100%;object-fit:cover;display:none}
+#bio-photo{width:100%;height:100%;object-fit:cover;display:none;cursor:grab;-webkit-user-drag:none}
+#bio-photo:active{cursor:grabbing}
 #bio-photo-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#e8e4dc,#d4c9b8);gap:.4rem}
 .paper-plane-anim{display:inline-block;color:var(--gold);margin-bottom:1.2rem;animation:planeFlutter 3.2s ease-in-out infinite}
 @keyframes planeFlutter{
@@ -603,7 +604,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
     <div class="bio-label-side">
       <h2>درباره دکتر شهاب یوسفی</h2>
       <div class="bio-photo-frame">
-        <img id="bio-photo" src="" alt="دکتر شهاب یوسفی"/>
+        <img id="bio-photo" src="" alt="دکتر شهاب یوسفی" draggable="false"/>
         <div id="bio-photo-ph"><div style="font-size:2.2rem;color:rgba(100,80,60,.25)">👤</div><p style="font-size:.78rem;color:rgba(80,60,40,.4)">عکس پروفایل</p></div>
         <button class="photo-upload-btn" onclick="gi('bio-file').click()">📷 تغییر عکس</button>
       </div>
@@ -1199,8 +1200,37 @@ function handleBioPhoto(e){
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();r.onload=ev=>{
     const img=gi('bio-photo');img.src=ev.target.result;img.style.display='block';gi('bio-photo-ph').style.display='none';
+    bioPhotoPos.x=50;bioPhotoPos.y=50;img.style.objectPosition='50% 50%';
   };r.readAsDataURL(f);
 }
+let bioPhotoPos={x:50,y:50};
+function setBioPhotoPos(x,y){
+  bioPhotoPos.x=Math.max(0,Math.min(100,x));
+  bioPhotoPos.y=Math.max(0,Math.min(100,y));
+  gi('bio-photo').style.objectPosition=`${bioPhotoPos.x}% ${bioPhotoPos.y}%`;
+}
+function initBioPhotoDrag(){
+  const img=gi('bio-photo'),frame=img.parentElement;
+  let dragging=false,startX=0,startY=0,startPos={x:50,y:50};
+  function move(clientX,clientY){
+    const rect=frame.getBoundingClientRect();
+    const dx=clientX-startX,dy=clientY-startY;
+    setBioPhotoPos(startPos.x-dx/rect.width*100,startPos.y-dy/rect.height*100);
+  }
+  img.addEventListener('mousedown',e=>{
+    dragging=true;startX=e.clientX;startY=e.clientY;startPos={...bioPhotoPos};e.preventDefault();
+  });
+  window.addEventListener('mousemove',e=>{if(dragging)move(e.clientX,e.clientY);});
+  window.addEventListener('mouseup',()=>{dragging=false;});
+  img.addEventListener('touchstart',e=>{
+    const t=e.touches[0];dragging=true;startX=t.clientX;startY=t.clientY;startPos={...bioPhotoPos};
+  },{passive:true});
+  window.addEventListener('touchmove',e=>{
+    if(!dragging)return;const t=e.touches[0];move(t.clientX,t.clientY);
+  },{passive:true});
+  window.addEventListener('touchend',()=>{dragging=false;});
+}
+initBioPhotoDrag();
 
 /* ======= HERO PHOTO ======= */
 function handleHero(e){
