@@ -363,9 +363,9 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
 .dp-register-btn:hover{filter:brightness(.95)}
 
 /* BIO PAGE */
-.bio-body{display:grid;grid-template-columns:1fr 2fr;min-height:calc(100vh - 62px)}
-.bio-label-side{background:var(--bg);padding:4rem 3rem;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:1rem}
-.bio-label-side h2{font-size:1.8rem;font-weight:700;color:var(--black);line-height:1.4}
+.bio-body{display:grid;grid-template-columns:1.4fr 2fr;min-height:calc(100vh - 62px)}
+.bio-label-side{background:var(--bg);padding:3rem 1rem;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:1rem}
+.bio-label-side h2{font-size:1.8rem;font-weight:700;color:var(--black);line-height:1.4;align-self:center;width:calc(100% - 2cm);text-align:center}
 .bio-label-side p{font-size:.82rem;color:var(--mid);line-height:1.9;font-weight:300}
 .bio-text-side{padding:4rem 3.5rem;overflow-y:auto}
 .bio-section{margin-bottom:2rem}
@@ -598,7 +598,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
   </div>
   <div class="bio-body">
     <div class="bio-label-side">
-      <h2 style="display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap">درباره دکتر شهاب یوسفی</h2>
+      <h2>درباره دکتر شهاب یوسفی</h2>
       <div class="bio-photo-frame">
         <img id="bio-photo" src="" alt="دکتر شهاب یوسفی"/>
         <div id="bio-photo-ph"><div style="font-size:2.2rem;color:rgba(100,80,60,.25)">👤</div><p style="font-size:.78rem;color:rgba(80,60,40,.4)">عکس پروفایل</p></div>
@@ -1389,7 +1389,7 @@ function delFilm(id){if(confirm('حذف شود؟')){films=films.filter(f=>f.id!=
 
 /* ======= COMMENTS (per-item) ======= */
 function itemCommentKey(type,id){return type+'_'+id;}
-let newCommentRating=0;
+let newCommentRating=5;
 function starsHtml(rating,interactive){
   let h='';
   for(let i=1;i<=5;i++){
@@ -1409,13 +1409,13 @@ function renderItemComments(type,id){
   const box=gi('dp-comments');if(!box)return;
   const key=itemCommentKey(type,id);
   const list=comments[key]||[];
-  newCommentRating=0;
+  newCommentRating=5;
   const avg=avgRating(list);
   box.innerHTML=`<div style="display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-bottom:1rem"><h3 style="margin:0">نظرات کاربران</h3>
     <span class="avg-rating"><span class="avg-rating-num">${avg?avg.toFixed(1):'—'}</span><span class="avg-rating-stars">${starsHtml(Math.round(avg),false)}</span><span class="avg-rating-count">(${list.filter(c=>c.rating).length})</span></span></div>
     <div class="comment-form">
       <input id="cf-name" placeholder="نام شما"/>
-      <div class="star-picker" id="cf-stars">${starsHtml(0,true)}</div>
+      <div class="star-picker" id="cf-stars">${starsHtml(newCommentRating,true)}</div>
       <textarea id="cf-text" placeholder="نظر خود را بنویسید..."></textarea>
       <button onclick="submitComment('${key}')">ارسال نظر</button>
     </div>
