@@ -140,24 +140,14 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .marquee-track .dot{color:var(--gold);opacity:1;padding:0}
 @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 /* intro */
-.intro{padding:6.5rem 3.5rem;display:grid;grid-template-columns:1fr 2fr;gap:5rem;background:var(--bg)}
+.intro{padding:6.5rem 3.5rem;display:grid;grid-template-columns:minmax(290px,1fr) 2fr;gap:5rem;background:var(--bg)}
 .intro-label{padding-top:.3rem;display:flex;justify-content:center}
-.bookshelf-widget{position:relative;width:130px;height:140px}
-.bookshelf-widget .shelf{position:absolute;bottom:42px;left:0;right:0;height:7px;background:#8b6b43;border-radius:2px;box-shadow:0 3px 6px rgba(0,0,0,.12)}
-.bookshelf-widget .floor-line{position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--light)}
-.bookshelf-widget .book{position:absolute;bottom:49px;width:14px;border-radius:2px 2px 0 0;transform-origin:bottom center;transition:transform .6s cubic-bezier(.34,1.56,.64,1) var(--d,0s),bottom .6s ease var(--d,0s)}
-.bookshelf-widget .b1{left:6px;height:60px;background:#16a34a}
-.bookshelf-widget .b2{left:24px;height:78px;background:#374151;--d:.04s}
-.bookshelf-widget .b3{left:42px;height:54px;background:#9ca3af;--d:.08s}
-.bookshelf-widget .b4{left:60px;height:72px;background:#15803d;--d:.12s}
-.bookshelf-widget .b5{left:78px;height:84px;background:#1f2937;--d:.16s}
-.bookshelf-widget .b6{left:96px;height:58px;background:#22c55e;--d:.2s}
-.bookshelf-widget:hover .b1{bottom:2px;transform:translateX(-14px) rotate(-78deg)}
-.bookshelf-widget:hover .b2{bottom:2px;transform:translateX(6px) rotate(58deg)}
-.bookshelf-widget:hover .b3{bottom:2px;transform:translateX(-4px) rotate(-44deg)}
-.bookshelf-widget:hover .b4{bottom:2px;transform:translateX(16px) rotate(82deg)}
-.bookshelf-widget:hover .b5{bottom:2px;transform:translateX(-18px) rotate(-65deg)}
-.bookshelf-widget:hover .b6{bottom:2px;transform:translateX(10px) rotate(50deg)}
+.bookshelf-widget{position:relative;width:260px;height:320px}
+.bookshelf-widget .shelf-board{position:absolute;left:-6px;right:-6px;height:7px;background:#8b6b43;border-radius:2px;box-shadow:0 4px 8px rgba(0,0,0,.16);z-index:2}
+.bookshelf-widget .floor-line{position:absolute;bottom:0;left:-16px;right:-16px;height:3px;background:var(--light);border-radius:2px}
+.bookshelf-widget .book{position:absolute;width:15px;border-radius:2px 2px 1px 1px;transform-origin:bottom center;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);transition:transform .65s cubic-bezier(.34,1.56,.64,1) var(--d,0s)}
+.bookshelf-widget .book::after{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:repeating-linear-gradient(90deg,#f7f2e3 0 2px,#e7dcc0 2px 3px);border-radius:2px 2px 0 0}
+.bookshelf-widget:hover .book{transform:translate(var(--fx,0px),var(--fy,150px)) rotate(var(--fr,70deg))}
 .intro-text h2{font-size:clamp(1.7rem,2.4vw,2.2rem);line-height:1.5;font-weight:700;margin-bottom:1.1rem}
 .intro-text p{font-size:1.05rem;line-height:2;color:var(--mid);font-weight:300;margin-bottom:.75rem}
 /* topics (legacy, unused styles kept harmlessly) */
@@ -656,13 +646,48 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
 <section class="intro reveal" id="about">
   <div class="intro-label">
     <div class="bookshelf-widget" aria-hidden="true">
-      <div class="shelf"></div>
-      <span class="book b1"></span>
-      <span class="book b2"></span>
-      <span class="book b3"></span>
-      <span class="book b4"></span>
-      <span class="book b5"></span>
-      <span class="book b6"></span>
+      <div class="shelf-board" style="bottom:230px"></div>
+      <div class="shelf-board" style="bottom:150px"></div>
+      <div class="shelf-board" style="bottom:70px"></div>
+
+      <span class="book" style="left:6px;bottom:237px;height:68px;background:#2f6b4f;--fx:-18px;--fy:233px;--fr:-72deg;--d:0s"></span>
+      <span class="book" style="left:24px;bottom:237px;height:75px;background:#c0563f;--fx:14px;--fy:233px;--fr:64deg;--d:.03s"></span>
+      <span class="book" style="left:42px;bottom:237px;height:60px;background:#3d5a80;--fx:-10px;--fy:233px;--fr:-80deg;--d:.06s"></span>
+      <span class="book" style="left:60px;bottom:237px;height:70px;background:#e0a23d;--fx:20px;--fy:233px;--fr:75deg;--d:.09s"></span>
+      <span class="book" style="left:78px;bottom:237px;height:64px;background:#6b3f5e;--fx:-16px;--fy:233px;--fr:-66deg;--d:.12s"></span>
+      <span class="book" style="left:96px;bottom:237px;height:72px;background:#7a8c6b;--fx:12px;--fy:233px;--fr:70deg;--d:.15s"></span>
+      <span class="book" style="left:114px;bottom:237px;height:58px;background:#8c8c8c;--fx:-14px;--fy:233px;--fr:-60deg;--d:.18s"></span>
+      <span class="book" style="left:132px;bottom:237px;height:67px;background:#264653;--fx:18px;--fy:233px;--fr:78deg;--d:.21s"></span>
+      <span class="book" style="left:150px;bottom:237px;height:73px;background:#9c6644;--fx:-12px;--fy:233px;--fr:-74deg;--d:.24s"></span>
+      <span class="book" style="left:168px;bottom:237px;height:61px;background:#4a5759;--fx:16px;--fy:233px;--fr:68deg;--d:.27s"></span>
+      <span class="book" style="left:186px;bottom:237px;height:69px;background:#588157;--fx:-20px;--fy:233px;--fr:-82deg;--d:.30s"></span>
+      <span class="book" style="left:204px;bottom:237px;height:63px;background:#a4423c;--fx:10px;--fy:233px;--fr:58deg;--d:.33s"></span>
+      <span class="book" style="left:222px;bottom:237px;height:71px;background:#5b4f6b;--fx:-15px;--fy:233px;--fr:-70deg;--d:.36s"></span>
+
+      <span class="book" style="left:10px;bottom:157px;height:66px;background:#3d5a80;--fx:14px;--fy:153px;--fr:65deg;--d:.05s"></span>
+      <span class="book" style="left:30px;bottom:157px;height:58px;background:#e0a23d;--fx:-18px;--fy:153px;--fr:-76deg;--d:.08s"></span>
+      <span class="book" style="left:50px;bottom:157px;height:72px;background:#2f6b4f;--fx:12px;--fy:153px;--fr:62deg;--d:.11s"></span>
+      <span class="book" style="left:70px;bottom:157px;height:60px;background:#6b3f5e;--fx:-16px;--fy:153px;--fr:-68deg;--d:.14s"></span>
+      <span class="book" style="left:90px;bottom:157px;height:69px;background:#a4423c;--fx:20px;--fy:153px;--fr:80deg;--d:.17s"></span>
+      <span class="book" style="left:110px;bottom:157px;height:64px;background:#264653;--fx:-10px;--fy:153px;--fr:-58deg;--d:.20s"></span>
+      <span class="book" style="left:130px;bottom:157px;height:73px;background:#9c6644;--fx:16px;--fy:153px;--fr:72deg;--d:.23s"></span>
+      <span class="book" style="left:150px;bottom:157px;height:59px;background:#588157;--fx:-14px;--fy:153px;--fr:-64deg;--d:.26s"></span>
+      <span class="book" style="left:170px;bottom:157px;height:67px;background:#8c8c8c;--fx:18px;--fy:153px;--fr:77deg;--d:.29s"></span>
+      <span class="book" style="left:190px;bottom:157px;height:62px;background:#5b4f6b;--fx:-12px;--fy:153px;--fr:-61deg;--d:.32s"></span>
+      <span class="book" style="left:210px;bottom:157px;height:70px;background:#c0563f;--fx:10px;--fy:153px;--fr:55deg;--d:.35s"></span>
+
+      <span class="book" style="left:8px;bottom:77px;height:65px;background:#264653;--fx:-16px;--fy:73px;--fr:-70deg;--d:.07s"></span>
+      <span class="book" style="left:28px;bottom:77px;height:71px;background:#9c6644;--fx:18px;--fy:73px;--fr:74deg;--d:.10s"></span>
+      <span class="book" style="left:48px;bottom:77px;height:58px;background:#588157;--fx:-12px;--fy:73px;--fr:-60deg;--d:.13s"></span>
+      <span class="book" style="left:68px;bottom:77px;height:68px;background:#3d5a80;--fx:14px;--fy:73px;--fr:66deg;--d:.16s"></span>
+      <span class="book" style="left:88px;bottom:77px;height:62px;background:#a4423c;--fx:-18px;--fy:73px;--fr:-78deg;--d:.19s"></span>
+      <span class="book" style="left:108px;bottom:77px;height:73px;background:#6b3f5e;--fx:12px;--fy:73px;--fr:60deg;--d:.22s"></span>
+      <span class="book" style="left:128px;bottom:77px;height:60px;background:#e0a23d;--fx:-20px;--fy:73px;--fr:-82deg;--d:.25s"></span>
+      <span class="book" style="left:148px;bottom:77px;height:69px;background:#2f6b4f;--fx:16px;--fy:73px;--fr:71deg;--d:.28s"></span>
+      <span class="book" style="left:168px;bottom:77px;height:64px;background:#8c8c8c;--fx:-10px;--fy:73px;--fr:-56deg;--d:.31s"></span>
+      <span class="book" style="left:188px;bottom:77px;height:72px;background:#c0563f;--fx:20px;--fy:73px;--fr:79deg;--d:.34s"></span>
+      <span class="book" style="left:208px;bottom:77px;height:59px;background:#5b4f6b;--fx:-14px;--fy:73px;--fr:-63deg;--d:.37s"></span>
+
       <div class="floor-line"></div>
     </div>
   </div>
