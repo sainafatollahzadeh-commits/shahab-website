@@ -162,9 +162,9 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .bookshelf-widget{position:relative;width:260px;height:320px}
 .bookshelf-widget .shelf-board{position:absolute;left:-6px;right:-6px;height:7px;background:#8b6b43;border-radius:2px;box-shadow:0 4px 8px rgba(0,0,0,.16);z-index:2}
 .bookshelf-widget .floor-line{position:absolute;bottom:0;left:-16px;right:-16px;height:3px;background:var(--light);border-radius:2px}
-.bookshelf-widget .book{position:absolute;width:15px;border-radius:2px 2px 1px 1px;transform-origin:bottom center;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);transition:transform .65s cubic-bezier(.34,1.56,.64,1) var(--d,0s)}
+.bookshelf-widget .book{position:absolute;width:15px;border-radius:2px 2px 1px 1px;transform-origin:bottom center;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);transition:transform .65s cubic-bezier(.34,1.56,.64,1) var(--d,0s),left .55s ease .15s}
 .bookshelf-widget .book::after{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:repeating-linear-gradient(90deg,#f7f2e3 0 2px,#e7dcc0 2px 3px);border-radius:2px 2px 0 0}
-.bookshelf-widget:hover .book{transform:translate(var(--fx,0px),var(--fy,150px)) rotate(var(--fr,70deg))}
+.bookshelf-widget.falling .book{transform:translate(var(--fx,0px),var(--fy,150px)) rotate(var(--fr,70deg))}
 
 /* page-header mini animations */
 .section-title-row{display:flex;align-items:center;gap:1rem}
@@ -895,6 +895,43 @@ let qBuilderDraft=[]; // working copy while editing questions in admin modal
 /* ======= SCROLL REVEAL ======= */
 const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.07});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+/* ======= BOOKSHELF: fall then return sorted by color ======= */
+function hueOf(rgbStr){
+  const m=(rgbStr||'').match(/\d+/g);if(!m)return 0;
+  const [r,g,b]=m.slice(0,3).map(Number);
+  const mx=Math.max(r,g,b),mn=Math.min(r,g,b);
+  if(mx===mn)return 0;
+  const d=mx-mn;let h;
+  if(mx===r)h=((g-b)/d)%6;else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;
+  h*=60;if(h<0)h+=360;return h;
+}
+function sortBookshelfByColor(widget){
+  const books=[...widget.querySelectorAll('.book')];
+  const rows={};
+  books.forEach(el=>{
+    const key=el.style.bottom;
+    (rows[key]=rows[key]||[]).push(el);
+  });
+  Object.values(rows).forEach(rowBooks=>{
+    const lefts=rowBooks.map(el=>parseFloat(el.style.left)).sort((a,b)=>a-b);
+    rowBooks.sort((a,b)=>hueOf(getComputedStyle(a).backgroundColor)-hueOf(getComputedStyle(b).backgroundColor));
+    rowBooks.forEach((el,i)=>{el.style.left=lefts[i]+'px';});
+  });
+}
+(function initBookshelf(){
+  const widget=document.querySelector('.bookshelf-widget');
+  if(!widget)return;
+  let returnTimer=null;
+  widget.addEventListener('mouseenter',()=>{
+    clearTimeout(returnTimer);
+    widget.classList.add('falling');
+  });
+  widget.addEventListener('mouseleave',()=>{
+    sortBookshelfByColor(widget);
+    returnTimer=setTimeout(()=>widget.classList.remove('falling'),20);
+  });
+})();
 
 /* ======= AUTH ======= */
 function showLogin(){gi('login-overlay').classList.remove('hidden');setTimeout(()=>gi('pw-input').focus(),80)}
