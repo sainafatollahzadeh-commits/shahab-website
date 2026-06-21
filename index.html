@@ -521,14 +521,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
         <label>پاراگراف اول</label><textarea id="s-about-p1"></textarea>
         <label>پاراگراف دوم</label><textarea id="s-about-p2"></textarea>
       </div><button class="abtn" onclick="saveAbout()">ذخیره</button></div>
-      <div class="aps"><h3>📄 صفحه بیوگرافی کامل</h3><div class="af">
-        <label>بخش ۱ — عنوان</label><input id="bio-t1" placeholder="تحصیلات"/>
-        <label>بخش ۱ — متن</label><textarea id="bio-p1" placeholder="..."></textarea>
-        <label>بخش ۲ — عنوان</label><input id="bio-t2" placeholder="تجربه بالینی"/>
-        <label>بخش ۲ — متن</label><textarea id="bio-p2" placeholder="..."></textarea>
-        <label>بخش ۳ — عنوان</label><input id="bio-t3" placeholder="رویکرد درمانی"/>
-        <label>بخش ۳ — متن</label><textarea id="bio-p3" placeholder="..."></textarea>
-      </div><button class="abtn" onclick="saveBio()">ذخیره بیوگرافی</button></div>
+      <div class="aps"><h3>📄 صفحه بیوگرافی کامل</h3><p style="font-size:.78rem;color:var(--mid);margin-bottom:.8rem">بخش‌های بیوگرافی را می‌توانید مستقیماً از صفحه «بیوگرافی کامل» ویرایش کنید (روی عنوان یا متن کلیک کنید) یا بخش جدید اضافه/حذف کنید.</p><button class="abtn" onclick="openBio()">باز کردن صفحه بیوگرافی</button></div>
       <div class="aps"><h3>💳 متن دستورالعمل پرداخت</h3><div class="af">
         <label>متن راهنمای پرداخت</label><textarea id="s-payinfo" style="min-height:110px" placeholder="مثلاً: لطفاً مبلغ ۲,۰۰۰,۰۰۰ تومان را به شماره کارت ۱۲۳۴-۵۶۷۸-۹۰۱۲-۳۴۵۶ واریز کرده و رسید را به آیدی تلگرام @shahab_yousefii ارسال کنید."></textarea>
         <p style="font-size:.74rem;color:var(--mid);margin-top:.4rem">این متن پس از تایید درخواست متقاضی، عیناً در صفحه «پیگیری ثبت‌نام» نمایش داده می‌شود. مبلغ، شماره حساب و آیدی تلگرام را خودتان در همین متن وارد کنید.</p>
@@ -858,7 +851,8 @@ const S={
   'nl-h':'بینش‌هایی درباره درمان، مستقیم برای شما.','nl-p':'تأملاتی درباره غم، تروما، و معنای زندگی.',
   'footer-desc':'فضایی دلسوزانه برای غم، تروما، و شخصیت.',
   tg:'https://t.me/Shahab_yousefii',li:'https://www.linkedin.com/in/shahab-yousefi-58508b126?utm_source=share_via&utm_content=profile&utm_medium=member_ios',
-  paymentInstructions:'لطفاً مبلغ ۲,۰۰۰,۰۰۰ تومان را به شماره کارت ۱۲۳۴-۵۶۷۸-۹۰۱۲-۳۴۵۶ (بانک ملت، به نام شهاب یوسفی) واریز کرده و تصویر رسید پرداخت را به آیدی تلگرام @shahab_yousefii ارسال کنید.'
+  paymentInstructions:'لطفاً مبلغ ۲,۰۰۰,۰۰۰ تومان را به شماره کارت ۱۲۳۴-۵۶۷۸-۹۰۱۲-۳۴۵۶ (بانک ملت، به نام شهاب یوسفی) واریز کرده و تصویر رسید پرداخت را به آیدی تلگرام @shahab_yousefii ارسال کنید.',
+  bioIntro:''
 };
 let lastLookupPhone='';
 let bioSections=[
@@ -976,11 +970,28 @@ function openBio(){
   renderBioContent();openOv('bio-page');
 }
 function renderBioContent(){
-  gi('bio-content').innerHTML=bioSections.map((s,i)=>`
+  const introHtml=`<div class="bio-section bio-intro-box">
+    <textarea id="bio-intro-input" placeholder="یادداشت یا توضیح آزاد..." oninput="S.bioIntro=this.value" ${isAdmin?'':'readonly'} style="width:100%;min-height:70px;padding:.8rem 1rem;border:1px solid var(--light);border-radius:6px;font-family:'Vazirmatn',sans-serif;font-size:.88rem;line-height:1.9;direction:rtl;text-align:right;resize:vertical;background:${isAdmin?'#fff':'#fafafa'}">${esc(S.bioIntro)}</textarea>
+  </div>`;
+  const sectionsHtml=bioSections.map((s,i)=>`
     <div class="bio-section">
-      <h3 class="bio-section-title editable" onclick="if(isAdmin)editBioSection(${i},'title')">${s.t}</h3>
+      <div style="display:flex;align-items:center;gap:.6rem">
+        <h3 class="bio-section-title editable" onclick="if(isAdmin)editBioSection(${i},'title')" style="flex:1">${s.t}</h3>
+        ${isAdmin?`<button class="comment-del" style="display:block" onclick="delBioSection(${i})">حذف بخش</button>`:''}
+      </div>
       <p class="bio-section-text editable" onclick="if(isAdmin)editBioSection(${i},'text')">${s.p}</p>
     </div>`).join('');
+  const addHtml=isAdmin?`<button class="abtn blue" style="margin-top:1rem" onclick="addBioSection()">+ افزودن بخش جدید</button>`:'';
+  gi('bio-content').innerHTML=introHtml+sectionsHtml+addHtml;
+}
+function addBioSection(){
+  bioSections.push({t:'بخش جدید',p:''});
+  renderBioContent();
+}
+function delBioSection(i){
+  if(!confirm('این بخش حذف شود؟'))return;
+  bioSections.splice(i,1);
+  renderBioContent();
 }
 function editBioSection(i,field){
   if(!isAdmin)return;
