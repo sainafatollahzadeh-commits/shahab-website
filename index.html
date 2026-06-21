@@ -416,6 +416,47 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
 .opt-row button{flex-shrink:0;background:#fff;border:1px solid #e53e3e;color:#e53e3e;border-radius:3px;cursor:pointer;font-size:.75rem;padding:0 .6rem}
 .answers-view{font-size:.82rem;line-height:1.9;color:#4a5568;background:var(--bg);padding:.8rem;border-radius:4px;margin-top:.5rem}
 .answers-view b{color:var(--black)}
+
+/* ======= MOBILE NAV TOGGLE ======= */
+.nav-toggle{display:none;flex-direction:column;justify-content:center;gap:5px;width:38px;height:38px;border:none;background:none;cursor:pointer;flex-shrink:0;padding:0}
+.nav-toggle span{display:block;width:24px;height:2px;background:var(--black);margin:0 auto;transition:transform .25s,opacity .25s}
+.nav-toggle.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-toggle.open span:nth-child(2){opacity:0}
+.nav-toggle.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ======= RESPONSIVE BREAKPOINTS ======= */
+@media (max-width:900px){
+  nav{padding:.9rem 1.2rem}
+  .nav-toggle{display:flex}
+  .nav-links{position:fixed;top:62px;right:0;left:0;background:#fff;flex-direction:column;align-items:stretch;gap:0;max-height:calc(100vh - 62px);overflow-y:auto;transform:translateY(-12px);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:0 12px 24px rgba(0,0,0,.1);padding:0;border-bottom:1px solid var(--light)}
+  .nav-links.open{opacity:1;transform:translateY(0);pointer-events:auto}
+  .nav-links-right,.nav-links-left{flex-direction:column;align-items:stretch;gap:0;width:100%}
+  .nav-links-right a,.nav-links-left a,.nav-links-left button{width:100%;padding:1rem 1.5rem;border-bottom:1px solid var(--light);border-radius:0;text-align:right;margin:0;font-size:.9rem}
+  .nav-cta{background:none;color:var(--black)!important}
+
+  .hero{grid-template-columns:1fr;padding:0 1.2rem;padding-top:2rem;gap:2rem;min-height:auto;padding-bottom:3rem}
+  .intro{grid-template-columns:1fr;padding:3rem 1.2rem;gap:2.2rem}
+  .topics-grid{grid-template-columns:repeat(2,1fr)}
+  .sessions-grid{grid-template-columns:1fr}
+  .books-grid{grid-template-columns:repeat(2,1fr)}
+  .articles-grid{grid-template-columns:repeat(2,1fr)}
+  .cta-strip{grid-template-columns:1fr;padding:3rem 1.2rem;gap:2rem;text-align:center}
+  .dp-body{grid-template-columns:1fr;min-height:auto}
+  .dp-img-side{min-height:280px;padding:1.5rem}
+  .dp-text-side{padding:2rem 1.2rem}
+  .bio-body{grid-template-columns:1fr;min-height:auto}
+  .bio-label-side{padding:2rem 1rem}
+  .ov-header{padding:.9rem 1.2rem}
+  .apb{padding:0 1rem}
+}
+
+@media (max-width:600px){
+  .topics-grid{grid-template-columns:1fr}
+  .books-grid{grid-template-columns:1fr}
+  .articles-grid{grid-template-columns:1fr}
+  .hero{padding:0 1rem;padding-top:1.5rem}
+  .nav-logo{font-size:1.1rem}
+}
 </style>
 </head>
 <body>
@@ -750,20 +791,23 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
 <!-- ===== SITE ===== -->
 <nav>
   <div class="nav-logo">دکتر شهاب یوسفی</div>
-  <div class="nav-links" style="justify-content:space-between">
+  <button class="nav-toggle" onclick="toggleNavMenu()" aria-label="منو">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="nav-links" style="justify-content:space-between">
     <div class="nav-links-right">
-      <a href="#about">درباره من</a>
-      <a href="#" onclick="openOv('history-page');return false;">تاریخ روانکاوی</a>
-      <a href="#" onclick="openOv('books-page');return false;">کتاب‌ها</a>
-      <a href="#" onclick="openOv('articles-page');return false;">مقالات</a>
-      <a href="#" onclick="openOv('workshops-page');return false;">کارگاه‌ها</a>
-      <a href="#" onclick="openOv('film-page');return false;">تحلیل فیلم</a>
-      <a href="#" onclick="openOv('grief-page');return false;">اشتراک‌گذاری</a>
-      <a href="#" onclick="openStatusPage();return false;">پیگیری ثبت‌نام</a>
+      <a href="#about" onclick="closeNavMenu()">درباره من</a>
+      <a href="#" onclick="openOv('history-page');closeNavMenu();return false;">تاریخ روانکاوی</a>
+      <a href="#" onclick="openOv('books-page');closeNavMenu();return false;">کتاب‌ها</a>
+      <a href="#" onclick="openOv('articles-page');closeNavMenu();return false;">مقالات</a>
+      <a href="#" onclick="openOv('workshops-page');closeNavMenu();return false;">کارگاه‌ها</a>
+      <a href="#" onclick="openOv('film-page');closeNavMenu();return false;">تحلیل فیلم</a>
+      <a href="#" onclick="openOv('grief-page');closeNavMenu();return false;">اشتراک‌گذاری</a>
+      <a href="#" onclick="openStatusPage();closeNavMenu();return false;">پیگیری ثبت‌نام</a>
     </div>
     <div class="nav-links-left">
-      <button class="nav-cta" onclick="scrollToNextStep()">رزرو جلسه</button>
-      <a href="#" onclick="showLogin()" class="nav-login">ورود</a>
+      <button class="nav-cta" onclick="scrollToNextStep();closeNavMenu()">رزرو جلسه</button>
+      <a href="#" onclick="showLogin();closeNavMenu()" class="nav-login">ورود</a>
     </div>
   </div>
 </nav>
@@ -1023,6 +1067,8 @@ function switchTab(n,el){
 /* ======= OVERLAYS ======= */
 function openOv(id){gi(id).classList.remove('hidden');document.body.style.overflow='hidden'}
 function closeOv(id){gi(id).classList.add('hidden');document.body.style.overflow=''}
+function toggleNavMenu(){gi('nav-links').classList.toggle('open');document.querySelector('.nav-toggle').classList.toggle('open')}
+function closeNavMenu(){gi('nav-links').classList.remove('open');document.querySelector('.nav-toggle').classList.remove('open')}
 
 /* ======= BOOK A SESSION TRIGGER ======= */
 function scrollToNextStep(){
