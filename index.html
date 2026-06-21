@@ -32,9 +32,9 @@ a{text-decoration:none;color:inherit}
 .add-tile-inner span{font-size:.85rem}
 /* page notes box */
 .page-notes-box{margin-bottom:2.4rem}
-.page-notes-box textarea{width:100%;min-height:90px;padding:.9rem 1.1rem;border:1px solid var(--light);border-radius:6px;font-family:'Vazirmatn',sans-serif;font-size:.88rem;line-height:1.9;direction:rtl;text-align:right;resize:vertical;background:#fff;color:#4a5568}
+.page-notes-box textarea{width:100%;min-height:90px;padding:.9rem 1.1rem;border:none;border-radius:6px;font-family:'Vazirmatn',sans-serif;font-size:.88rem;line-height:1.9;direction:rtl;text-align:right;resize:vertical;background:#fff;color:#4a5568}
 .page-notes-box textarea::placeholder{color:var(--mid)}
-.page-notes-box textarea:focus{outline:none;border-color:var(--blue)}
+.page-notes-box textarea:focus{outline:none}
 .page-notes-box textarea[readonly]{background:#fafafa;cursor:default}
 .comments-section{margin-top:3rem;padding-top:2rem;border-top:1px solid var(--light)}
 .comments-section h3{font-size:1.1rem;margin-bottom:1rem}
@@ -81,6 +81,7 @@ a{text-decoration:none;color:inherit}
 .af label{font-size:.78rem;color:var(--mid);display:block;margin:.8rem 0 .28rem;font-weight:500}
 .af label.req::after{content:' *';color:#e53e3e}
 .af input,.af textarea,.af select{width:100%;padding:.62rem .88rem;border:1px solid var(--light);border-radius:3px;font-family:'Vazirmatn',sans-serif;font-size:.87rem;direction:rtl;text-align:right}
+.af input[type="checkbox"]{width:auto;flex:0 0 auto;padding:0}
 .af input:focus,.af textarea:focus{outline:none;border-color:var(--blue)}
 .af textarea{min-height:85px;resize:vertical}
 .abtn{background:var(--black);color:#fff;border:none;padding:.62rem 1.7rem;border-radius:3px;cursor:pointer;font-family:'Vazirmatn',sans-serif;font-size:.84rem;margin-top:.9rem}
@@ -146,10 +147,10 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 #hero-photo-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#e8e4dc,#d4c9b8);gap:1rem}
 .photo-upload-btn{position:absolute;bottom:1rem;left:1rem;background:rgba(255,255,255,.92);border:1px solid var(--light);padding:.45rem .9rem;border-radius:3px;font-size:.75rem;cursor:pointer;font-family:'Vazirmatn',sans-serif;z-index:5;display:none}
 .admin-mode .photo-upload-btn{display:block}
-.about-photo-frame{width:140px;height:140px;border-radius:8px;position:relative;overflow:hidden;margin:1.2rem 0;border:1px solid var(--light)}
-.about-photo-frame .photo-upload-btn{bottom:.4rem;left:.4rem;padding:.3rem .55rem;font-size:.65rem}
-#about-photo{width:100%;height:100%;object-fit:cover;display:none}
-#about-photo-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#e8e4dc,#d4c9b8);gap:.4rem}
+.bio-photo-frame{width:140px;height:140px;border-radius:8px;position:relative;overflow:hidden;margin:1.2rem 0;border:1px solid var(--light)}
+.bio-photo-frame .photo-upload-btn{bottom:.4rem;left:.4rem;padding:.3rem .55rem;font-size:.65rem}
+#bio-photo{width:100%;height:100%;object-fit:cover;display:none}
+#bio-photo-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#e8e4dc,#d4c9b8);gap:.4rem}
 /* marquee */
 .marquee-bar{background:var(--black);color:#fff;padding:1rem 0;overflow:hidden;white-space:nowrap;direction:ltr}
 .marquee-track{display:inline-flex;animation:marquee 25s linear infinite}
@@ -566,6 +567,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
       <div class="dp-register-box hidden" id="dp-register-box">
         <button class="dp-register-btn" onclick="openRegisterForm()">ثبت‌نام در کارگاه</button>
       </div>
+      <div id="dp-comments" class="comments-section"></div>
     </div>
   </div>
   <input type="file" id="dp-img-file" accept="image/*" style="display:none" onchange="dpImgUpload(event)"/>
@@ -580,7 +582,12 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
   <div class="bio-body">
     <div class="bio-label-side">
       <h2 style="display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap">درباره دکتر شهاب یوسفی</h2>
-      <p>روان‌درمانگر و روانشناس بالینی با بیش از ۱۵ سال تجربه</p>
+      <div class="bio-photo-frame">
+        <img id="bio-photo" src="" alt="دکتر شهاب یوسفی"/>
+        <div id="bio-photo-ph"><div style="font-size:2.2rem;color:rgba(100,80,60,.25)">👤</div><p style="font-size:.78rem;color:rgba(80,60,40,.4)">عکس پروفایل</p></div>
+        <button class="photo-upload-btn" onclick="gi('bio-file').click()">📷 تغییر عکس</button>
+      </div>
+      <input type="file" id="bio-file" accept="image/*" style="display:none" onchange="handleBioPhoto(event)"/>
     </div>
     <div class="bio-text-side" id="bio-content"></div>
   </div>
@@ -595,8 +602,8 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
   <div style="max-width:520px;margin:4rem auto;padding:0 1.5rem;text-align:center">
     <div style="font-size:3rem;margin-bottom:1.2rem">📲</div>
     <h2 style="font-size:1.25rem;font-weight:700;margin-bottom:1rem">رزرو جلسه از طریق تلگرام</h2>
-    <p style="font-size:.92rem;line-height:2.1;color:var(--mid);margin-bottom:1.8rem">لطفاً اطلاعات خود — شامل نام، نوع جلسه (داخل یا خارج از کشور) و زمان پیشنهادی — را به آیدی تلگرام زیر ارسال کنید. دکتر یوسفی پس از بررسی با شما هماهنگ خواهد کرد.</p>
-    <div style="background:var(--bg);border:2px dashed var(--gold);border-radius:6px;padding:1.3rem;font-size:1.15rem;font-weight:700;color:var(--black);direction:ltr">@shahab_yousefii</div>
+    <p class="editable" onclick="inlineEdit('tg-text')" id="tg-text" style="font-size:.92rem;line-height:2.1;color:var(--mid);margin-bottom:1.8rem">لطفاً اطلاعات خود — شامل نام، نوع جلسه (داخل یا خارج از کشور) و زمان پیشنهادی — را به آیدی تلگرام زیر ارسال کنید. دکتر یوسفی پس از بررسی با شما هماهنگ خواهد کرد.</p>
+    <div class="editable" onclick="inlineEdit('tg-id')" id="tg-id-box" style="background:var(--bg);border:2px dashed var(--gold);border-radius:6px;padding:1.3rem;font-size:1.15rem;font-weight:700;color:var(--black);direction:ltr">@shahab_yousefii</div>
   </div>
 </div>
 
@@ -613,7 +620,6 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
     <div class="section-header"><div class="section-title-row"><div class="clock-anim" aria-hidden="true"></div><h2 class="section-title">تاریخ روانکاوی</h2></div></div>
     <div class="page-notes-box"><textarea id="notes-history" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.history=this.value" readonly></textarea></div>
     <div class="articles-grid" id="psycho-history-grid"></div>
-    <div id="comments-history" class="comments-section"></div>
   </section>
 </div>
 
@@ -627,7 +633,6 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
     <div class="section-header"><div class="section-title-row"><div class="book-anim" aria-hidden="true"><div class="ba-half ba-left"></div><div class="ba-half ba-right"></div><div class="ba-page"></div></div><h2 class="section-title">خلاصه کتاب‌ها</h2></div></div>
     <div class="page-notes-box"><textarea id="notes-books" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.books=this.value" readonly></textarea></div>
     <div class="books-grid" id="books-grid"></div>
-    <div id="comments-books" class="comments-section"></div>
   </section>
 </div>
 
@@ -641,7 +646,6 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
     <div class="section-header"><div class="section-title-row"><div class="pages-anim" aria-hidden="true"><div class="pa-staple"></div><div class="pa-sheet pa-1"></div><div class="pa-sheet pa-2"></div></div><h2 class="section-title">مقالات و یادداشت‌ها</h2></div></div>
     <div class="page-notes-box"><textarea id="notes-articles" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.articles=this.value" readonly></textarea></div>
     <div class="articles-grid" id="articles-grid"></div>
-    <div id="comments-articles" class="comments-section"></div>
   </section>
 </div>
 
@@ -655,7 +659,6 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
     <div class="section-header"><div class="section-title-row"><div class="write-anim" aria-hidden="true"><div class="wa-paper"></div><div class="wa-line wa-l1"><span></span></div><div class="wa-line wa-l2"><span></span></div><div class="wa-line wa-l3"><span></span></div><div class="wa-pen"></div></div><h2 class="section-title">کارگاه‌ها</h2></div></div>
     <div class="page-notes-box"><textarea id="notes-workshops" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.workshops=this.value" readonly></textarea></div>
     <div class="books-grid" id="workshops-grid"></div>
-    <div id="comments-workshops" class="comments-section"></div>
   </section>
 </div>
 
@@ -669,7 +672,6 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
     <div class="section-header"><div class="section-title-row"><div class="film-anim" aria-hidden="true"><div class="fa-strip"><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div></div></div><h2 class="section-title">تحلیل فیلم</h2></div></div>
     <div class="page-notes-box"><textarea id="notes-films" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.films=this.value" readonly></textarea></div>
     <div class="books-grid" id="films-grid"></div>
-    <div id="comments-films" class="comments-section"></div>
   </section>
 </div>
 
@@ -818,12 +820,6 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
   </div>
   <div class="intro-text">
     <h2 class="editable" onclick="inlineEdit('about-h')" id="about-heading">فضایی برای باری که سال‌هاست با خود حمل می‌کنید.</h2>
-    <div class="about-photo-frame">
-      <img id="about-photo" src="" alt="دکتر شهاب یوسفی"/>
-      <div id="about-photo-ph"><div style="font-size:2.2rem;color:rgba(100,80,60,.25)">👤</div><p style="font-size:.78rem;color:rgba(80,60,40,.4)">عکس پروفایل</p></div>
-      <button class="photo-upload-btn" onclick="gi('about-file').click()">📷 تغییر عکس</button>
-    </div>
-    <input type="file" id="about-file" accept="image/*" style="display:none" onchange="handleAboutPhoto(event)"/>
     <p class="editable" onclick="inlineEdit('about-p2')" id="about-p2">او معتقد است هر انسانی داستانی دارد که ارزش شنیدن دارد — و با حمایت درست، حتی سخت‌ترین فصل‌های زندگی می‌توانند منبع رشد و معنا شوند.</p>
     <button class="btn-ghost" onclick="openBio()" style="margin-top:1rem">بیوگرافی کامل</button>
   </div>
@@ -866,7 +862,9 @@ const S={
   'footer-desc':'فضایی دلسوزانه برای غم، تروما، و شخصیت.',
   tg:'https://t.me/Shahab_yousefii',li:'https://www.linkedin.com/in/shahab-yousefi-58508b126?utm_source=share_via&utm_content=profile&utm_medium=member_ios',
   paymentInstructions:'لطفاً مبلغ ۲,۰۰۰,۰۰۰ تومان را به شماره کارت ۱۲۳۴-۵۶۷۸-۹۰۱۲-۳۴۵۶ (بانک ملت، به نام شهاب یوسفی) واریز کرده و تصویر رسید پرداخت را به آیدی تلگرام @shahab_yousefii ارسال کنید.',
-  bioIntro:''
+  bioIntro:'',
+  'tg-text':'لطفاً اطلاعات خود — شامل نام، نوع جلسه (داخل یا خارج از کشور) و زمان پیشنهادی — را به آیدی تلگرام زیر ارسال کنید. دکتر یوسفی پس از بررسی با شما هماهنگ خواهد کرد.',
+  'tg-id':'@shahab_yousefii'
 };
 let lastLookupPhone='';
 let bioSections=[
@@ -898,9 +896,10 @@ let workshops=[
   {id:2,title:'کارگاه تنظیم هیجان در تروما',author:'دکتر شهاب یوسفی',cat:'تروما',desc:'آموزش تکنیک‌های تنظیم هیجان برای بازماندگان تروما.',full:'در این کارگاه، تکنیک‌های عملی تنظیم هیجان و آرام‌سازی سیستم عصبی آموزش داده می‌شود.',img:'',regQuestions:[],registrations:[],regOpen:true,offlineEnabled:false,offlinePrice:'',offlineVideos:[]},
   {id:3,title:'کارگاه مرزهای سالم در روابط',author:'دکتر شهاب یوسفی',cat:'روابط',desc:'یادگیری نحوه تعیین مرز در روابط صمیمی و خانوادگی.',full:'شرکت‌کنندگان می‌آموزند چگونه بدون احساس گناه، مرزهای سالم در روابط خود برقرار کنند.',img:'',regQuestions:[],registrations:[],regOpen:true,offlineEnabled:false,offlinePrice:'',offlineVideos:[]}
 ];
-let purchasedOffline=[];
+let purchasedOffline=JSON.parse(localStorage.getItem('purchasedOffline')||'[]');
+function savePurchasedOffline(){localStorage.setItem('purchasedOffline',JSON.stringify(purchasedOffline));}
 let pendingPurchaseWid=null;
-let comments={history:[],books:[],articles:[],workshops:[],films:[]};
+let comments={};
 let grief=[
   {id:1,name:'ناشناس',text:'سه سال از رفتن مادرم می‌گذره.',reply:'سوگ زمان‌بند نیست.',replied:true,showPending:false},
   {id:2,name:'سارا',text:'پدرم رو تازه از دست دادم.',reply:'',replied:false,showPending:false}
@@ -1024,7 +1023,7 @@ function openBio(){
 }
 function renderBioContent(){
   const introHtml=`<div class="bio-section bio-intro-box">
-    <textarea id="bio-intro-input" placeholder="یادداشت یا توضیح آزاد..." oninput="S.bioIntro=this.value" ${isAdmin?'':'readonly'} style="width:100%;min-height:70px;padding:.8rem 1rem;border:1px solid var(--light);border-radius:6px;font-family:'Vazirmatn',sans-serif;font-size:.88rem;line-height:1.9;direction:rtl;text-align:right;resize:vertical;background:${isAdmin?'#fff':'#fafafa'}">${esc(S.bioIntro)}</textarea>
+    <textarea id="bio-intro-input" placeholder="یادداشت یا توضیح آزاد..." oninput="S.bioIntro=this.value" ${isAdmin?'':'readonly'} style="width:100%;min-height:70px;padding:.8rem 1rem;border:none;border-radius:6px;font-family:'Vazirmatn',sans-serif;font-size:.88rem;line-height:1.9;direction:rtl;text-align:right;resize:vertical;background:${isAdmin?'#fff':'#fafafa'}">${esc(S.bioIntro)}</textarea>
   </div>`;
   const sectionsHtml=bioSections.map((s,i)=>`
     <div class="bio-section">
@@ -1091,6 +1090,7 @@ function openDp(type,id){
     regBox.classList.remove('hidden');
     renderWorkshopRegBox(item);
   }else{regBox.classList.add('hidden');}
+  renderItemComments(type,id);
   openOv('detail-page');
 }
 function renderWorkshopRegBox(w){
@@ -1100,7 +1100,7 @@ function renderWorkshopRegBox(w){
   if(w.offlineEnabled){
     if(purchased){
       html+=`<div style="margin-bottom:1rem"><h4 style="font-size:.92rem;margin-bottom:.6rem">🎬 ویدیوهای دوره</h4>${
-        (w.offlineVideos||[]).length?w.offlineVideos.map(v=>`<div style="margin-bottom:1rem"><p style="font-size:.82rem;margin-bottom:.4rem">${esc(v.name)}</p><video src="${v.src}" controls style="width:100%;max-width:480px;border-radius:4px"></video></div>`).join(''):'<p style="color:var(--mid);font-size:.85rem">هنوز ویدیویی برای این دوره آپلود نشده.</p>'
+        (w.offlineVideos||[]).length?`<div class="session-thumb-grid" style="display:flex;flex-wrap:wrap;gap:1rem">${w.offlineVideos.map((v,i)=>`<div class="session-thumb" style="width:130px;text-align:center;cursor:pointer" onclick="playSessionVideo(${w.id},${i})"><div style="width:130px;height:90px;border-radius:6px;background:linear-gradient(160deg,#3a3530,#1c1a17);display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:#e8c98a">▶</div><p style="font-size:.78rem;margin-top:.4rem">جلسه ${i+1}</p></div>`).join('')}</div><div id="session-player" style="margin-top:1rem"></div>`:'<p style="color:var(--mid);font-size:.85rem">هنوز ویدیویی برای این دوره آپلود نشده.</p>'
       }</div>`;
     } else {
       html+=`<button class="dp-register-btn" onclick="buyOfflineCourse(${w.id})">خرید دوره آفلاین</button>
@@ -1113,10 +1113,17 @@ function renderWorkshopRegBox(w){
   }
   box.innerHTML=html;
 }
+function playSessionVideo(wid,idx){
+  const w=workshops.find(x=>x.id===wid);if(!w)return;
+  const v=(w.offlineVideos||[])[idx];if(!v)return;
+  const p=gi('session-player');if(!p)return;
+  p.innerHTML=`<p style="font-size:.82rem;margin-bottom:.4rem">جلسه ${idx+1} — ${esc(v.name)}</p><video src="${v.src}" controls autoplay style="width:100%;max-width:480px;border-radius:4px"></video>`;
+}
 function buyOfflineCourse(wid){
   const w=workshops.find(x=>x.id===wid);if(!w)return;
   if(!confirm('برای ادامه به درگاه پرداخت آنلاین هدایت می‌شوید (نمونه‌سازی). ادامه می‌دهید؟'))return;
   if(!purchasedOffline.includes(wid))purchasedOffline.push(wid);
+  savePurchasedOffline();
   pendingPurchaseWid=wid;
   closeOv('detail-page');
   openOv('payment-success-page');
@@ -1145,10 +1152,10 @@ function dpImgUpload(e){
     if(item){item.img=src;renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();renderFilms();}
   };r.readAsDataURL(f);
 }
-function handleAboutPhoto(e){
+function handleBioPhoto(e){
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();r.onload=ev=>{
-    const img=gi('about-photo');img.src=ev.target.result;img.style.display='block';gi('about-photo-ph').style.display='none';
+    const img=gi('bio-photo');img.src=ev.target.result;img.style.display='block';gi('bio-photo-ph').style.display='none';
   };r.readAsDataURL(f);
 }
 
@@ -1191,7 +1198,9 @@ const EM={
   'nl-h':{lbl:'عنوان خبرنامه',t:'input',g:()=>S['nl-h'],s:v=>{S['nl-h']=v;setText('nl-h',v)}},
   'nl-p':{lbl:'متن خبرنامه',t:'textarea',g:()=>S['nl-p'],s:v=>{S['nl-p']=v;setText('nl-p',v)}},
   'footer-desc':{lbl:'توضیح فوتر',t:'textarea',g:()=>S['footer-desc'],s:v=>{S['footer-desc']=v;setText('footer-desc',v)}},
-  headline:{lbl:'تیتر',t:'headline',g:()=>({h1:S.h1,hem:S.hem,h2:S.h2}),s:v=>{S.h1=v.h1;S.hem=v.hem;S.h2=v.h2;setText('h-l1',v.h1);setText('h-em',v.hem);setText('h-l2',v.h2)}}
+  headline:{lbl:'تیتر',t:'headline',g:()=>({h1:S.h1,hem:S.hem,h2:S.h2}),s:v=>{S.h1=v.h1;S.hem=v.hem;S.h2=v.h2;setText('h-l1',v.h1);setText('h-em',v.hem);setText('h-l2',v.h2)}},
+  'tg-text':{lbl:'متن صفحه رزرو تلگرام',t:'textarea',g:()=>S['tg-text'],s:v=>{S['tg-text']=v;setText('tg-text',v)}},
+  'tg-id':{lbl:'آیدی تلگرام',t:'input',g:()=>S['tg-id'],s:v=>{S['tg-id']=v;setText('tg-id-box',v)}}
 };
 function inlineEdit(key){
   if(!isAdmin)return;
@@ -1359,15 +1368,16 @@ function addFilm(){
 }
 function delFilm(id){if(confirm('حذف شود؟')){films=films.filter(f=>f.id!==id);renderFilms();renderAPFilms();}}
 
-/* ======= COMMENTS ======= */
-const COMMENT_PAGES={history:'تاریخ روانکاوی',books:'کتاب‌ها',articles:'مقالات',workshops:'کارگاه‌ها',films:'تحلیل فیلم'};
-function renderComments(key){
-  const box=gi('comments-'+key);if(!box)return;
+/* ======= COMMENTS (per-item) ======= */
+function itemCommentKey(type,id){return type+'_'+id;}
+function renderItemComments(type,id){
+  const box=gi('dp-comments');if(!box)return;
+  const key=itemCommentKey(type,id);
   const list=comments[key]||[];
   box.innerHTML=`<h3>نظرات کاربران</h3>
     <div class="comment-form">
-      <input id="cf-name-${key}" placeholder="نام شما"/>
-      <textarea id="cf-text-${key}" placeholder="نظر خود را بنویسید..."></textarea>
+      <input id="cf-name" placeholder="نام شما"/>
+      <textarea id="cf-text" placeholder="نظر خود را بنویسید..."></textarea>
       <button onclick="submitComment('${key}')">ارسال نظر</button>
     </div>
     <div class="comment-list">
@@ -1375,19 +1385,21 @@ function renderComments(key){
     </div>`;
 }
 function submitComment(key){
-  const name=gv('cf-name-'+key)||'ناشناس';
-  const text=gv('cf-text-'+key);
+  const name=gv('cf-name')||'ناشناس';
+  const text=gv('cf-text');
   if(!text){alert('لطفاً متن نظر را بنویسید');return;}
+  if(!comments[key])comments[key]=[];
   comments[key].push({id:Date.now(),name,text});
-  renderComments(key);
+  const [type,id]=key.split('_');
+  renderItemComments(type,Number(id));
 }
 function delComment(key,id){
   if(!isAdmin)return;
   if(!confirm('این نظر حذف شود؟'))return;
-  comments[key]=comments[key].filter(c=>c.id!==id);
-  renderComments(key);
+  comments[key]=(comments[key]||[]).filter(c=>c.id!==id);
+  const [type,iid]=key.split('_');
+  renderItemComments(type,Number(iid));
 }
-function renderAllComments(){Object.keys(COMMENT_PAGES).forEach(renderComments);}
 
 /* ======= ARTICLES ======= */
 function renderArticles(){
@@ -1868,7 +1880,7 @@ function saveFooter(){
 }
 
 /* ======= HELPERS ======= */
-function renderAll(){renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();renderFilms();renderGrief();renderAllComments();}
+function renderAll(){renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();renderFilms();renderGrief();}
 function gi(id){return document.getElementById(id)}
 function gv(id){const el=gi(id);return el?el.value.trim():''}
 function setText(id,v){const el=gi(id);if(el)el.textContent=v}
