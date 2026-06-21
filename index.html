@@ -695,6 +695,20 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
   <div id="register-page-body"></div>
 </div>
 
+<!-- PAYMENT SUCCESS PAGE -->
+<div id="payment-success-page" class="overlay hidden">
+  <div class="ov-header">
+    <div class="ov-back" onclick="closeOv('payment-success-page')">← بازگشت</div>
+    <span style="font-size:.82rem;color:var(--mid)">پرداخت موفق</span>
+  </div>
+  <div class="reg-form-wrap" style="text-align:center;padding-top:3rem">
+    <div class="ico" style="font-size:2.5rem;margin-bottom:1rem">✓</div>
+    <h2>ثبت‌نام شما تکمیل شد</h2>
+    <p style="margin-top:1rem;color:var(--mid)">برای دسترسی به ویدیوهای دوره، به صفحه دوره خود بازگردید.</p>
+    <button class="dp-register-btn" style="margin-top:1.6rem" onclick="goToPurchasedCourse()">بازگشت به صفحه دوره</button>
+  </div>
+</div>
+
 <!-- STATUS LOOKUP PAGE -->
 <div id="status-page" class="overlay hidden">
   <div class="ov-header">
@@ -880,10 +894,12 @@ let psychoHistory=[
 ];
 /* workshops now carry: regQuestions (array of {id,label,type:'text'|'choice',options:[]}), registrations (array) */
 let workshops=[
-  {id:1,title:'کارگاه مواجهه با سوگ',author:'دکتر شهاب یوسفی',cat:'سوگ',desc:'کارگاهی نیم‌روزه برای آشنایی با مراحل سوگواری و مهارت‌های مقابله.',full:'این کارگاه به‌صورت گروهی برگزار می‌شود و شرکت‌کنندگان با تمرین‌های عملی برای عبور از سوگ آشنا می‌شوند.',img:'',regQuestions:[],registrations:[]},
-  {id:2,title:'کارگاه تنظیم هیجان در تروما',author:'دکتر شهاب یوسفی',cat:'تروما',desc:'آموزش تکنیک‌های تنظیم هیجان برای بازماندگان تروما.',full:'در این کارگاه، تکنیک‌های عملی تنظیم هیجان و آرام‌سازی سیستم عصبی آموزش داده می‌شود.',img:'',regQuestions:[],registrations:[]},
-  {id:3,title:'کارگاه مرزهای سالم در روابط',author:'دکتر شهاب یوسفی',cat:'روابط',desc:'یادگیری نحوه تعیین مرز در روابط صمیمی و خانوادگی.',full:'شرکت‌کنندگان می‌آموزند چگونه بدون احساس گناه، مرزهای سالم در روابط خود برقرار کنند.',img:'',regQuestions:[],registrations:[]}
+  {id:1,title:'کارگاه مواجهه با سوگ',author:'دکتر شهاب یوسفی',cat:'سوگ',desc:'کارگاهی نیم‌روزه برای آشنایی با مراحل سوگواری و مهارت‌های مقابله.',full:'این کارگاه به‌صورت گروهی برگزار می‌شود و شرکت‌کنندگان با تمرین‌های عملی برای عبور از سوگ آشنا می‌شوند.',img:'',regQuestions:[],registrations:[],regOpen:true,offlineEnabled:false,offlinePrice:'',offlineVideos:[]},
+  {id:2,title:'کارگاه تنظیم هیجان در تروما',author:'دکتر شهاب یوسفی',cat:'تروما',desc:'آموزش تکنیک‌های تنظیم هیجان برای بازماندگان تروما.',full:'در این کارگاه، تکنیک‌های عملی تنظیم هیجان و آرام‌سازی سیستم عصبی آموزش داده می‌شود.',img:'',regQuestions:[],registrations:[],regOpen:true,offlineEnabled:false,offlinePrice:'',offlineVideos:[]},
+  {id:3,title:'کارگاه مرزهای سالم در روابط',author:'دکتر شهاب یوسفی',cat:'روابط',desc:'یادگیری نحوه تعیین مرز در روابط صمیمی و خانوادگی.',full:'شرکت‌کنندگان می‌آموزند چگونه بدون احساس گناه، مرزهای سالم در روابط خود برقرار کنند.',img:'',regQuestions:[],registrations:[],regOpen:true,offlineEnabled:false,offlinePrice:'',offlineVideos:[]}
 ];
+let purchasedOffline=[];
+let pendingPurchaseWid=null;
 let comments={history:[],books:[],articles:[],workshops:[],films:[]};
 let grief=[
   {id:1,name:'ناشناس',text:'سه سال از رفتن مادرم می‌گذره.',reply:'سوگ زمان‌بند نیست.',replied:true,showPending:false},
@@ -1071,8 +1087,43 @@ function openDp(type,id){
   setText('dp-date',item.date||'');gi('dp-date').style.display='none';
   setText('dp-desc',item.full||item.desc||item.summary||'');
   const regBox=gi('dp-register-box');
-  if(type==='workshop'){regBox.classList.remove('hidden');}else{regBox.classList.add('hidden');}
+  if(type==='workshop'){
+    regBox.classList.remove('hidden');
+    renderWorkshopRegBox(item);
+  }else{regBox.classList.add('hidden');}
   openOv('detail-page');
+}
+function renderWorkshopRegBox(w){
+  const box=gi('dp-register-box');
+  const purchased=purchasedOffline.includes(w.id);
+  let html='';
+  if(w.offlineEnabled){
+    if(purchased){
+      html+=`<div style="margin-bottom:1rem"><h4 style="font-size:.92rem;margin-bottom:.6rem">🎬 ویدیوهای دوره</h4>${
+        (w.offlineVideos||[]).length?w.offlineVideos.map(v=>`<div style="margin-bottom:1rem"><p style="font-size:.82rem;margin-bottom:.4rem">${esc(v.name)}</p><video src="${v.src}" controls style="width:100%;max-width:480px;border-radius:4px"></video></div>`).join(''):'<p style="color:var(--mid);font-size:.85rem">هنوز ویدیویی برای این دوره آپلود نشده.</p>'
+      }</div>`;
+    } else {
+      html+=`<button class="dp-register-btn" onclick="buyOfflineCourse(${w.id})">خرید دوره آفلاین</button>
+      ${w.offlinePrice?`<p style="margin-top:.6rem;font-size:.88rem;color:var(--mid)">قیمت: ${esc(w.offlinePrice)}</p>`:''}`;
+    }
+  } else if(w.regOpen!==false){
+    html+=`<button class="dp-register-btn" onclick="openRegisterForm()">ثبت‌نام در کارگاه</button>`;
+  } else {
+    html+=`<p style="color:var(--mid);font-size:.88rem">ثبت‌نام عمومی برای این کارگاه بسته شده است.</p>`;
+  }
+  box.innerHTML=html;
+}
+function buyOfflineCourse(wid){
+  const w=workshops.find(x=>x.id===wid);if(!w)return;
+  if(!confirm('برای ادامه به درگاه پرداخت آنلاین هدایت می‌شوید (نمونه‌سازی). ادامه می‌دهید؟'))return;
+  if(!purchasedOffline.includes(wid))purchasedOffline.push(wid);
+  pendingPurchaseWid=wid;
+  closeOv('detail-page');
+  openOv('payment-success-page');
+}
+function goToPurchasedCourse(){
+  closeOv('payment-success-page');
+  if(pendingPurchaseWid)openDp('workshop',pendingPurchaseWid);
 }
 function dpInlineEdit(field){
   if(!isAdmin||!dpCurrent)return;
@@ -1220,6 +1271,13 @@ function saveEdit(){
     } else if(type==='film'){
       films.push({id:Date.now(),title,author:gv('mv-author'),cat:gv('mv-cat'),desc,full:gv('mv-full'),img});
       renderFilms();renderAPFilms();
+    }
+  } else if(t==='wsettings'){
+    const w=workshops.find(x=>x.id===editTarget.wid);
+    if(w){
+      w.regOpen=wsDraft.regOpen;w.offlineEnabled=wsDraft.offlineEnabled;w.offlinePrice=wsDraft.offlinePrice;w.offlineVideos=wsDraft.offlineVideos;
+      renderWorkshops();renderAPWorkshops();
+      if(dpCurrent&&dpCurrent.type==='workshop'&&dpCurrent.id===w.id)openDp('workshop',w.id);
     }
   } else if(t==='qedit'){
     /* editing a single question's label inside the q-builder draft */
@@ -1436,6 +1494,7 @@ function renderAPWorkshops(){
         <div class="ap-ia">
           <button class="edit-b" onclick="editWorkshop(${w.id});closePanel()">ویرایش</button>
           <button class="blue-b" style="border-color:var(--blue);color:var(--blue)" onclick="openQBuilder(${w.id})">سوالات ثبت‌نام</button>
+          <button class="blue-b" style="border-color:var(--gold);color:var(--gold)" onclick="openWorkshopSettings(${w.id})">تنظیمات ثبت‌نام/آفلاین</button>
           <button class="del" onclick="delWorkshop(${w.id})">حذف</button>
         </div>
       </div>
@@ -1531,12 +1590,46 @@ function deleteReg(wid,rid){
 }
 function addWorkshop(){
   const t=gv('w-title'),d=gv('w-desc'),img=gv('w-img-d');if(!t||!d){alert('عنوان و خلاصه الزامی');return}
-  workshops.push({id:Date.now(),title:t,author:gv('w-author'),cat:gv('w-cat'),desc:d,full:gv('w-full'),img,regQuestions:[],registrations:[]});
+  workshops.push({id:Date.now(),title:t,author:gv('w-author'),cat:gv('w-cat'),desc:d,full:gv('w-full'),img,regQuestions:[],registrations:[],regOpen:true,offlineEnabled:false,offlinePrice:'',offlineVideos:[]});
   ['w-title','w-author','w-cat','w-desc','w-full','w-img-d'].forEach(id=>{const el=gi(id);if(el)el.value='';});
   gi('w-img-prev').style.display='none';gi('w-img-ph').style.display='flex';
   renderWorkshops();renderAPWorkshops();alert('کارگاه اضافه شد!');
 }
 function delWorkshop(id){if(confirm('حذف شود؟ تمام ثبت‌نام‌های این کارگاه نیز حذف می‌شوند.')){workshops=workshops.filter(w=>w.id!==id);renderWorkshops();renderAPWorkshops();}}
+
+/* ======= WORKSHOP REGISTRATION / OFFLINE SETTINGS (admin) ======= */
+let wsDraft=null;
+function openWorkshopSettings(wid){
+  const w=workshops.find(x=>x.id===wid);if(!w)return;
+  editTarget={t:'wsettings',wid};
+  wsDraft={regOpen:w.regOpen!==false,offlineEnabled:!!w.offlineEnabled,offlinePrice:w.offlinePrice||'',offlineVideos:(w.offlineVideos||[]).slice()};
+  gi('m-title').textContent='تنظیمات ثبت‌نام و دوره آفلاین';
+  gi('m-sub').textContent=w.title;
+  gi('m-body').innerHTML=`<div id="ws-body"></div>`;
+  renderWsSettingsDraft();
+  gi('edit-modal').classList.remove('hidden');
+}
+function renderWsSettingsDraft(){
+  const c=gi('ws-body');if(!c)return;
+  c.innerHTML=`<label style="display:flex;align-items:center;gap:.5rem;cursor:pointer"><input type="checkbox" id="ws-regopen" ${wsDraft.regOpen?'checked':''} onchange="wsDraft.regOpen=this.checked"/> ثبت‌نام عمومی باز است (در صورت پایان مدت کارگاه، غیرفعال کنید)</label>
+  <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;margin-top:.8rem"><input type="checkbox" id="ws-offline" ${wsDraft.offlineEnabled?'checked':''} onchange="wsDraft.offlineEnabled=this.checked;renderWsSettingsDraft()"/> فعال‌سازی خرید دوره آفلاین (ضبط‌شده) — در صورت فعال بودن، دکمه ثبت‌نام عمومی غیرفعال می‌شود</label>
+  ${wsDraft.offlineEnabled?`<div style="margin-top:.8rem">
+    <label>قیمت دوره آفلاین</label><input id="ws-price" value="${esc(wsDraft.offlinePrice)}" placeholder="مثلاً ۸۵۰,۰۰۰ تومان" onchange="wsDraft.offlinePrice=this.value"/>
+    <label style="margin-top:.6rem">ویدیوهای جلسات</label>
+    <div id="ws-video-list" style="display:flex;flex-direction:column;gap:.4rem;margin-bottom:.5rem">
+      ${wsDraft.offlineVideos.map((v,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;font-size:.8rem;border:1px solid var(--light);border-radius:3px;padding:.4rem .6rem"><span>🎞️ ${esc(v.name)}</span><button type="button" style="border:none;background:none;color:#e53e3e;cursor:pointer" onclick="wsDraft.offlineVideos.splice(${i},1);renderWsSettingsDraft()">حذف</button></div>`).join('')||'<p style="color:var(--mid);font-size:.78rem">ویدیویی آپلود نشده.</p>'}
+    </div>
+    <input type="file" id="ws-video-f" accept="video/*" multiple onchange="wsAddVideos(event)"/>
+  </div>`:''}`;
+}
+function wsAddVideos(e){
+  const files=[...e.target.files];
+  files.forEach(f=>{
+    const url=URL.createObjectURL(f);
+    wsDraft.offlineVideos.push({id:Date.now()+Math.random().toString(36).slice(2,6),name:f.name,src:url});
+  });
+  renderWsSettingsDraft();
+}
 
 /* ======= REGISTRATION QUESTION BUILDER (admin) ======= */
 function openQBuilder(wid){
