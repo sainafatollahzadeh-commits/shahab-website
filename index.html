@@ -25,6 +25,9 @@ a{text-decoration:none;color:inherit}
 .card-del-btn{display:none;position:absolute;top:.5rem;left:.5rem;width:28px;height:28px;border-radius:50%;background:rgba(229,62,62,.92);color:#fff;align-items:center;justify-content:center;font-size:.85rem;cursor:pointer;z-index:6;border:none;line-height:1}
 .card-del-btn:hover{background:#c53030}
 .admin-mode .card-del-btn{display:flex}
+.card-view-btn{display:none;position:absolute;top:.5rem;left:2.6rem;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;align-items:center;justify-content:center;font-size:.85rem;cursor:pointer;z-index:6;border:none;line-height:1}
+.card-view-btn:hover{background:rgba(0,0,0,.8)}
+.admin-mode .card-view-btn{display:flex}
 .add-tile{display:flex;align-items:center;justify-content:center;border:2px dashed var(--light);cursor:pointer;background:#fafafa;transition:border-color .2s,background .2s}
 .add-tile:hover{border-color:var(--gold);background:#fffdf8}
 .add-tile-inner{text-align:center;color:var(--mid)}
@@ -1318,7 +1321,7 @@ const bkBg=id=>['#e8e4dc','#dce8e4','#dcdce8','#e8dce4'][(id-1)%4];
 function renderBooks(){
   const g=gi('books-grid');
   let html=books.map(b=>`<div class="book-card reveal" onclick="${isAdmin?`editBook(${b.id})`:`openDp('book',${b.id})`}">
-    <div class="book-cover eimg" style="background:${bkBg(b.id)}">${b.img?`<img src="${b.img}"/>`:`<div class="book-cover-ph">📚</div>`}<div class="eimg-badge" onclick="event.stopPropagation();if(isAdmin)editBook(${b.id})"><span>📷</span><span>ویرایش</span></div>${isAdmin?`<button class="card-del-btn" onclick="event.stopPropagation();delBook(${b.id})" title="حذف">✕</button>`:''}</div>
+    <div class="book-cover eimg" style="background:${bkBg(b.id)}">${b.img?`<img src="${b.img}"/>`:`<div class="book-cover-ph">📚</div>`}<div class="eimg-badge" onclick="event.stopPropagation();if(isAdmin)editBook(${b.id})"><span>📷</span><span>ویرایش</span></div>${isAdmin?`<button class="card-view-btn" onclick="event.stopPropagation();openDp('book',${b.id})" title="مشاهده صفحه عمومی">👁</button><button class="card-del-btn" onclick="event.stopPropagation();delBook(${b.id})" title="حذف">✕</button>`:''}</div>
     <div class="book-body"><p class="book-tag">${b.cat}</p><h3 class="book-title">${b.title}</h3><p class="book-author">${b.author}</p><p class="book-desc">${b.desc}</p></div>
   </div>`).join('');
   if(isAdmin)html+=addTileHtml('book','افزودن کتاب جدید','book-card',240);
@@ -1353,7 +1356,7 @@ function delBook(id){if(confirm('حذف شود؟')){books=books.filter(b=>b.id!=
 function renderFilms(){
   const g=gi('films-grid');if(!g)return;
   let html=films.map(f=>`<div class="book-card reveal" onclick="${isAdmin?`editFilm(${f.id})`:`openDp('film',${f.id})`}">
-    <div class="book-cover eimg" style="background:${bkBg(f.id)}">${f.img?`<img src="${f.img}"/>`:`<div class="book-cover-ph">🎬</div>`}<div class="eimg-badge" onclick="event.stopPropagation();if(isAdmin)editFilm(${f.id})"><span>📷</span><span>ویرایش</span></div>${isAdmin?`<button class="card-del-btn" onclick="event.stopPropagation();delFilm(${f.id})" title="حذف">✕</button>`:''}</div>
+    <div class="book-cover eimg" style="background:${bkBg(f.id)}">${f.img?`<img src="${f.img}"/>`:`<div class="book-cover-ph">🎬</div>`}<div class="eimg-badge" onclick="event.stopPropagation();if(isAdmin)editFilm(${f.id})"><span>📷</span><span>ویرایش</span></div>${isAdmin?`<button class="card-view-btn" onclick="event.stopPropagation();openDp('film',${f.id})" title="مشاهده صفحه عمومی">👁</button><button class="card-del-btn" onclick="event.stopPropagation();delFilm(${f.id})" title="حذف">✕</button>`:''}</div>
     <div class="book-body"><p class="book-tag">${f.cat}</p><h3 class="book-title">${f.title}</h3><p class="book-author">${f.author}</p><p class="book-desc">${f.desc}</p></div>
   </div>`).join('');
   if(isAdmin)html+=addTileHtml('film','افزودن تحلیل فیلم جدید','book-card',240);
@@ -1441,7 +1444,7 @@ function delComment(key,id){
 function renderArticles(){
   const g=gi('articles-grid');
   let html=articles.map(a=>`<div class="article-card reveal" onclick="${isAdmin?`editArticle(${a.id})`:`openDp('article',${a.id})`}">
-    <div class="art-img eimg">${a.img?`<img src="${a.img}"/>`:`<div class="art-img-ph">📝</div>`}<div class="eimg-badge" onclick="event.stopPropagation();if(isAdmin)editArticle(${a.id})"><span>📷</span><span>ویرایش</span></div>${isAdmin?`<button class="card-del-btn" onclick="event.stopPropagation();delArticle(${a.id})" title="حذف">✕</button>`:''}</div>
+    <div class="art-img eimg">${a.img?`<img src="${a.img}"/>`:`<div class="art-img-ph">📝</div>`}<div class="eimg-badge" onclick="event.stopPropagation();if(isAdmin)editArticle(${a.id})"><span>📷</span><span>ویرایش</span></div>${isAdmin?`<button class="card-view-btn" onclick="event.stopPropagation();openDp('article',${a.id})" title="مشاهده صفحه عمومی">👁</button><button class="card-del-btn" onclick="event.stopPropagation();delArticle(${a.id})" title="حذف">✕</button>`:''}</div>
     <div class="art-body"><p class="art-date">${a.date}</p><h3 class="art-title">${a.title}</h3><p class="art-summary">${a.summary}</p></div>
   </div>`).join('');
   if(isAdmin)html+=addTileHtml('article','افزودن مقاله جدید','article-card',220);
@@ -1476,7 +1479,7 @@ function delArticle(id){if(confirm('حذف شود؟')){articles=articles.filter(
 function renderPsychoHistory(){
   const g=gi('psycho-history-grid');
   let html=psychoHistory.map(a=>`<div class="article-card reveal" onclick="${isAdmin?`editPsychoHistory(${a.id})`:`openDp('history',${a.id})`}">
-    <div class="art-img eimg">${a.img?`<img src="${a.img}"/>`:`<div class="art-img-ph">📜</div>`}<div class="eimg-badge" onclick="event.stopPropagation();if(isAdmin)editPsychoHistory(${a.id})"><span>📷</span><span>ویرایش</span></div>${isAdmin?`<button class="card-del-btn" onclick="event.stopPropagation();delPsychoHistory(${a.id})" title="حذف">✕</button>`:''}</div>
+    <div class="art-img eimg">${a.img?`<img src="${a.img}"/>`:`<div class="art-img-ph">📜</div>`}<div class="eimg-badge" onclick="event.stopPropagation();if(isAdmin)editPsychoHistory(${a.id})"><span>📷</span><span>ویرایش</span></div>${isAdmin?`<button class="card-view-btn" onclick="event.stopPropagation();openDp('history',${a.id})" title="مشاهده صفحه عمومی">👁</button><button class="card-del-btn" onclick="event.stopPropagation();delPsychoHistory(${a.id})" title="حذف">✕</button>`:''}</div>
     <div class="art-body"><p class="art-date">${a.date}</p><h3 class="art-title">${a.title}</h3><p class="art-summary">${a.summary}</p></div>
   </div>`).join('');
   if(isAdmin)html+=addTileHtml('history','افزودن رویداد جدید','article-card',220);
@@ -1511,7 +1514,7 @@ function delPsychoHistory(id){if(confirm('حذف شود؟')){psychoHistory=psych
 function renderWorkshops(){
   const g=gi('workshops-grid');
   let html=workshops.map(w=>`<div class="book-card reveal" onclick="${isAdmin?`editWorkshop(${w.id})`:`openDp('workshop',${w.id})`}">
-    <div class="book-cover eimg" style="background:${bkBg(w.id)}">${w.img?`<img src="${w.img}"/>`:`<div class="book-cover-ph">🛠️</div>`}<div class="eimg-badge" onclick="event.stopPropagation();if(isAdmin)editWorkshop(${w.id})"><span>📷</span><span>ویرایش</span></div>${isAdmin?`<button class="card-del-btn" onclick="event.stopPropagation();delWorkshop(${w.id})" title="حذف">✕</button>`:''}</div>
+    <div class="book-cover eimg" style="background:${bkBg(w.id)}">${w.img?`<img src="${w.img}"/>`:`<div class="book-cover-ph">🛠️</div>`}<div class="eimg-badge" onclick="event.stopPropagation();if(isAdmin)editWorkshop(${w.id})"><span>📷</span><span>ویرایش</span></div>${isAdmin?`<button class="card-view-btn" onclick="event.stopPropagation();openDp('workshop',${w.id})" title="مشاهده صفحه عمومی">👁</button><button class="card-del-btn" onclick="event.stopPropagation();delWorkshop(${w.id})" title="حذف">✕</button>`:''}</div>
     <div class="book-body"><p class="book-tag">${w.cat}</p><h3 class="book-title">${w.title}</h3><p class="book-author">${w.author}</p><p class="book-desc">${w.desc}</p></div>
   </div>`).join('');
   if(isAdmin)html+=addTileHtml('workshop','افزودن کارگاه جدید','book-card',240);
