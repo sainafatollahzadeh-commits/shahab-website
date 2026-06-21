@@ -51,6 +51,8 @@ a{text-decoration:none;color:inherit}
 .lbox h3{font-size:1.05rem;margin-bottom:1.4rem;font-weight:600}
 .lbox input{width:100%;padding:.72rem 1rem;border:1px solid var(--light);border-radius:3px;font-family:'Vazirmatn',sans-serif;font-size:.9rem;margin-bottom:.9rem;text-align:right;direction:rtl}
 .lbox button{width:100%;background:var(--black);color:#fff;border:none;padding:.78rem;border-radius:3px;font-family:'Vazirmatn',sans-serif;font-size:.9rem;cursor:pointer}
+.lbox-cancel{background:transparent !important;color:var(--mid) !important;margin-top:.6rem;border:1px solid var(--light) !important}
+.lbox-cancel:hover{color:var(--black) !important;border-color:var(--black) !important}
 .lerr{color:#e53e3e;font-size:.8rem;margin-top:.4rem}
 /* admin panel */
 #admin-panel{position:fixed;inset:0;background:#f0f0f0;z-index:400;overflow-y:auto;direction:rtl}
@@ -107,8 +109,8 @@ a{text-decoration:none;color:inherit}
 .mac .save{background:var(--black);color:#fff}.mac .cancel{background:#f0f0f0}
 /* nav */
 nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.05rem 3.5rem;border-bottom:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.97);backdrop-filter:blur(8px)}
-.nav-logo{font-size:1.02rem;font-weight:600;white-space:nowrap;flex-shrink:0}
-.nav-links{display:flex;gap:1.8rem;align-items:center}
+.nav-logo{font-size:1.02rem;font-weight:600;white-space:nowrap;flex-shrink:0;margin-inline-end:2.2rem}
+.nav-links{display:flex;gap:1.8rem;align-items:center;flex:1;min-width:0}
 .nav-links-right{display:flex;gap:1.8rem;align-items:center;flex-wrap:wrap}
 .nav-links-right a{font-size:.84rem;color:var(--mid);transition:color .2s}
 .nav-links-right a:hover{color:var(--black)}
@@ -372,11 +374,12 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
 <body>
 
 <!-- LOGIN -->
-<div id="login-overlay" class="hidden">
+<div id="login-overlay" class="hidden" onclick="if(event.target===this)cancelLogin()">
   <div class="lbox">
     <h3>ورود به پنل مدیریت</h3>
-    <input type="password" id="pw-input" placeholder="رمز عبور" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <input type="password" id="pw-input" placeholder="رمز عبور" onkeydown="if(event.key==='Enter')doLogin();if(event.key==='Escape')cancelLogin()"/>
     <button onclick="doLogin()">ورود</button>
+    <button class="lbox-cancel" onclick="cancelLogin()">انصراف</button>
     <p class="lerr hidden" id="login-err">رمز عبور اشتباه است</p>
   </div>
 </div>
@@ -659,7 +662,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
 <!-- ===== SITE ===== -->
 <nav>
   <div class="nav-logo">دکتر شهاب یوسفی</div>
-  <div class="nav-links" style="width:100%;justify-content:space-between">
+  <div class="nav-links" style="justify-content:space-between">
     <div class="nav-links-right">
       <a href="#about">درباره من</a>
       <a href="#" onclick="openOv('history-page');return false;">تاریخ روانکاوی</a>
@@ -836,6 +839,7 @@ document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
 /* ======= AUTH ======= */
 function showLogin(){gi('login-overlay').classList.remove('hidden');setTimeout(()=>gi('pw-input').focus(),80)}
+function cancelLogin(){gi('login-overlay').classList.add('hidden');gi('pw-input').value='';gi('login-err').classList.add('hidden');}
 function doLogin(){
   if(gi('pw-input').value===PASS){
     isAdmin=true;gi('login-overlay').classList.add('hidden');gi('admin-bar').classList.remove('hidden');
