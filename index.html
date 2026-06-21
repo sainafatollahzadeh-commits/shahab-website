@@ -35,6 +35,7 @@ a{text-decoration:none;color:inherit}
 .page-notes-box textarea{width:100%;min-height:90px;padding:.9rem 1.1rem;border:1px solid var(--light);border-radius:6px;font-family:'Vazirmatn',sans-serif;font-size:.88rem;line-height:1.9;direction:rtl;text-align:right;resize:vertical;background:#fff;color:#4a5568}
 .page-notes-box textarea::placeholder{color:var(--mid)}
 .page-notes-box textarea:focus{outline:none;border-color:var(--blue)}
+.page-notes-box textarea[readonly]{background:#fafafa;cursor:default}
 /* overlays */
 .overlay{position:fixed;inset:0;background:#fff;z-index:300;overflow-y:auto;direction:rtl}
 .ov-header{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 3rem;border-bottom:1px solid var(--light);position:sticky;top:0;background:#fff;z-index:10}
@@ -109,7 +110,7 @@ a{text-decoration:none;color:inherit}
 .mac .save{background:var(--black);color:#fff}.mac .cancel{background:#f0f0f0}
 /* nav */
 nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.05rem 3.5rem;border-bottom:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.97);backdrop-filter:blur(8px)}
-.nav-logo{font-size:1.02rem;font-weight:600;white-space:nowrap;flex-shrink:0;margin-inline-end:2.2rem}
+.nav-logo{font-size:1.32rem;font-weight:800;white-space:nowrap;flex-shrink:0;margin-inline-end:2.2rem;letter-spacing:.2px}
 .nav-links{display:flex;gap:1.8rem;align-items:center;flex:1;min-width:0}
 .nav-links-right{display:flex;gap:1.8rem;align-items:center;flex-wrap:wrap}
 .nav-links-right a{font-size:.84rem;color:var(--mid);transition:color .2s}
@@ -133,8 +134,10 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 #hero-photo-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#e8e4dc,#d4c9b8);gap:1rem}
 .photo-upload-btn{position:absolute;bottom:1rem;left:1rem;background:rgba(255,255,255,.92);border:1px solid var(--light);padding:.45rem .9rem;border-radius:3px;font-size:.75rem;cursor:pointer;font-family:'Vazirmatn',sans-serif;z-index:5;display:none}
 .admin-mode .photo-upload-btn{display:block}
-.name-badge{position:absolute;bottom:-3.4rem;left:50%;transform:translateX(-50%);width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.96);border:2.5px solid var(--light);box-shadow:0 6px 24px rgba(0,0,0,.14);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2;gap:3px}
-.name-badge span{font-size:1.32rem;font-weight:800;color:var(--black);line-height:1.3;font-family:'Poppins','Vazirmatn',sans-serif;letter-spacing:.3px}
+.about-photo-frame{width:140px;height:140px;border-radius:8px;position:relative;overflow:hidden;margin:1.2rem 0;border:1px solid var(--light)}
+.about-photo-frame .photo-upload-btn{bottom:.4rem;left:.4rem;padding:.3rem .55rem;font-size:.65rem}
+#about-photo{width:100%;height:100%;object-fit:cover;display:none}
+#about-photo-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#e8e4dc,#d4c9b8);gap:.4rem}
 /* marquee */
 .marquee-bar{background:var(--black);color:#fff;padding:1rem 0;overflow:hidden;white-space:nowrap;direction:ltr}
 .marquee-track{display:inline-flex;animation:marquee 25s linear infinite}
@@ -578,7 +581,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
   </div>
   <section class="articles" style="padding-top:3rem">
     <div class="section-header"><div class="section-title-row"><div class="clock-anim" aria-hidden="true"></div><h2 class="section-title">تاریخ روانکاوی</h2></div></div>
-    <div class="page-notes-box"><textarea id="notes-history" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.history=this.value"></textarea></div>
+    <div class="page-notes-box"><textarea id="notes-history" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.history=this.value" readonly></textarea></div>
     <div class="articles-grid" id="psycho-history-grid"></div>
   </section>
 </div>
@@ -591,7 +594,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
   </div>
   <section class="books" style="padding-top:3rem">
     <div class="section-header"><div class="section-title-row"><div class="book-anim" aria-hidden="true"><div class="ba-half ba-left"></div><div class="ba-half ba-right"></div><div class="ba-page"></div></div><h2 class="section-title">خلاصه کتاب‌ها</h2></div></div>
-    <div class="page-notes-box"><textarea id="notes-books" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.books=this.value"></textarea></div>
+    <div class="page-notes-box"><textarea id="notes-books" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.books=this.value" readonly></textarea></div>
     <div class="books-grid" id="books-grid"></div>
   </section>
 </div>
@@ -604,7 +607,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
   </div>
   <section class="articles" style="padding-top:3rem">
     <div class="section-header"><div class="section-title-row"><div class="pages-anim" aria-hidden="true"><div class="pa-staple"></div><div class="pa-sheet pa-1"></div><div class="pa-sheet pa-2"></div></div><h2 class="section-title">مقالات و یادداشت‌ها</h2></div></div>
-    <div class="page-notes-box"><textarea id="notes-articles" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.articles=this.value"></textarea></div>
+    <div class="page-notes-box"><textarea id="notes-articles" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.articles=this.value" readonly></textarea></div>
     <div class="articles-grid" id="articles-grid"></div>
   </section>
 </div>
@@ -617,7 +620,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
   </div>
   <section class="books" style="padding-top:3rem">
     <div class="section-header"><div class="section-title-row"><div class="write-anim" aria-hidden="true"><div class="wa-paper"></div><div class="wa-line wa-l1"><span></span></div><div class="wa-line wa-l2"><span></span></div><div class="wa-line wa-l3"><span></span></div><div class="wa-pen"></div></div><h2 class="section-title">کارگاه‌ها</h2></div></div>
-    <div class="page-notes-box"><textarea id="notes-workshops" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.workshops=this.value"></textarea></div>
+    <div class="page-notes-box"><textarea id="notes-workshops" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.workshops=this.value" readonly></textarea></div>
     <div class="books-grid" id="workshops-grid"></div>
   </section>
 </div>
@@ -698,7 +701,6 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
       <button class="photo-upload-btn" onclick="gi('hero-file').click()">📷 تغییر عکس</button>
     </div>
     <input type="file" id="hero-file" accept="image/*" style="display:none" onchange="handleHero(event)"/>
-    <div class="name-badge"><span>شهاب</span><span>یوسفی</span></div>
   </div>
 </section>
 
@@ -753,7 +755,12 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
   </div>
   <div class="intro-text">
     <h2 class="editable" onclick="inlineEdit('about-h')" id="about-heading">فضایی برای باری که سال‌هاست با خود حمل می‌کنید.</h2>
-    <p class="editable" onclick="inlineEdit('about-p1')" id="about-p1">دکتر شهاب یوسفی روان‌درمانگر دارای مجوز با بیش از ۱۵ سال تجربه در کمک به افراد برای گذر از فقدان عمیق، تروما، و پیچیدگی‌های شخصیت است.</p>
+    <div class="about-photo-frame">
+      <img id="about-photo" src="" alt="دکتر شهاب یوسفی"/>
+      <div id="about-photo-ph"><div style="font-size:2.2rem;color:rgba(100,80,60,.25)">👤</div><p style="font-size:.78rem;color:rgba(80,60,40,.4)">عکس پروفایل</p></div>
+      <button class="photo-upload-btn" onclick="gi('about-file').click()">📷 تغییر عکس</button>
+    </div>
+    <input type="file" id="about-file" accept="image/*" style="display:none" onchange="handleAboutPhoto(event)"/>
     <p class="editable" onclick="inlineEdit('about-p2')" id="about-p2">او معتقد است هر انسانی داستانی دارد که ارزش شنیدن دارد — و با حمایت درست، حتی سخت‌ترین فصل‌های زندگی می‌توانند منبع رشد و معنا شوند.</p>
     <button class="btn-ghost" onclick="openBio()" style="margin-top:1rem">بیوگرافی کامل</button>
   </div>
@@ -842,10 +849,16 @@ function doLogin(){
   if(gi('pw-input').value===PASS){
     isAdmin=true;gi('login-overlay').classList.add('hidden');gi('admin-bar').classList.remove('hidden');
     gi('pw-input').value='';gi('login-err').classList.add('hidden');
-    document.body.classList.add('admin-mode');renderAll();
+    document.body.classList.add('admin-mode');setNotesReadonly();renderAll();
   } else gi('login-err').classList.remove('hidden');
 }
-function doLogout(){isAdmin=false;gi('admin-bar').classList.add('hidden');gi('admin-panel').classList.add('hidden');document.body.classList.remove('admin-mode');renderAll();}
+function doLogout(){isAdmin=false;gi('admin-bar').classList.add('hidden');gi('admin-panel').classList.add('hidden');document.body.classList.remove('admin-mode');setNotesReadonly();renderAll();}
+function setNotesReadonly(){
+  ['history','books','articles','workshops'].forEach(n=>{
+    const el=gi('notes-'+n);if(!el)return;
+    if(isAdmin)el.removeAttribute('readonly');else el.setAttribute('readonly','readonly');
+  });
+}
 function openPanel(){
   gi('admin-panel').classList.remove('hidden');
   renderAPBooks();renderAPArticles();renderAPPsychoHistory();renderAPWorkshops();renderAPGrief();
@@ -970,6 +983,12 @@ function dpImgUpload(e){
     const src=ev.target.result;gi('dp-img').src=src;gi('dp-img').style.display='block';gi('dp-img-ph').style.display='none';
     const item=getDpItem(dpCurrent.type,dpCurrent.id);
     if(item){item.img=src;renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();}
+  };r.readAsDataURL(f);
+}
+function handleAboutPhoto(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=ev=>{
+    const img=gi('about-photo');img.src=ev.target.result;img.style.display='block';gi('about-photo-ph').style.display='none';
   };r.readAsDataURL(f);
 }
 
@@ -1580,6 +1599,7 @@ function setText(id,v){const el=gi(id);if(el)el.textContent=v}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
 /* INIT */
+setNotesReadonly();
 renderAll();
 (function(){const tg=gi('lnk2-tg'),li=gi('lnk2-li');if(tg)tg.href=S.tg;if(li)li.href=S.li;})();
 </script>
