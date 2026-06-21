@@ -210,6 +210,16 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .chat-anim .ca-3::after{left:-2px;background:#fff}
 @keyframes caPop{0%{opacity:0;transform:translateY(4px) scale(.8)}10%,75%{opacity:1;transform:translateY(0) scale(1)}90%,100%{opacity:0;transform:translateY(0) scale(1)}}
 
+/* spinning film strip (film analysis page) */
+.film-anim{position:relative;width:58px;height:46px;flex-shrink:0;filter:drop-shadow(0 2px 3px rgba(0,0,0,.12));overflow:hidden;border:1.5px solid var(--black);border-radius:3px;background:#fff}
+.film-anim .fa-strip{position:absolute;top:0;left:0;width:200%;height:100%;display:flex;animation:faScroll 3.2s linear infinite}
+.film-anim .fa-frame{position:relative;width:29px;height:100%;flex-shrink:0;border-right:1.5px solid var(--black)}
+.film-anim .fa-frame::before,.film-anim .fa-frame::after{content:'';position:absolute;left:3px;right:3px;height:5px;background:var(--black);border-radius:1px}
+.film-anim .fa-frame::before{top:3px}
+.film-anim .fa-frame::after{bottom:3px}
+.film-anim .fa-pic{position:absolute;top:11px;bottom:11px;left:5px;right:5px;border:1px solid var(--black);border-radius:1px}
+@keyframes faScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
 .intro-text h2{font-size:clamp(1.7rem,2.4vw,2.2rem);line-height:1.5;font-weight:700;margin-bottom:1.1rem}
 .intro-text p{font-size:1.05rem;line-height:2;color:var(--mid);font-weight:300;margin-bottom:.75rem}
 /* topics (legacy, unused styles kept harmlessly) */
@@ -402,6 +412,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
       <button class="ap-tab" onclick="switchTab('articles',this)">📝 مقالات</button>
       <button class="ap-tab" onclick="switchTab('history',this)">📜 تاریخ روانکاوی</button>
       <button class="ap-tab" onclick="switchTab('workshops',this)">🛠️ کارگاه‌ها</button>
+      <button class="ap-tab" onclick="switchTab('films',this)">🎬 تحلیل فیلم</button>
       <button class="ap-tab" onclick="switchTab('grief',this)">💬 پیام‌ها</button>
       <button class="ap-tab" onclick="switchTab('site',this)">🌐 تنظیمات</button>
     </div>
@@ -460,6 +471,20 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
         <label>متن کامل (صفحه جزئیات)</label><textarea id="w-full" placeholder="متن کامل‌تر..." style="min-height:100px"></textarea>
       </div><button class="abtn" onclick="addWorkshop()">+ افزودن</button></div>
       <div class="aps"><h3>کارگاه‌های موجود و ثبت‌نام‌ها</h3><div class="ap-items" id="ap-workshops-list"></div></div>
+    </div>
+    <!-- FILMS -->
+    <div id="tab-films" class="hidden">
+      <div class="aps"><h3>افزودن تحلیل فیلم جدید</h3><div class="af">
+        <label class="req">تصویر</label>
+        <div class="iup" onclick="gi('f-img-f').click()"><img id="f-img-prev" src="" style="display:none"/><div id="f-img-ph" class="iup-lbl"><span class="ico">🖼️</span><span>آپلود تصویر</span></div></div>
+        <input type="file" id="f-img-f" accept="image/*" style="display:none" onchange="prevImg(this,'f-img-prev','f-img-ph','f-img-d')"/><input type="hidden" id="f-img-d"/>
+        <label class="req">عنوان فیلم</label><input id="f-title" placeholder="نام فیلم"/>
+        <label>کارگردان</label><input id="f-author" placeholder="نام کارگردان"/>
+        <label>دسته‌بندی</label><input id="f-cat" placeholder="سوگ، تروما ..."/>
+        <label class="req">خلاصه (کارت)</label><textarea id="f-desc" placeholder="خلاصه کوتاه..."></textarea>
+        <label>متن کامل (صفحه جزئیات)</label><textarea id="f-full" placeholder="تحلیل کامل..." style="min-height:100px"></textarea>
+      </div><button class="abtn" onclick="addFilm()">+ افزودن</button></div>
+      <div class="aps"><h3>تحلیل‌های موجود</h3><div class="ap-items" id="ap-films-list"></div></div>
     </div>
     <!-- GRIEF -->
     <div id="tab-grief" class="hidden">
@@ -625,6 +650,20 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
   </section>
 </div>
 
+<!-- FILM ANALYSIS PAGE -->
+<div id="film-page" class="overlay hidden">
+  <div class="ov-header">
+    <div class="ov-back" onclick="closeOv('film-page')">← بازگشت</div>
+    <span style="font-size:.82rem;color:var(--mid)">تحلیل فیلم</span>
+  </div>
+  <section class="books" style="padding-top:3rem">
+    <div class="section-header"><div class="section-title-row"><div class="film-anim" aria-hidden="true"><div class="fa-strip"><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div></div></div><h2 class="section-title">تحلیل فیلم</h2></div></div>
+    <div class="page-notes-box"><textarea id="notes-films" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.films=this.value" readonly></textarea></div>
+    <div class="books-grid" id="films-grid"></div>
+    <div id="comments-films"></div>
+  </section>
+</div>
+
 <!-- GRIEF PAGE -->
 <div id="grief-page" class="overlay hidden">
   <div class="ov-header">
@@ -672,6 +711,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
       <a href="#" onclick="openOv('books-page');return false;">کتاب‌ها</a>
       <a href="#" onclick="openOv('articles-page');return false;">مقالات</a>
       <a href="#" onclick="openOv('workshops-page');return false;">کارگاه‌ها</a>
+      <a href="#" onclick="openOv('film-page');return false;">تحلیل فیلم</a>
       <a href="#" onclick="openOv('grief-page');return false;">اشتراک‌گذاری</a>
       <a href="#" onclick="openStatusPage();return false;">پیگیری ثبت‌نام</a>
     </div>
@@ -815,6 +855,9 @@ let books=[
   {id:2,title:'بدن حساب می‌کند',author:'بسل ون در کولک',cat:'تروما',desc:'پژوهشی درباره تروما در بدن.',full:'چگونه تروما در بدن ذخیره می‌شود و چطور می‌توان به بهبودی رسید.',img:''},
   {id:3,title:'مرز بین من و تو',author:'نجمه دهقانی',cat:'اختلالات شخصیت',desc:'راهنمای اختلال شخصیت مرزی.',full:'راهنمای عملی برای اختلال شخصیت مرزی و ایجاد ثبات عاطفی.',img:''}
 ];
+let films=[
+  {id:1,title:'افسانه‌های خشم',author:'کارگردان نمونه',cat:'سوگ',desc:'تحلیلی روان‌شناختی از مراحل سوگواری در این فیلم.',full:'تحلیل کامل فیلم از منظر روان‌درمانی و مراحل پردازش فقدان.',img:''}
+];
 let articles=[
   {id:1,title:'وقتی غم نمی‌رود',date:'۱۴۰۵/۰۲/۱۰',summary:'سوگ پیچیده زمانی رخ می‌دهد که فرآیند طبیعی اندوه متوقف می‌شود.',full:'سوگ پیچیده وضعیتی جدی است که نیاز به درمان تخصصی دارد.',img:'',link:''},
   {id:2,title:'تروما و حافظه',date:'۱۴۰۵/۰۱/۲۵',summary:'تروما در سیستم عصبی و بدن ذخیره می‌شود.',full:'تحقیقات نوروبیولوژی اثرات عمیق تروما بر مغز را نشان می‌دهند.',img:'',link:''},
@@ -854,19 +897,19 @@ function doLogin(){
 }
 function doLogout(){isAdmin=false;gi('admin-bar').classList.add('hidden');gi('admin-panel').classList.add('hidden');document.body.classList.remove('admin-mode');setNotesReadonly();renderAll();}
 function setNotesReadonly(){
-  ['history','books','articles','workshops'].forEach(n=>{
+  ['history','books','articles','workshops','films'].forEach(n=>{
     const el=gi('notes-'+n);if(!el)return;
     if(isAdmin)el.removeAttribute('readonly');else el.setAttribute('readonly','readonly');
   });
 }
 function openPanel(){
   gi('admin-panel').classList.remove('hidden');
-  renderAPBooks();renderAPArticles();renderAPPsychoHistory();renderAPWorkshops();renderAPGrief();
+  renderAPBooks();renderAPArticles();renderAPPsychoHistory();renderAPWorkshops();renderAPFilms();renderAPGrief();
   loadSiteForm();
 }
 function closePanel(){gi('admin-panel').classList.add('hidden')}
 function switchTab(n,el){
-  ['books','articles','history','workshops','grief','site'].forEach(t=>gi('tab-'+t).classList.add('hidden'));
+  ['books','articles','history','workshops','films','grief','site'].forEach(t=>gi('tab-'+t).classList.add('hidden'));
   document.querySelectorAll('.ap-tab').forEach(b=>b.classList.remove('active'));
   gi('tab-'+n).classList.remove('hidden');el.classList.add('active');
 }
@@ -890,13 +933,13 @@ function addTileHtml(type,label,cardClass,minH){
 function openNewItemModal(type){
   if(!isAdmin)return;
   editTarget={t:'new',type};
-  const titles={book:'افزودن کتاب جدید',article:'افزودن مقاله جدید',history:'افزودن رویداد تاریخی جدید',workshop:'افزودن کارگاه جدید'};
+  const titles={book:'افزودن کتاب جدید',article:'افزودن مقاله جدید',history:'افزودن رویداد تاریخی جدید',workshop:'افزودن کارگاه جدید',film:'افزودن تحلیل فیلم جدید'};
   gi('m-title').textContent=titles[type]||'افزودن مورد جدید';
   gi('m-sub').textContent='';
   let fields=`<label>تصویر</label><div class="iup" style="height:100px" onclick="gi('m-n-f').click()"><img id="m-n-prev" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/><div id="m-n-ph" class="iup-lbl"><span class="ico">🖼️</span><span>آپلود</span></div></div><input type="file" id="m-n-f" accept="image/*" style="display:none" onchange="prevImg(this,'m-n-prev','m-n-ph','mv-img')"/><input type="hidden" id="mv-img" value=""/>
   <label class="req">عنوان</label><input id="mv-title" placeholder="عنوان"/>`;
-  if(type==='book'||type==='workshop'){
-    fields+=`<label>${type==='book'?'نویسنده':'مدرس'}</label><input id="mv-author" placeholder="${type==='book'?'نام نویسنده':'نام مدرس'}"/>
+  if(type==='book'||type==='workshop'||type==='film'){
+    fields+=`<label>${type==='book'?'نویسنده':type==='film'?'کارگردان':'مدرس'}</label><input id="mv-author" placeholder="${type==='book'?'نام نویسنده':type==='film'?'نام کارگردان':'نام مدرس'}"/>
     <label>دسته‌بندی</label><input id="mv-cat" placeholder="دسته‌بندی"/>`;
   } else {
     fields+=`<label>تاریخ</label><input id="mv-date" placeholder="تاریخ"/>`;
@@ -946,17 +989,18 @@ function getDpItem(type,id){
   if(type==='article')return articles.find(x=>x.id===id);
   if(type==='history')return psychoHistory.find(x=>x.id===id);
   if(type==='workshop')return workshops.find(x=>x.id===id);
+  if(type==='film')return films.find(x=>x.id===id);
   return null;
 }
 function openDp(type,id){
   const item=getDpItem(type,id);if(!item)return;
   dpCurrent={type,id};
-  const breadcrumbs={book:'کتاب‌ها',article:'مقالات',history:'تاریخ روانکاوی',workshop:'کارگاه‌ها'};
+  const breadcrumbs={book:'کتاب‌ها',article:'مقالات',history:'تاریخ روانکاوی',workshop:'کارگاه‌ها',film:'تحلیل فیلم'};
   gi('dp-breadcrumb').textContent=breadcrumbs[type]||'';
   const img=gi('dp-img'),ph=gi('dp-img-ph');
   if(item.img){img.src=item.img;img.style.display='block';ph.style.display='none';}
-  else{img.style.display='none';ph.style.display='flex';const icons={book:'📚',article:'📝',history:'📜',workshop:'🛠️'};ph.textContent=icons[type]||'📄';}
-  setText('dp-tag',(type==='book'||type==='workshop')?item.cat:item.date);
+  else{img.style.display='none';ph.style.display='flex';const icons={book:'📚',article:'📝',history:'📜',workshop:'🛠️',film:'🎬'};ph.textContent=icons[type]||'📄';}
+  setText('dp-tag',(type==='book'||type==='workshop'||type==='film')?item.cat:item.date);
   setText('dp-title',item.title);
   setText('dp-author',item.author||'');gi('dp-author').style.display=item.author?'block':'none';
   setText('dp-date',item.date||'');gi('dp-date').style.display='none';
@@ -968,7 +1012,7 @@ function openDp(type,id){
 function dpInlineEdit(field){
   if(!isAdmin||!dpCurrent)return;
   const item=getDpItem(dpCurrent.type,dpCurrent.id);if(!item)return;
-  const fieldMap={tag:{k:(dpCurrent.type==='book'||dpCurrent.type==='workshop')?'cat':'date',lbl:'دسته‌بندی/تاریخ',long:false},title:{k:'title',lbl:'عنوان',long:false},author:{k:'author',lbl:'نویسنده/مدرس',long:false},date:{k:'date',lbl:'تاریخ',long:false},desc:{k:'full',lbl:'متن کامل',long:true}};
+  const fieldMap={tag:{k:(dpCurrent.type==='book'||dpCurrent.type==='workshop'||dpCurrent.type==='film')?'cat':'date',lbl:'دسته‌بندی/تاریخ',long:false},title:{k:'title',lbl:'عنوان',long:false},author:{k:'author',lbl:'نویسنده/مدرس',long:false},date:{k:'date',lbl:'تاریخ',long:false},desc:{k:'full',lbl:'متن کامل',long:true}};
   const fm=fieldMap[field];if(!fm)return;
   editTarget={t:'dp',dpType:dpCurrent.type,dpId:dpCurrent.id,k:fm.k,field};
   gi('m-title').textContent='ویرایش';gi('m-sub').textContent=fm.lbl;
@@ -982,7 +1026,7 @@ function dpImgUpload(e){
   const r=new FileReader();r.onload=ev=>{
     const src=ev.target.result;gi('dp-img').src=src;gi('dp-img').style.display='block';gi('dp-img-ph').style.display='none';
     const item=getDpItem(dpCurrent.type,dpCurrent.id);
-    if(item){item.img=src;renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();}
+    if(item){item.img=src;renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();renderFilms();}
   };r.readAsDataURL(f);
 }
 function handleAboutPhoto(e){
@@ -1056,7 +1100,7 @@ function saveEdit(){
     else m.s(gv('mv'));
   } else if(t==='dp'){
     const item=getDpItem(editTarget.dpType,editTarget.dpId);
-    if(item){item[editTarget.k]=gv('mv');setText('dp-'+editTarget.field,item[editTarget.k]);renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();}
+    if(item){item[editTarget.k]=gv('mv');setText('dp-'+editTarget.field,item[editTarget.k]);renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();renderFilms();}
   } else if(t==='bio'){
     const s=bioSections[editTarget.i];
     if(editTarget.field==='title')s.t=gv('mv');else s.p=gv('mv');
@@ -1067,6 +1111,12 @@ function saveEdit(){
     const ni=gv('mv-img');if(ni)b.img=ni;
     renderBooks();renderAPBooks();
     if(dpCurrent&&dpCurrent.type==='book'&&dpCurrent.id===b.id)openDp('book',b.id);
+  } else if(t==='film'){
+    const f=films.find(x=>x.id===editTarget.id);
+    f.title=gv('mv-title');f.author=gv('mv-author');f.cat=gv('mv-cat');f.desc=gv('mv-desc');f.full=gv('mv-full');
+    const ni=gv('mv-img');if(ni)f.img=ni;
+    renderFilms();renderAPFilms();
+    if(dpCurrent&&dpCurrent.type==='film'&&dpCurrent.id===f.id)openDp('film',f.id);
   } else if(t==='article'){
     const a=articles.find(x=>x.id===editTarget.id);
     a.title=gv('mv-title');a.date=gv('mv-date');a.summary=gv('mv-desc');a.full=gv('mv-full');a.link=gv('mv-link');
@@ -1102,6 +1152,9 @@ function saveEdit(){
     } else if(type==='workshop'){
       workshops.push({id:Date.now(),title,author:gv('mv-author'),cat:gv('mv-cat'),desc,full:gv('mv-full'),img,regQuestions:[],registrations:[]});
       renderWorkshops();renderAPWorkshops();
+    } else if(type==='film'){
+      films.push({id:Date.now(),title,author:gv('mv-author'),cat:gv('mv-cat'),desc,full:gv('mv-full'),img});
+      renderFilms();renderAPFilms();
     }
   } else if(t==='qedit'){
     /* editing a single question's label inside the q-builder draft */
@@ -1147,6 +1200,41 @@ function addBook(){
   renderBooks();renderAPBooks();alert('کتاب اضافه شد!');
 }
 function delBook(id){if(confirm('حذف شود؟')){books=books.filter(b=>b.id!==id);renderBooks();renderAPBooks();}}
+
+/* ======= FILMS ======= */
+function renderFilms(){
+  const g=gi('films-grid');if(!g)return;
+  let html=films.map(f=>`<div class="book-card reveal" onclick="${isAdmin?`editFilm(${f.id})`:`openDp('film',${f.id})`}">
+    <div class="book-cover eimg" style="background:${bkBg(f.id)}">${f.img?`<img src="${f.img}"/>`:`<div class="book-cover-ph">🎬</div>`}<div class="eimg-badge" onclick="event.stopPropagation();if(isAdmin)editFilm(${f.id})"><span>📷</span><span>ویرایش</span></div>${isAdmin?`<button class="card-del-btn" onclick="event.stopPropagation();delFilm(${f.id})" title="حذف">✕</button>`:''}</div>
+    <div class="book-body"><p class="book-tag">${f.cat}</p><h3 class="book-title">${f.title}</h3><p class="book-author">${f.author}</p><p class="book-desc">${f.desc}</p></div>
+  </div>`).join('');
+  if(isAdmin)html+=addTileHtml('film','افزودن تحلیل فیلم جدید','book-card',240);
+  g.innerHTML=html||'<p style="color:var(--mid);grid-column:1/-1">تحلیلی ثبت نشده.</p>';
+  g.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+}
+function editFilm(id){
+  if(!isAdmin)return;const f=films.find(x=>x.id===id);editTarget={t:'film',id};
+  gi('m-title').textContent='ویرایش تحلیل فیلم';gi('m-sub').textContent=f.title;
+  gi('m-body').innerHTML=`<label>تصویر</label><div class="iup" style="height:100px" onclick="gi('m-f-f').click()"><img id="m-f-prev" src="${f.img||''}" style="${f.img?'display:block':'display:none'};position:absolute;inset:0;width:100%;height:100%;object-fit:cover"/><div id="m-f-ph" class="iup-lbl" style="${f.img?'display:none':''}"><span class="ico">🖼️</span><span>آپلود</span></div></div><input type="file" id="m-f-f" accept="image/*" style="display:none" onchange="prevImg(this,'m-f-prev','m-f-ph','mv-img')"/><input type="hidden" id="mv-img" value="${f.img}"/>
+  <label>عنوان</label><input id="mv-title" value="${esc(f.title)}"/>
+  <label>کارگردان</label><input id="mv-author" value="${esc(f.author)}"/>
+  <label>دسته‌بندی</label><input id="mv-cat" value="${esc(f.cat)}"/>
+  <label>خلاصه (کارت)</label><textarea id="mv-desc">${esc(f.desc)}</textarea>
+  <label>متن کامل</label><textarea id="mv-full" style="min-height:100px">${esc(f.full)}</textarea>`;
+  gi('edit-modal').classList.remove('hidden');
+}
+function renderAPFilms(){
+  const l=gi('ap-films-list');if(!l)return;if(!films.length){l.innerHTML='<p style="color:var(--mid)">تحلیلی ثبت نشده.</p>';return}
+  l.innerHTML=films.map(f=>`<div class="ap-item"><div class="ap-thumb">${f.img?`<img src="${f.img}"/>`:'🎬'}</div><div class="ap-it"><strong>${f.title}</strong><span>${f.author}</span></div><div class="ap-ia"><button class="edit-b" onclick="editFilm(${f.id});closePanel()">ویرایش</button><button class="del" onclick="delFilm(${f.id})">حذف</button></div></div>`).join('');
+}
+function addFilm(){
+  const t=gv('f-title'),d=gv('f-desc'),img=gv('f-img-d');if(!t||!d){alert('عنوان و خلاصه الزامی');return}
+  films.push({id:Date.now(),title:t,author:gv('f-author'),cat:gv('f-cat'),desc:d,full:gv('f-full'),img});
+  ['f-title','f-author','f-cat','f-desc','f-full','f-img-d'].forEach(id=>{const el=gi(id);if(el)el.value='';});
+  gi('f-img-prev').style.display='none';gi('f-img-ph').style.display='flex';
+  renderFilms();renderAPFilms();alert('تحلیل فیلم اضافه شد!');
+}
+function delFilm(id){if(confirm('حذف شود؟')){films=films.filter(f=>f.id!==id);renderFilms();renderAPFilms();}}
 
 /* ======= ARTICLES ======= */
 function renderArticles(){
@@ -1592,7 +1680,7 @@ function saveFooter(){
 }
 
 /* ======= HELPERS ======= */
-function renderAll(){renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();renderGrief();}
+function renderAll(){renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();renderFilms();renderGrief();}
 function gi(id){return document.getElementById(id)}
 function gv(id){const el=gi(id);return el?el.value.trim():''}
 function setText(id,v){const el=gi(id);if(el)el.textContent=v}
