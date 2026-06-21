@@ -36,6 +36,18 @@ a{text-decoration:none;color:inherit}
 .page-notes-box textarea::placeholder{color:var(--mid)}
 .page-notes-box textarea:focus{outline:none;border-color:var(--blue)}
 .page-notes-box textarea[readonly]{background:#fafafa;cursor:default}
+.comments-section{margin-top:3rem;padding-top:2rem;border-top:1px solid var(--light)}
+.comments-section h3{font-size:1.1rem;margin-bottom:1rem}
+.comment-form{display:flex;flex-direction:column;gap:.6rem;max-width:480px;margin-bottom:1.6rem}
+.comment-form input,.comment-form textarea{padding:.6rem .8rem;border:1px solid var(--light);border-radius:4px;font-family:'Vazirmatn',sans-serif;font-size:.85rem;direction:rtl;text-align:right}
+.comment-form textarea{min-height:70px;resize:vertical}
+.comment-form button{align-self:flex-start;background:var(--black);color:#fff;border:none;padding:.55rem 1.3rem;border-radius:4px;font-size:.82rem;cursor:pointer;font-family:'Vazirmatn',sans-serif}
+.comment-item{padding:.8rem 0;border-bottom:1px solid var(--light);font-size:.85rem;display:flex;justify-content:space-between;align-items:flex-start;gap:.6rem}
+.comment-item .ct{flex:1}
+.comment-item .ct strong{display:block;margin-bottom:.2rem}
+.comment-item .ct p{color:#4a5568;line-height:1.8}
+.comment-del{border:none;background:none;color:#e53e3e;cursor:pointer;font-size:.78rem;flex-shrink:0;display:none}
+.admin-mode .comment-del{display:block}
 /* overlays */
 .overlay{position:fixed;inset:0;background:#fff;z-index:300;overflow-y:auto;direction:rtl}
 .ov-header{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 3rem;border-bottom:1px solid var(--light);position:sticky;top:0;background:#fff;z-index:10}
@@ -608,6 +620,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
     <div class="section-header"><div class="section-title-row"><div class="clock-anim" aria-hidden="true"></div><h2 class="section-title">تاریخ روانکاوی</h2></div></div>
     <div class="page-notes-box"><textarea id="notes-history" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.history=this.value" readonly></textarea></div>
     <div class="articles-grid" id="psycho-history-grid"></div>
+    <div id="comments-history" class="comments-section"></div>
   </section>
 </div>
 
@@ -621,6 +634,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
     <div class="section-header"><div class="section-title-row"><div class="book-anim" aria-hidden="true"><div class="ba-half ba-left"></div><div class="ba-half ba-right"></div><div class="ba-page"></div></div><h2 class="section-title">خلاصه کتاب‌ها</h2></div></div>
     <div class="page-notes-box"><textarea id="notes-books" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.books=this.value" readonly></textarea></div>
     <div class="books-grid" id="books-grid"></div>
+    <div id="comments-books" class="comments-section"></div>
   </section>
 </div>
 
@@ -634,6 +648,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
     <div class="section-header"><div class="section-title-row"><div class="pages-anim" aria-hidden="true"><div class="pa-staple"></div><div class="pa-sheet pa-1"></div><div class="pa-sheet pa-2"></div></div><h2 class="section-title">مقالات و یادداشت‌ها</h2></div></div>
     <div class="page-notes-box"><textarea id="notes-articles" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.articles=this.value" readonly></textarea></div>
     <div class="articles-grid" id="articles-grid"></div>
+    <div id="comments-articles" class="comments-section"></div>
   </section>
 </div>
 
@@ -647,6 +662,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
     <div class="section-header"><div class="section-title-row"><div class="write-anim" aria-hidden="true"><div class="wa-paper"></div><div class="wa-line wa-l1"><span></span></div><div class="wa-line wa-l2"><span></span></div><div class="wa-line wa-l3"><span></span></div><div class="wa-pen"></div></div><h2 class="section-title">کارگاه‌ها</h2></div></div>
     <div class="page-notes-box"><textarea id="notes-workshops" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.workshops=this.value" readonly></textarea></div>
     <div class="books-grid" id="workshops-grid"></div>
+    <div id="comments-workshops" class="comments-section"></div>
   </section>
 </div>
 
@@ -660,7 +676,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
     <div class="section-header"><div class="section-title-row"><div class="film-anim" aria-hidden="true"><div class="fa-strip"><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div><div class="fa-frame"><div class="fa-pic"></div></div></div></div><h2 class="section-title">تحلیل فیلم</h2></div></div>
     <div class="page-notes-box"><textarea id="notes-films" placeholder="یادداشت‌ها یا توضیحات خود را درباره این صفحه اینجا بنویسید..." oninput="pageNotes.films=this.value" readonly></textarea></div>
     <div class="books-grid" id="films-grid"></div>
-    <div id="comments-films"></div>
+    <div id="comments-films" class="comments-section"></div>
   </section>
 </div>
 
@@ -874,6 +890,7 @@ let workshops=[
   {id:2,title:'کارگاه تنظیم هیجان در تروما',author:'دکتر شهاب یوسفی',cat:'تروما',desc:'آموزش تکنیک‌های تنظیم هیجان برای بازماندگان تروما.',full:'در این کارگاه، تکنیک‌های عملی تنظیم هیجان و آرام‌سازی سیستم عصبی آموزش داده می‌شود.',img:'',regQuestions:[],registrations:[]},
   {id:3,title:'کارگاه مرزهای سالم در روابط',author:'دکتر شهاب یوسفی',cat:'روابط',desc:'یادگیری نحوه تعیین مرز در روابط صمیمی و خانوادگی.',full:'شرکت‌کنندگان می‌آموزند چگونه بدون احساس گناه، مرزهای سالم در روابط خود برقرار کنند.',img:'',regQuestions:[],registrations:[]}
 ];
+let comments={history:[],books:[],articles:[],workshops:[],films:[]};
 let grief=[
   {id:1,name:'ناشناس',text:'سه سال از رفتن مادرم می‌گذره.',reply:'سوگ زمان‌بند نیست.',replied:true,showPending:false},
   {id:2,name:'سارا',text:'پدرم رو تازه از دست دادم.',reply:'',replied:false,showPending:false}
@@ -1235,6 +1252,36 @@ function addFilm(){
   renderFilms();renderAPFilms();alert('تحلیل فیلم اضافه شد!');
 }
 function delFilm(id){if(confirm('حذف شود؟')){films=films.filter(f=>f.id!==id);renderFilms();renderAPFilms();}}
+
+/* ======= COMMENTS ======= */
+const COMMENT_PAGES={history:'تاریخ روانکاوی',books:'کتاب‌ها',articles:'مقالات',workshops:'کارگاه‌ها',films:'تحلیل فیلم'};
+function renderComments(key){
+  const box=gi('comments-'+key);if(!box)return;
+  const list=comments[key]||[];
+  box.innerHTML=`<h3>نظرات کاربران</h3>
+    <div class="comment-form">
+      <input id="cf-name-${key}" placeholder="نام شما"/>
+      <textarea id="cf-text-${key}" placeholder="نظر خود را بنویسید..."></textarea>
+      <button onclick="submitComment('${key}')">ارسال نظر</button>
+    </div>
+    <div class="comment-list">
+    ${list.length?list.map(c=>`<div class="comment-item"><div class="ct"><strong>${esc(c.name)}</strong><p>${esc(c.text)}</p></div><button class="comment-del" onclick="delComment('${key}',${c.id})">حذف</button></div>`).join(''):'<p style="color:var(--mid);font-size:.85rem">هنوز نظری ثبت نشده.</p>'}
+    </div>`;
+}
+function submitComment(key){
+  const name=gv('cf-name-'+key)||'ناشناس';
+  const text=gv('cf-text-'+key);
+  if(!text){alert('لطفاً متن نظر را بنویسید');return;}
+  comments[key].push({id:Date.now(),name,text});
+  renderComments(key);
+}
+function delComment(key,id){
+  if(!isAdmin)return;
+  if(!confirm('این نظر حذف شود؟'))return;
+  comments[key]=comments[key].filter(c=>c.id!==id);
+  renderComments(key);
+}
+function renderAllComments(){Object.keys(COMMENT_PAGES).forEach(renderComments);}
 
 /* ======= ARTICLES ======= */
 function renderArticles(){
@@ -1680,7 +1727,7 @@ function saveFooter(){
 }
 
 /* ======= HELPERS ======= */
-function renderAll(){renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();renderFilms();renderGrief();}
+function renderAll(){renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();renderFilms();renderGrief();renderAllComments();}
 function gi(id){return document.getElementById(id)}
 function gv(id){const el=gi(id);return el?el.value.trim():''}
 function setText(id,v){const el=gi(id);if(el)el.textContent=v}
