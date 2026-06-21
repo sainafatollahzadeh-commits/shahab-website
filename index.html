@@ -48,6 +48,12 @@ a{text-decoration:none;color:inherit}
 .comment-item .ct p{color:#4a5568;line-height:1.8}
 .comment-del{border:none;background:none;color:#e53e3e;cursor:pointer;font-size:.78rem;flex-shrink:0;display:none}
 .admin-mode .comment-del{display:block}
+.star-picker .star,.comment-stars .star,.avg-rating-stars .star{color:var(--light);font-size:1.05rem;cursor:default}
+.star-picker .star{cursor:pointer}
+.star-picker .star.filled,.comment-stars .star.filled,.avg-rating-stars .star.filled{color:var(--gold)}
+.comment-stars{display:block;margin-bottom:.3rem}
+.avg-rating{display:flex;align-items:center;gap:.35rem;font-size:.85rem;color:var(--mid)}
+.avg-rating-num{font-weight:700;color:var(--black)}
 /* overlays */
 .overlay{position:fixed;inset:0;background:#fff;z-index:300;overflow-y:auto;direction:rtl}
 .ov-header{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 3rem;border-bottom:1px solid var(--light);position:sticky;top:0;background:#fff;z-index:10}
@@ -147,10 +153,18 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 #hero-photo-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#e8e4dc,#d4c9b8);gap:1rem}
 .photo-upload-btn{position:absolute;bottom:1rem;left:1rem;background:rgba(255,255,255,.92);border:1px solid var(--light);padding:.45rem .9rem;border-radius:3px;font-size:.75rem;cursor:pointer;font-family:'Vazirmatn',sans-serif;z-index:5;display:none}
 .admin-mode .photo-upload-btn{display:block}
-.bio-photo-frame{width:140px;height:140px;border-radius:8px;position:relative;overflow:hidden;margin:1.2rem 0;border:1px solid var(--light)}
+.bio-photo-frame{width:calc(100% - 2cm);aspect-ratio:1/1;border-radius:8px;position:relative;overflow:hidden;margin:1cm;border:1px solid var(--light)}
 .bio-photo-frame .photo-upload-btn{bottom:.4rem;left:.4rem;padding:.3rem .55rem;font-size:.65rem}
 #bio-photo{width:100%;height:100%;object-fit:cover;display:none}
 #bio-photo-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#e8e4dc,#d4c9b8);gap:.4rem}
+.paper-plane-anim{display:inline-block;color:var(--gold);margin-bottom:1.2rem;animation:planeFlutter 3.2s ease-in-out infinite}
+@keyframes planeFlutter{
+  0%{transform:translateY(0) rotate(-6deg)}
+  25%{transform:translateY(-8px) rotate(8deg)}
+  50%{transform:translateY(2px) rotate(-10deg)}
+  75%{transform:translateY(-5px) rotate(6deg)}
+  100%{transform:translateY(0) rotate(-6deg)}
+}
 /* marquee */
 .marquee-bar{background:var(--black);color:#fff;padding:1rem 0;overflow:hidden;white-space:nowrap;direction:ltr}
 .marquee-track{display:inline-flex;animation:marquee 25s linear infinite}
@@ -600,8 +614,8 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
     <span style="font-size:.82rem;color:var(--mid)">رزرو جلسه</span>
   </div>
   <div style="max-width:520px;margin:4rem auto;padding:0 1.5rem;text-align:center">
-    <div style="font-size:3rem;margin-bottom:1.2rem">📲</div>
-    <h2 style="font-size:1.25rem;font-weight:700;margin-bottom:1rem">رزرو جلسه از طریق تلگرام</h2>
+    <div class="paper-plane-anim" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" width="46" height="46"><path d="M22.05 2.4 1.96 10.3c-1.37.55-1.36 1.32-.25 1.66l5.15 1.6 11.93-7.5c.56-.34 1.07-.16.65.21l-9.68 8.74h-.01l.01.01-.37 5.45c.54 0 .78-.25 1.08-.55l2.6-2.52 5.4 3.98c.99.55 1.7.27 1.95-.92l3.53-16.6c.36-1.45-.55-2.1-1.9-1.46z"/></svg></div>
+    <h2 class="editable" onclick="inlineEdit('tg-h')" id="tg-h" style="font-size:1.25rem;font-weight:700;margin-bottom:1rem">رزرو جلسه از طریق تلگرام</h2>
     <p class="editable" onclick="inlineEdit('tg-text')" id="tg-text" style="font-size:.92rem;line-height:2.1;color:var(--mid);margin-bottom:1.8rem">لطفاً اطلاعات خود — شامل نام، نوع جلسه (داخل یا خارج از کشور) و زمان پیشنهادی — را به آیدی تلگرام زیر ارسال کنید. دکتر یوسفی پس از بررسی با شما هماهنگ خواهد کرد.</p>
     <div class="editable" onclick="inlineEdit('tg-id')" id="tg-id-box" style="background:var(--bg);border:2px dashed var(--gold);border-radius:6px;padding:1.3rem;font-size:1.15rem;font-weight:700;color:var(--black);direction:ltr">@shahab_yousefii</div>
   </div>
@@ -864,7 +878,8 @@ const S={
   paymentInstructions:'لطفاً مبلغ ۲,۰۰۰,۰۰۰ تومان را به شماره کارت ۱۲۳۴-۵۶۷۸-۹۰۱۲-۳۴۵۶ (بانک ملت، به نام شهاب یوسفی) واریز کرده و تصویر رسید پرداخت را به آیدی تلگرام @shahab_yousefii ارسال کنید.',
   bioIntro:'',
   'tg-text':'لطفاً اطلاعات خود — شامل نام، نوع جلسه (داخل یا خارج از کشور) و زمان پیشنهادی — را به آیدی تلگرام زیر ارسال کنید. دکتر یوسفی پس از بررسی با شما هماهنگ خواهد کرد.',
-  'tg-id':'@shahab_yousefii'
+  'tg-id':'@shahab_yousefii',
+  'tg-h':'رزرو جلسه از طریق تلگرام'
 };
 let lastLookupPhone='';
 let bioSections=[
@@ -1200,7 +1215,8 @@ const EM={
   'footer-desc':{lbl:'توضیح فوتر',t:'textarea',g:()=>S['footer-desc'],s:v=>{S['footer-desc']=v;setText('footer-desc',v)}},
   headline:{lbl:'تیتر',t:'headline',g:()=>({h1:S.h1,hem:S.hem,h2:S.h2}),s:v=>{S.h1=v.h1;S.hem=v.hem;S.h2=v.h2;setText('h-l1',v.h1);setText('h-em',v.hem);setText('h-l2',v.h2)}},
   'tg-text':{lbl:'متن صفحه رزرو تلگرام',t:'textarea',g:()=>S['tg-text'],s:v=>{S['tg-text']=v;setText('tg-text',v)}},
-  'tg-id':{lbl:'آیدی تلگرام',t:'input',g:()=>S['tg-id'],s:v=>{S['tg-id']=v;setText('tg-id-box',v)}}
+  'tg-id':{lbl:'آیدی تلگرام',t:'input',g:()=>S['tg-id'],s:v=>{S['tg-id']=v;setText('tg-id-box',v)}},
+  'tg-h':{lbl:'عنوان صفحه رزرو تلگرام',t:'input',g:()=>S['tg-h'],s:v=>{S['tg-h']=v;setText('tg-h',v)}}
 };
 function inlineEdit(key){
   if(!isAdmin)return;
@@ -1370,18 +1386,38 @@ function delFilm(id){if(confirm('حذف شود؟')){films=films.filter(f=>f.id!=
 
 /* ======= COMMENTS (per-item) ======= */
 function itemCommentKey(type,id){return type+'_'+id;}
+let newCommentRating=0;
+function starsHtml(rating,interactive){
+  let h='';
+  for(let i=1;i<=5;i++){
+    h+=`<span class="star${i<=rating?' filled':''}"${interactive?` onclick="newCommentRating=${i};renderStarPicker()"`:''}>★</span>`;
+  }
+  return h;
+}
+function renderStarPicker(){
+  const el=gi('cf-stars');if(el)el.innerHTML=starsHtml(newCommentRating,true);
+}
+function avgRating(list){
+  const rated=list.filter(c=>c.rating);
+  if(!rated.length)return 0;
+  return rated.reduce((s,c)=>s+c.rating,0)/rated.length;
+}
 function renderItemComments(type,id){
   const box=gi('dp-comments');if(!box)return;
   const key=itemCommentKey(type,id);
   const list=comments[key]||[];
-  box.innerHTML=`<h3>نظرات کاربران</h3>
+  newCommentRating=0;
+  const avg=avgRating(list);
+  box.innerHTML=`<div style="display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-bottom:1rem"><h3 style="margin:0">نظرات کاربران</h3>
+    <span class="avg-rating"><span class="avg-rating-num">${avg?avg.toFixed(1):'—'}</span><span class="avg-rating-stars">${starsHtml(Math.round(avg),false)}</span><span class="avg-rating-count">(${list.filter(c=>c.rating).length})</span></span></div>
     <div class="comment-form">
       <input id="cf-name" placeholder="نام شما"/>
+      <div class="star-picker" id="cf-stars">${starsHtml(0,true)}</div>
       <textarea id="cf-text" placeholder="نظر خود را بنویسید..."></textarea>
       <button onclick="submitComment('${key}')">ارسال نظر</button>
     </div>
     <div class="comment-list">
-    ${list.length?list.map(c=>`<div class="comment-item"><div class="ct"><strong>${esc(c.name)}</strong><p>${esc(c.text)}</p></div><button class="comment-del" onclick="delComment('${key}',${c.id})">حذف</button></div>`).join(''):'<p style="color:var(--mid);font-size:.85rem">هنوز نظری ثبت نشده.</p>'}
+    ${list.length?list.map(c=>`<div class="comment-item"><div class="ct"><strong>${esc(c.name)}</strong>${c.rating?`<span class="comment-stars">${starsHtml(c.rating,false)}</span>`:''}<p>${esc(c.text)}</p></div><button class="comment-del" onclick="delComment('${key}',${c.id})">حذف</button></div>`).join(''):'<p style="color:var(--mid);font-size:.85rem">هنوز نظری ثبت نشده.</p>'}
     </div>`;
 }
 function submitComment(key){
@@ -1389,7 +1425,7 @@ function submitComment(key){
   const text=gv('cf-text');
   if(!text){alert('لطفاً متن نظر را بنویسید');return;}
   if(!comments[key])comments[key]=[];
-  comments[key].push({id:Date.now(),name,text});
+  comments[key].push({id:Date.now(),name,text,rating:newCommentRating});
   const [type,id]=key.split('_');
   renderItemComments(type,Number(id));
 }
