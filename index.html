@@ -10,6 +10,9 @@
 body{font-family:'Vazirmatn',sans-serif;background:var(--white);color:var(--black);overflow-x:hidden;direction:rtl}
 a{text-decoration:none;color:inherit}
 .hidden{display:none!important}
+body:not(.admin-mode) .no-copy,body:not(.admin-mode) .no-copy *{user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none}
+body:not(.admin-mode) .no-copy img{-webkit-user-drag:none;pointer-events:none}
+body:not(.admin-mode) .no-copy .editable,body:not(.admin-mode) .no-copy .eimg-badge,body:not(.admin-mode) .no-copy .photo-upload-btn,body:not(.admin-mode) .no-copy button,body:not(.admin-mode) .no-copy input,body:not(.admin-mode) .no-copy textarea,body:not(.admin-mode) .no-copy a{pointer-events:auto}
 /* scroll reveal */
 .reveal{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s ease}
 .reveal.visible{opacity:1;transform:none}
@@ -625,7 +628,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
 </div>
 
 <!-- HISTORY PAGE -->
-<div id="history-page" class="overlay hidden">
+<div id="history-page" class="overlay hidden no-copy">
   <div class="ov-header">
     <div class="ov-back" onclick="closeOv('history-page')">← بازگشت</div>
     <div style="display:flex;align-items:center;gap:1.2rem">
@@ -641,7 +644,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
 </div>
 
 <!-- BOOKS PAGE -->
-<div id="books-page" class="overlay hidden">
+<div id="books-page" class="overlay hidden no-copy">
   <div class="ov-header">
     <div class="ov-back" onclick="closeOv('books-page')">← بازگشت</div>
     <span style="font-size:.82rem;color:var(--mid)">کتاب‌ها</span>
@@ -654,7 +657,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
 </div>
 
 <!-- ARTICLES PAGE -->
-<div id="articles-page" class="overlay hidden">
+<div id="articles-page" class="overlay hidden no-copy">
   <div class="ov-header">
     <div class="ov-back" onclick="closeOv('articles-page')">← بازگشت</div>
     <span style="font-size:.82rem;color:var(--mid)">مقالات</span>
@@ -680,7 +683,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
 </div>
 
 <!-- FILM ANALYSIS PAGE -->
-<div id="film-page" class="overlay hidden">
+<div id="film-page" class="overlay hidden no-copy">
   <div class="ov-header">
     <div class="ov-back" onclick="closeOv('film-page')">← بازگشت</div>
     <span style="font-size:.82rem;color:var(--mid)">تحلیل فیلم</span>
@@ -925,6 +928,27 @@ let grief=[
 let registerCurrentWorkshopId=null;
 let qBuilderDraft=[]; // working copy while editing questions in admin modal
 
+/* ======= CONTENT PROTECTION (books/articles/history/film-analysis) ======= */
+document.addEventListener('contextmenu',e=>{
+  if(!isAdmin&&e.target.closest('.no-copy'))e.preventDefault();
+});
+document.addEventListener('copy',e=>{
+  if(!isAdmin&&e.target.closest&&e.target.closest('.no-copy'))e.preventDefault();
+});
+document.addEventListener('cut',e=>{
+  if(!isAdmin&&e.target.closest&&e.target.closest('.no-copy'))e.preventDefault();
+});
+document.addEventListener('dragstart',e=>{
+  if(!isAdmin&&e.target.closest('.no-copy'))e.preventDefault();
+});
+document.addEventListener('keydown',e=>{
+  if(isAdmin)return;
+  const inNoCopy=document.querySelector('.overlay.no-copy:not(.hidden)');
+  if(!inNoCopy)return;
+  const k=e.key.toLowerCase();
+  if((e.ctrlKey||e.metaKey)&&(k==='c'||k==='x'||k==='s'||k==='p'||k==='u'))e.preventDefault();
+});
+
 /* ======= SCROLL REVEAL ======= */
 const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.07});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
@@ -1093,6 +1117,7 @@ function getDpItem(type,id){
 function openDp(type,id){
   const item=getDpItem(type,id);if(!item)return;
   dpCurrent={type,id};
+  gi('detail-page').classList.toggle('no-copy',type==='book'||type==='article'||type==='history'||type==='film');
   const breadcrumbs={book:'کتاب‌ها',article:'مقالات',history:'تاریخ روانکاوی',workshop:'کارگاه‌ها',film:'تحلیل فیلم'};
   gi('dp-breadcrumb').textContent=breadcrumbs[type]||'';
   const img=gi('dp-img'),ph=gi('dp-img-ph');
@@ -1135,7 +1160,7 @@ function playSessionVideo(wid,idx){
   const w=workshops.find(x=>x.id===wid);if(!w)return;
   const v=(w.offlineVideos||[])[idx];if(!v)return;
   const p=gi('session-player');if(!p)return;
-  p.innerHTML=`<p style="font-size:.82rem;margin-bottom:.4rem">جلسه ${idx+1} — ${esc(v.name)}</p><video src="${v.src}" controls autoplay style="width:100%;max-width:480px;border-radius:4px"></video>`;
+  p.innerHTML=`<p style="font-size:.82rem;margin-bottom:.4rem">جلسه ${idx+1} — ${esc(v.name)}</p><video src="${v.src}" controls autoplay controlsList="nodownload noremoteplayback" disablepictureinpicture disableremoteplayback oncontextmenu="return false" style="width:100%;max-width:480px;border-radius:4px"></video>`;
 }
 function buyOfflineCourse(wid){
   const w=workshops.find(x=>x.id===wid);if(!w)return;
