@@ -107,7 +107,7 @@ a{text-decoration:none;color:inherit}
 .mac .save{background:var(--black);color:#fff}.mac .cancel{background:#f0f0f0}
 /* nav */
 nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.05rem 3.5rem;border-bottom:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.97);backdrop-filter:blur(8px)}
-.nav-logo{font-size:1.02rem;font-weight:600}
+.nav-logo{font-size:1.02rem;font-weight:600;white-space:nowrap;flex-shrink:0}
 .nav-links{display:flex;gap:1.8rem;align-items:center}
 .nav-links-right{display:flex;gap:1.8rem;align-items:center;flex-wrap:wrap}
 .nav-links-right a{font-size:.84rem;color:var(--mid);transition:color .2s}
@@ -179,9 +179,9 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 @keyframes paLeaf{0%,10%{transform:rotateX(0deg)}50%,60%{transform:rotateX(-150deg)}95%,100%{transform:rotateX(0deg)}}
 
 /* writing pen on paper (workshops page) */
-.write-anim{position:relative;width:54px;height:46px;flex-shrink:0}
-.write-anim .wa-paper{position:absolute;inset:0;background:#f3f1ea;border:1px solid var(--light);border-radius:2px}
-.write-anim .wa-line{position:absolute;left:8px;height:2px;background:var(--light);border-radius:1px;overflow:hidden}
+.write-anim{position:relative;width:54px;height:46px;flex-shrink:0;filter:drop-shadow(0 2px 3px rgba(0,0,0,.12))}
+.write-anim .wa-paper{position:absolute;inset:0;background:#fff;border:1.5px solid var(--black);border-radius:2px}
+.write-anim .wa-line{position:absolute;left:8px;height:2px;background:var(--mid);border-radius:1px;overflow:hidden}
 .write-anim .wa-line span{position:absolute;inset:0;background:var(--gold);transform:scaleX(0);transform-origin:right center;animation:waFill 2.4s ease-in-out infinite}
 .write-anim .wa-l1{top:13px;width:30px}
 .write-anim .wa-l2{top:21px;width:22px}
@@ -194,15 +194,15 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 @keyframes waPen{0%{left:8px}33%{left:38px}34%{left:8px}67%{left:30px}68%{left:8px}99%{left:34px}100%{left:8px}}
 
 /* FaceTime/iMessage-style chat bubbles exchange (sharing page) */
-.chat-anim{position:relative;width:66px;height:48px;flex-shrink:0;background:#eef1f4;border-radius:10px;border:1px solid var(--light)}
-.chat-anim .ca-bubble{position:absolute;height:12px;border-radius:9px;opacity:0;box-shadow:0 1px 2px rgba(0,0,0,.1);animation:caPop 3.6s ease-in-out infinite}
+.chat-anim{position:relative;width:66px;height:48px;flex-shrink:0;background:#7c8a98;border-radius:10px;border:1px solid var(--mid)}
+.chat-anim .ca-bubble{position:absolute;height:12px;border-radius:9px;opacity:0;box-shadow:0 1px 2px rgba(0,0,0,.18);animation:caPop 3.6s ease-in-out infinite}
 .chat-anim .ca-bubble::after{content:'';position:absolute;bottom:-1px;width:7px;height:7px;border-radius:50%}
-.chat-anim .ca-1{top:6px;left:6px;width:30px;background:#e4e7ea;animation-delay:0s}
-.chat-anim .ca-1::after{left:-2px;background:#e4e7ea}
+.chat-anim .ca-1{top:6px;left:6px;width:30px;background:#fff;animation-delay:0s}
+.chat-anim .ca-1::after{left:-2px;background:#fff}
 .chat-anim .ca-2{top:21px;right:6px;width:32px;background:#2b9bf4;animation-delay:.9s}
 .chat-anim .ca-2::after{right:-2px;background:#2b9bf4}
-.chat-anim .ca-3{top:34px;left:6px;width:22px;background:#e4e7ea;animation-delay:1.8s}
-.chat-anim .ca-3::after{left:-2px;background:#e4e7ea}
+.chat-anim .ca-3{top:34px;left:6px;width:22px;background:#fff;animation-delay:1.8s}
+.chat-anim .ca-3::after{left:-2px;background:#fff}
 @keyframes caPop{0%{opacity:0;transform:translateY(4px) scale(.8)}10%,75%{opacity:1;transform:translateY(0) scale(1)}90%,100%{opacity:0;transform:translateY(0) scale(1)}}
 
 .intro-text h2{font-size:clamp(1.7rem,2.4vw,2.2rem);line-height:1.5;font-weight:700;margin-bottom:1.1rem}
