@@ -1,0 +1,55 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    // Public content: readable by everyone, writable only by the admin
+    match /books/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /films/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /articles/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /psychoHistory/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Workshops: public read, admin write; registrations are a separate subcollection
+    match /workshops/{wid} {
+      allow read: if true;
+      allow write: if isAdmin();
+
+      match /registrations/{rid} {
+        // Visitors may only submit a new registration; they cannot read,
+        // list, edit or delete registrations (their own or anyone else's).
+        allow create: if true;
+        allow read, update, delete: if isAdmin();
+      }
+    }
+
+    // Comments: public can read and create comments, only admin can delete
+    match /comments/{itemKey}/items/{cid} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if isAdmin();
+    }
+
+    // Grief messages: public "wall" stays readable once the admin has replied;
+    // otherwise (pending / private messages) only the admin can read them.
+    match /grief/{id} {
+      allow read: if isAdmin() || resource.data.replied == true;
+      allow create: if true;
+      allow update, delete: if isAdmin();
+    }
+  }
+}
