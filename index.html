@@ -194,12 +194,14 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .marquee-track .dot{color:var(--gold);opacity:1;padding:0}
 @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 /* intro */
-.intro{padding:6.5rem 3.5rem;display:grid;grid-template-columns:minmax(290px,1fr) 2fr;gap:5rem;background:var(--bg)}
+.intro{padding:6.5rem 3.5rem;display:grid;grid-template-columns:minmax(220px,1fr) minmax(280px,1.5fr) minmax(220px,1fr);align-items:center;gap:2.5rem;background:var(--bg)}
 .intro-label{padding-top:.3rem;display:flex;justify-content:center}
+.intro-text{text-align:center}
+.intro-text h2,.intro-text p{margin-left:auto;margin-right:auto}
 .bookshelf-widget{position:relative;width:260px;max-width:100%;height:320px}
 .bookshelf-widget .shelf-board{position:absolute;left:-6px;right:-6px;height:7px;background:#8b6b43;border-radius:2px;box-shadow:0 4px 8px rgba(0,0,0,.16);z-index:2}
 .bookshelf-widget .floor-line{position:absolute;bottom:0;left:-16px;right:-16px;height:3px;background:var(--light);border-radius:2px}
-.bookshelf-widget .book{position:absolute;width:15px;border-radius:2px 2px 1px 1px;transform-origin:bottom center;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);transition:transform .65s cubic-bezier(.34,1.56,.64,1) var(--d,0s),left .55s ease .15s}
+.bookshelf-widget .book{position:absolute;width:15px;border-radius:2px 2px 1px 1px;transform-origin:bottom center;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);transition:transform .65s cubic-bezier(.34,1.56,.64,1) var(--d,0s),left .55s ease .15s;z-index:3}
 .bookshelf-widget .book::after{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:repeating-linear-gradient(90deg,#f7f2e3 0 2px,#e7dcc0 2px 3px);border-radius:2px 2px 0 0}
 .bookshelf-widget.falling .book{transform:translate(var(--fx,0px),var(--fy,150px)) rotate(var(--fr,70deg))}
 
@@ -877,7 +879,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
 
 <section class="intro reveal" id="about">
   <div class="intro-label">
-    <div class="bookshelf-widget" aria-hidden="true">
+    <div class="bookshelf-widget" id="shelf-full" aria-hidden="true">
       <div class="shelf-board" style="bottom:230px"></div>
       <div class="shelf-board" style="bottom:150px"></div>
       <div class="shelf-board" style="bottom:70px"></div>
@@ -927,6 +929,14 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
     <h2 class="editable" onclick="inlineEdit('about-h')" id="about-heading">فضایی برای باری که سال‌هاست با خود حمل می‌کنید.</h2>
     <p class="editable" onclick="inlineEdit('about-p2')" id="about-p2">او معتقد است هر انسانی داستانی دارد که ارزش شنیدن دارد — و با حمایت درست، حتی سخت‌ترین فصل‌های زندگی می‌توانند منبع رشد و معنا شوند.</p>
     <button class="btn-ghost" onclick="openBio()" style="margin-top:1rem">بیوگرافی کامل</button>
+  </div>
+  <div class="intro-label">
+    <div class="bookshelf-widget" id="shelf-empty" aria-hidden="true">
+      <div class="shelf-board" style="bottom:230px"></div>
+      <div class="shelf-board" style="bottom:150px"></div>
+      <div class="shelf-board" style="bottom:70px"></div>
+      <div class="floor-line"></div>
+    </div>
   </div>
 </section>
 
@@ -1048,49 +1058,66 @@ function hueOf(rgbStr){
   if(mx===r)h=((g-b)/d)%6;else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;
   h*=60;if(h<0)h+=360;return h;
 }
-function sortBookshelfByColor(widget){
-  const books=[...widget.querySelectorAll('.book')];
-  const rows={};
-  books.forEach(el=>{
-    const key=el.style.bottom;
-    (rows[key]=rows[key]||[]).push(el);
-  });
-  Object.values(rows).forEach(rowBooks=>{
-    const lefts=rowBooks.map(el=>parseFloat(el.style.left)).sort((a,b)=>a-b);
-    rowBooks.sort((a,b)=>hueOf(getComputedStyle(a).backgroundColor)-hueOf(getComputedStyle(b).backgroundColor));
-    rowBooks.forEach((el,i)=>{el.style.left=lefts[i]+'px';});
-  });
-}
 (function initBookshelf(){
-  const widget=document.querySelector('.bookshelf-widget');
-  if(!widget)return;
-  let returnTimer=null;
-  widget.addEventListener('mouseenter',()=>{
-    clearTimeout(returnTimer);
-    widget.classList.add('falling');
-  });
-  widget.addEventListener('mouseleave',()=>{
-    sortBookshelfByColor(widget);
-    returnTimer=setTimeout(()=>widget.classList.remove('falling'),20);
-  });
+  const full=document.getElementById('shelf-full');
+  const empty=document.getElementById('shelf-empty');
+  if(!full||!empty)return;
+  const books=[...full.querySelectorAll('.book')];
+  const slots=books.map(el=>({left:parseFloat(el.style.left),bottom:parseFloat(el.style.bottom),height:parseFloat(el.style.height)}));
+  let arranged=false,animating=false;
+
+  function resetInstant(){
+    books.forEach(el=>{
+      el.style.transition='none';
+      el.style.transform='';
+    });
+    full.classList.remove('falling');
+    void full.offsetHeight;
+    books.forEach(el=>{el.style.transition='';});
+    arranged=false;
+  }
+
+  function playSequence(){
+    if(animating)return;
+    if(arranged)resetInstant();
+    animating=true;
+    full.classList.add('falling');
+
+    setTimeout(()=>{
+      const order=[...books].sort((a,b)=>hueOf(getComputedStyle(a).backgroundColor)-hueOf(getComputedStyle(b).backgroundColor));
+      const emptyRect=empty.getBoundingClientRect();
+      order.forEach((el,i)=>{
+        const slot=slots[i];
+        const targetX=emptyRect.left+slot.left;
+        const targetY=emptyRect.bottom-slot.bottom-slot.height;
+        const curRect=el.getBoundingClientRect();
+        const dx=targetX-curRect.left;
+        const dy=targetY-curRect.top;
+        const delay=(i*0.025).toFixed(3)+'s';
+        el.style.transition='transform 1s cubic-bezier(.34,1.1,.64,1) '+delay;
+        const fx=getComputedStyle(el).getPropertyValue('--fx')||'0px';
+        const fy=getComputedStyle(el).getPropertyValue('--fy')||'0px';
+        el.style.transform='translate(calc('+fx+' + '+dx+'px),calc('+fy+' + '+dy+'px)) rotate(0deg)';
+      });
+      setTimeout(()=>{animating=false;arranged=true;},1100+order.length*25);
+    },1050);
+  }
+
+  full.addEventListener('mouseenter',playSequence);
 
   if(window.matchMedia('(hover:none),(pointer:coarse)').matches){
     let cooldown=false;
     const playFall=()=>{
       if(cooldown)return;
       cooldown=true;
-      widget.classList.add('falling');
-      setTimeout(()=>{
-        sortBookshelfByColor(widget);
-        widget.classList.remove('falling');
-      },1300);
-      setTimeout(()=>{cooldown=false},4000);
+      playSequence();
+      setTimeout(()=>{cooldown=false},5000);
     };
     const io=new IntersectionObserver(entries=>{
       entries.forEach(e=>{if(e.isIntersecting)playFall();});
     },{threshold:.5});
-    io.observe(widget);
-    widget.addEventListener('click',playFall);
+    io.observe(full);
+    full.addEventListener('click',playFall);
   }
 })();
 
