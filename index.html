@@ -1082,17 +1082,17 @@ function hueOf(rgbStr){
     if(arranged)resetInstant();
     animating=true;
     const origRects=books.map(el=>el.getBoundingClientRect());
+    const emptyRect=empty.getBoundingClientRect();
     full.classList.add('falling');
 
     setTimeout(()=>{
       const order=books.map((el,i)=>({el,i})).sort((a,b)=>hueOf(getComputedStyle(a.el).backgroundColor)-hueOf(getComputedStyle(b.el).backgroundColor));
-      const emptyRect=empty.getBoundingClientRect();
       order.forEach((entry,slotIndex)=>{
         const{el,i}=entry;
         const slot=slots[slotIndex];
-        const targetX=emptyRect.left+slot.left;
-        const targetY=emptyRect.bottom-slot.bottom-slot.height;
         const origRect=origRects[i];
+        const targetX=emptyRect.left+slot.left;
+        const targetY=emptyRect.bottom-slot.bottom-origRect.height;
         const dx=targetX-origRect.left;
         const dy=targetY-origRect.top;
         const delay=(slotIndex*0.025).toFixed(3)+'s';
