@@ -811,21 +811,6 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
   </div>
 </div>
 
-<!-- STATUS LOOKUP PAGE -->
-<div id="status-page" class="overlay hidden">
-  <div class="ov-header">
-    <div class="ov-back" onclick="closeOv('status-page')">← بازگشت</div>
-    <span style="font-size:.82rem;color:var(--mid)">پیگیری وضعیت ثبت‌نام</span>
-  </div>
-  <div class="status-wrap">
-    <h2>پیگیری وضعیت ثبت‌نام</h2>
-    <p class="reg-sub">شماره تلفنی که هنگام ثبت‌نام وارد کرده‌اید را وارد کنید تا وضعیت درخواست خود را ببینید.</p>
-    <div class="reg-field"><label>شماره تلفن</label><input type="text" id="status-phone" placeholder="مثلاً 09123456789" onkeydown="if(event.key==='Enter')lookupStatus()"/></div>
-    <button class="reg-submit-btn" onclick="lookupStatus()">بررسی وضعیت</button>
-    <div class="status-result" id="status-result"></div>
-  </div>
-</div>
-
 <!-- ===== SITE ===== -->
 <nav>
   <div class="nav-logo">دکتر شهاب یوسفی</div>
@@ -841,7 +826,6 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
       <a href="#" onclick="openOv('workshops-page');closeNavMenu();return false;">کارگاه‌ها</a>
       <a href="#" onclick="openOv('film-page');closeNavMenu();return false;">تحلیل فیلم</a>
       <a href="#" onclick="openOv('grief-page');closeNavMenu();return false;">اشتراک‌گذاری</a>
-      <a href="#" onclick="openStatusPage();closeNavMenu();return false;">پیگیری ثبت‌نام</a>
     </div>
     <div class="nav-links-left">
       <button class="nav-cta" onclick="scrollToNextStep();closeNavMenu()">رزرو جلسه</button>
@@ -986,7 +970,6 @@ const S={
   'tg-id':'@shahab_yousefii',
   'tg-h':'رزرو جلسه از طریق تلگرام'
 };
-let lastLookupPhone='';
 let bioSections=[
   {t:'تحصیلات',p:'دکترای روان‌شناسی بالینی از دانشگاه تهران. کارشناسی ارشد روان‌پزشکی از دانشگاه علوم پزشکی ایران.'},
   {t:'تجربه بالینی',p:'بیش از ۱۵ سال تجربه در حوزه سوگ، تروما، و اختلالات شخصیت. همکاری با مراکز مشاوره معتبر تهران.'},
@@ -2237,62 +2220,11 @@ function submitRegistration(){
     <div class="ico">✓</div>
     <h2>درخواست شما ثبت شد</h2>
     <p>درخواست ثبت‌نام شما در «${esc(w.title)}» دریافت شد. دکتر یوسفی پس از بررسی، از طریق ایمیل (${esc(email)}) یا تماس با شماره (${esc(phone)}) نتیجه را به اطلاع شما خواهد رساند.</p>
-    <p style="margin-top:1rem;font-weight:600">برای پیگیری وضعیت درخواست خود، حتماً به بخش «پیگیری ثبت‌نام» بروید و شماره تلفن همراهی که در این فرم وارد کردید (${esc(phone)}) را وارد کنید.</p>
+    <p style="margin-top:1rem;font-weight:600">برای پیگیری وضعیت ثبت‌نام خود، لطفاً با ادمین تلگرام @admin_Drshahabyousefi پیام دهید.</p>
   </div>`;
   renderAPWorkshops();
 }
 
-/* ======= STATUS LOOKUP (public) ======= */
-function openStatusPage(){
-  gi('status-phone').value='';
-  gi('status-result').innerHTML='';
-  openOv('status-page');
-}
-function lookupStatus(){
-  const phone=gv('status-phone');
-  if(!phone){alert('لطفاً شماره تلفن را وارد کنید');return;}
-  lastLookupPhone=phone;
-  const box=gi('status-result');
-  if(!isAdmin){
-    box.innerHTML=`<p style="color:var(--mid);font-size:.86rem">برای حفظ حریم خصوصی کاربران، پیگیری مستقیم وضعیت ثبت‌نام از این صفحه دیگر در دسترس نیست. لطفاً برای پیگیری با آیدی تلگرام ${esc(S['tg-id']||'@shahab_yousefii')} در ارتباط باشید.</p>`;
-    return;
-  }
-  let matches=[];
-  workshops.forEach(w=>{
-    (w.registrations||[]).forEach(r=>{
-      if(r.phone.replace(/\s/g,'')===phone.replace(/\s/g,'')){
-        matches.push({workshop:w,reg:r});
-      }
-    });
-  });
-  if(!matches.length){
-    box.innerHTML='<p style="color:var(--mid);font-size:.86rem">ثبت‌نامی با این شماره تلفن پیدا نشد.</p>';
-    return;
-  }
-  box.innerHTML=matches.map(m=>{
-    const badge=`<span class="badge ${REG_STATUS_BADGE[m.reg.status]||'pending'}">${REG_STATUS_LABEL[m.reg.status]||'در انتظار بررسی'}</span>`;
-    let extra='';
-    if(m.reg.status==='pending'){
-      extra='<p style="font-size:.8rem;color:var(--mid);margin-top:.5rem">درخواست شما در حال بررسی است. به‌زودی از طریق ایمیل یا تماس تلفنی با شما هماهنگ می‌شود.</p>';
-    } else if(m.reg.status==='rejected'){
-      extra='<p style="font-size:.8rem;color:var(--mid);margin-top:.5rem">متاسفانه این درخواست در حال حاضر تایید نشد. برای اطلاعات بیشتر می‌توانید با ما تماس بگیرید.</p>';
-    } else if(m.reg.status==='approved'){
-      extra=`<div class="status-pay-box">
-        <h4>مرحله بعد: پرداخت</h4>
-        <p>${esc(S.paymentInstructions)}</p>
-      </div>`;
-    } else if(m.reg.status==='paid'){
-      extra=`<div class="status-pay-box"><h4>در انتظار نهایی‌سازی</h4><p>پرداخت شما دریافت و تایید شد. لینک و زمان جلسه به‌زودی توسط دکتر یوسفی تخصیص داده خواهد شد — لطفاً بعداً دوباره از همین صفحه با شماره تلفن خود پیگیری کنید.</p></div>`;
-    } else if(m.reg.status==='finalized'){
-      extra=`<div class="status-pay-box"><h4>✅ ثبت‌نام نهایی شد</h4><p><a href="${esc(m.reg.sessionLink||'#')}" target="_blank" style="color:var(--blue);font-weight:600">لینک ورود به جلسه</a></p><p style="margin-top:.6rem">${esc(m.reg.sessionInfo||'')}</p></div>`;
-    }
-    return `<div class="status-card">
-      <div class="status-card-top"><strong>${esc(m.workshop.title)}</strong>${badge}</div>
-      <p style="font-size:.82rem;color:var(--mid)">ثبت‌نام به نام ${esc(m.reg.name)}</p>
-      ${extra}
-    </div>`;
-  }).join('');
-}
 function markPaid(wid,rid){
   const w=workshops.find(x=>x.id===wid);if(!w)return;
   const r=(w.registrations||[]).find(x=>x.id===rid);if(!r)return;
