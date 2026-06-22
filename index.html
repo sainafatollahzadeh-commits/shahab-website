@@ -1081,23 +1081,23 @@ function hueOf(rgbStr){
     if(animating)return;
     if(arranged)resetInstant();
     animating=true;
+    const origRects=books.map(el=>el.getBoundingClientRect());
     full.classList.add('falling');
 
     setTimeout(()=>{
-      const order=[...books].sort((a,b)=>hueOf(getComputedStyle(a).backgroundColor)-hueOf(getComputedStyle(b).backgroundColor));
+      const order=books.map((el,i)=>({el,i})).sort((a,b)=>hueOf(getComputedStyle(a.el).backgroundColor)-hueOf(getComputedStyle(b.el).backgroundColor));
       const emptyRect=empty.getBoundingClientRect();
-      order.forEach((el,i)=>{
-        const slot=slots[i];
+      order.forEach((entry,slotIndex)=>{
+        const{el,i}=entry;
+        const slot=slots[slotIndex];
         const targetX=emptyRect.left+slot.left;
         const targetY=emptyRect.bottom-slot.bottom-slot.height;
-        const curRect=el.getBoundingClientRect();
-        const dx=targetX-curRect.left;
-        const dy=targetY-curRect.top;
-        const delay=(i*0.025).toFixed(3)+'s';
+        const origRect=origRects[i];
+        const dx=targetX-origRect.left;
+        const dy=targetY-origRect.top;
+        const delay=(slotIndex*0.025).toFixed(3)+'s';
         el.style.transition='transform 1s cubic-bezier(.34,1.1,.64,1) '+delay;
-        const fx=getComputedStyle(el).getPropertyValue('--fx')||'0px';
-        const fy=getComputedStyle(el).getPropertyValue('--fy')||'0px';
-        el.style.transform='translate(calc('+fx+' + '+dx+'px),calc('+fy+' + '+dy+'px)) rotate(0deg)';
+        el.style.transform='translate('+dx+'px,'+dy+'px) rotate(0deg)';
       });
       setTimeout(()=>{animating=false;arranged=true;},1100+order.length*25);
     },1050);
