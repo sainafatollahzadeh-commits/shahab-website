@@ -45,24 +45,8 @@ body:not(.admin-mode) .no-copy .editable,body:not(.admin-mode) .no-copy .eimg-ba
 .page-notes-box textarea::placeholder{color:var(--mid)}
 .page-notes-box textarea:focus{outline:none}
 .page-notes-box textarea[readonly]{background:var(--surface2);cursor:default}
-.comments-section{margin-top:3rem;padding-top:2rem;border-top:1px solid var(--light)}
-.comments-section h3{font-size:1.1rem;margin-bottom:1rem}
-.comment-form{display:flex;flex-direction:column;gap:.6rem;max-width:480px;margin-bottom:1.6rem}
-.comment-form input,.comment-form textarea{padding:.6rem .8rem;border:1px solid var(--light);border-radius:4px;font-family:'Vazirmatn',sans-serif;font-size:.85rem;direction:rtl;text-align:right}
-.comment-form textarea{min-height:70px;resize:vertical}
-.comment-form button{align-self:flex-start;background:var(--ink);color:#fff;border:none;padding:.55rem 1.3rem;border-radius:4px;font-size:.82rem;cursor:pointer;font-family:'Vazirmatn',sans-serif}
-.comment-item{padding:.8rem 0;border-bottom:1px solid var(--light);font-size:.85rem;display:flex;justify-content:space-between;align-items:flex-start;gap:.6rem}
-.comment-item .ct{flex:1}
-.comment-item .ct strong{display:block;margin-bottom:.2rem}
-.comment-item .ct p{color:var(--text2);line-height:1.8}
 .comment-del{border:none;background:none;color:#e53e3e;cursor:pointer;font-size:.78rem;flex-shrink:0;display:none}
 .admin-mode .comment-del{display:block}
-.star-picker .star,.comment-stars .star,.avg-rating-stars .star{color:var(--light);font-size:1.05rem;cursor:default}
-.star-picker .star{cursor:pointer}
-.star-picker .star.filled,.comment-stars .star.filled,.avg-rating-stars .star.filled{color:var(--gold)}
-.comment-stars{display:block;margin-bottom:.3rem}
-.avg-rating{display:flex;align-items:center;gap:.35rem;font-size:.85rem;color:var(--mid)}
-.avg-rating-num{font-weight:700;color:var(--black)}
 /* overlays */
 .overlay{position:fixed;inset:0;background:var(--surface);z-index:300;overflow-y:auto;direction:rtl}
 .ov-header{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 3rem;border-bottom:1px solid var(--light);position:sticky;top:0;background:var(--surface);z-index:10}
@@ -345,14 +329,6 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .grief-reply-label{font-size:.7rem;color:var(--gold);font-weight:600;margin-bottom:.45rem}
 .grief-reply-text{font-size:.86rem;line-height:1.9;color:var(--text2);font-weight:300}
 .grief-success{background:#d1fae5;color:#065f46;padding:.75rem 1.1rem;border-radius:3px;font-size:.84rem;margin-top:.5rem}
-/* testimonials */
-.testimonials-section{padding:5.5rem 3.5rem;background:var(--bg)}
-.testimonials-section h2{font-size:1.6rem;font-weight:600;margin-bottom:2.2rem;text-align:center}
-.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem}
-@media (max-width:900px){.testimonials-grid{grid-template-columns:1fr}}
-.testimonial-card{background:var(--surface);border-radius:6px;padding:1.6rem;border:1px solid var(--light)}
-.testimonial-card p{font-size:.88rem;line-height:2;color:var(--text2);font-weight:300;margin-bottom:.9rem}
-.testimonial-card strong{font-size:.88rem;font-weight:600}
 /* cta/footer etc */
 .cta-strip{padding:5.5rem 3.5rem;background:var(--white);display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:center}
 .cta-left h2{font-size:clamp(1.7rem,2.3vw,2.2rem);font-weight:700;line-height:1.5;margin-bottom:.9rem}
@@ -542,7 +518,6 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
       <button class="ap-tab" onclick="switchTab('workshops',this)">🛠️ کارگاه‌ها</button>
       <button class="ap-tab" onclick="switchTab('films',this)">🎬 تحلیل فیلم</button>
       <button class="ap-tab" onclick="switchTab('grief',this)">💬 پیام‌ها</button>
-      <button class="ap-tab" onclick="switchTab('testimonials',this)">⭐ نظرات کاربران</button>
       <button class="ap-tab" onclick="switchTab('site',this)">🌐 تنظیمات</button>
     </div>
     <!-- BOOKS -->
@@ -619,24 +594,6 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
     <div id="tab-grief" class="hidden">
       <div class="aps"><h3>پیام‌های کاربران</h3><p style="font-size:.78rem;color:var(--mid);margin-bottom:.9rem">تمام پیام‌های ارسالی از بخش «اشتراک‌گذاری تجربه سوگ» اینجا نمایش داده می‌شود. پاسخ شما پس از ارسال، به‌صورت عمومی در صفحه اشتراک‌گذاری منتشر می‌شود.</p><div class="ap-items" id="ap-grief-list"></div></div>
     </div>
-    <!-- TESTIMONIALS -->
-    <div id="tab-testimonials" class="hidden">
-      <div class="aps"><h3>نمایش بخش نظرات کاربران</h3><div class="af">
-        <label><input type="checkbox" id="s-show-testimonials" onchange="toggleTestimonials()"/> نمایش این بخش در صفحه اصلی</label>
-        <label>محل نمایش در صفحه اصلی</label>
-        <select id="s-testimonials-place" onchange="toggleTestimonials()">
-          <option value="after-hero">بعد از بخش اصلی (Hero)</option>
-          <option value="after-intro">بعد از معرفی دکتر</option>
-          <option value="after-cta">بعد از رزرو جلسه</option>
-          <option value="after-about">بعد از درباره سایت</option>
-        </select>
-      </div></div>
-      <div class="aps"><h3>افزودن نظر جدید</h3><div class="af">
-        <label class="req">نام</label><input id="ts-name" placeholder="نام کاربر"/>
-        <label class="req">متن نظر</label><textarea id="ts-text" placeholder="متن نظر..."></textarea>
-      </div><button class="abtn" onclick="addTestimonial()">+ افزودن</button></div>
-      <div class="aps"><h3>نظرات موجود</h3><div class="ap-items" id="ap-testimonials-list"></div></div>
-    </div>
     <!-- SITE -->
     <div id="tab-site" class="hidden">
       <div class="aps"><h3>🖼️ عکس پروفایل</h3><div class="af">
@@ -705,7 +662,6 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
       <div class="dp-register-box hidden" id="dp-register-box">
         <button class="dp-register-btn" onclick="openRegisterForm()">ثبت‌نام در کارگاه</button>
       </div>
-      <div id="dp-comments" class="comments-section"></div>
     </div>
   </div>
   <input type="file" id="dp-img-file" accept="image/*" style="display:none" onchange="dpImgUpload(event)"/>
@@ -985,11 +941,6 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
   </div>
 </section>
 
-<section class="testimonials-section reveal hidden" id="testimonials-section">
-  <h2>نظرات کاربران</h2>
-  <div class="testimonials-grid" id="testimonials-grid"></div>
-</section>
-
 <section class="about-website reveal">
   <h2 class="editable" onclick="inlineEdit('about-website-h')" id="about-website-h">درباره سایت</h2>
   <p class="editable" onclick="inlineEdit('about-website-text')" id="about-website-text">این وب‌سایت فضایی برای آشنایی با دکتر شهاب یوسفی، خدمات درمانی ایشان، و منابعی در زمینه سوگ، تروما و سلامت روان است.</p>
@@ -1029,10 +980,8 @@ const S={
   'tg-h':'رزرو جلسه از طریق تلگرام',
   'grief-intro':'اگر تجربه‌ای از دست دادن داشته‌اید، این فضا برای شماست. دکتر یوسفی شخصاً هر پیام را می‌خواند و پاسخ می‌دهد.',
   'grief-img':'','grief-img-caption':'توضیحی برای این تصویر بنویسید.',
-  'about-website-h':'درباره سایت','about-website-text':'این وب‌سایت فضایی برای آشنایی با دکتر شهاب یوسفی، خدمات درمانی ایشان، و منابعی در زمینه سوگ، تروما و سلامت روان است.',
-  showTestimonials:false,testimonialsPlacement:'after-cta'
+  'about-website-h':'درباره سایت','about-website-text':'این وب‌سایت فضایی برای آشنایی با دکتر شهاب یوسفی، خدمات درمانی ایشان، و منابعی در زمینه سوگ، تروما و سلامت روان است.'
 };
-let testimonials=[];
 let bioSections=[
   {t:'تحصیلات',p:'دکترای روان‌شناسی بالینی از دانشگاه تهران. کارشناسی ارشد روان‌پزشکی از دانشگاه علوم پزشکی ایران.'},
   {t:'تجربه بالینی',p:'بیش از ۱۵ سال تجربه در حوزه سوگ، تروما، و اختلالات شخصیت. همکاری با مراکز مشاوره معتبر تهران.'},
@@ -1065,7 +1014,6 @@ let workshops=[
 let purchasedOffline=JSON.parse(localStorage.getItem('purchasedOffline')||'[]');
 function savePurchasedOffline(){localStorage.setItem('purchasedOffline',JSON.stringify(purchasedOffline));}
 let pendingPurchaseWid=null;
-let comments={};
 let grief=[
   {id:1,name:'ناشناس',text:'سه سال از رفتن مادرم می‌گذره.',reply:'سوگ زمان‌بند نیست.',replied:true,showPending:false},
   {id:2,name:'سارا',text:'پدرم رو تازه از دست دادم.',reply:'',replied:false,showPending:false}
@@ -1133,9 +1081,8 @@ async function loadAllFromFirestore(){
     articles=await fbLoadCollection('articles');
     psychoHistory=await fbLoadCollection('psychoHistory');
     workshops=await fbLoadCollection('workshops');
-    testimonials=await fbLoadCollection('testimonials');
     if(isAdmin)for(const w of workshops)await loadWorkshopRegistrations(w);
-    renderAll();renderAPBooks();renderAPArticles();renderAPPsychoHistory();renderAPWorkshops();renderAPFilms();renderAPTestimonials();
+    renderAll();renderAPBooks();renderAPArticles();renderAPPsychoHistory();renderAPWorkshops();renderAPFilms();
   }catch(e){
     console.error('Firestore load failed, keeping local defaults',e);
   }
@@ -1150,22 +1097,6 @@ async function loadGrief(){
   renderGrief();
   if(isAdmin)renderAPGrief();
 }
-function commentsRef(key){
-  return db.collection('comments').doc(key).collection('items');
-}
-function fbSetComment(key,c){
-  return commentsRef(key).doc(String(c.id)).set(c).catch(e=>console.error('fbSetComment',key,e));
-}
-function fbDeleteComment(key,id){
-  return commentsRef(key).doc(String(id)).delete().catch(e=>console.error('fbDeleteComment',key,e));
-}
-async function loadComments(key){
-  try{
-    const snap=await commentsRef(key).get();
-    comments[key]=snap.docs.map(fbDocToItem);
-  }catch(e){console.error('loadComments',key,e);}
-}
-
 /* ======= CONTENT PROTECTION (books/articles/history/film-analysis) ======= */
 document.addEventListener('contextmenu',e=>{
   if(!isAdmin&&e.target.closest('.no-copy'))e.preventDefault();
@@ -1334,7 +1265,7 @@ function openPanel(){
 }
 function closePanel(){gi('admin-panel').classList.add('hidden')}
 function switchTab(n,el){
-  ['books','articles','history','workshops','films','grief','testimonials','site'].forEach(t=>gi('tab-'+t).classList.add('hidden'));
+  ['books','articles','history','workshops','films','grief','site'].forEach(t=>gi('tab-'+t).classList.add('hidden'));
   document.querySelectorAll('.ap-tab').forEach(b=>b.classList.remove('active'));
   gi('tab-'+n).classList.remove('hidden');el.classList.add('active');
 }
@@ -1480,7 +1411,6 @@ function openDp(type,id){
     regBox.classList.remove('hidden');
     renderWorkshopRegBox(item);
   }else{regBox.classList.add('hidden');}
-  renderItemComments(type,id);
   openOv('detail-page');
 }
 function renderWorkshopRegBox(w){
@@ -1817,66 +1747,6 @@ function addFilm(){
   renderFilms();renderAPFilms();alert('تحلیل فیلم اضافه شد!');
 }
 function delFilm(id){if(confirm('حذف شود؟')){films=films.filter(f=>f.id!==id);fbDelete('films',id);renderFilms();renderAPFilms();}}
-
-/* ======= COMMENTS (per-item) ======= */
-function itemCommentKey(type,id){return type+'_'+id;}
-let newCommentRating=5;
-function starsHtml(rating,interactive){
-  let h='';
-  for(let i=1;i<=5;i++){
-    h+=`<span class="star${i<=rating?' filled':''}"${interactive?` onclick="newCommentRating=${i};renderStarPicker()"`:''}>★</span>`;
-  }
-  return h;
-}
-function renderStarPicker(){
-  const el=gi('cf-stars');if(el)el.innerHTML=starsHtml(newCommentRating,true);
-}
-function avgRating(list){
-  const rated=list.filter(c=>c.rating);
-  if(!rated.length)return 0;
-  return rated.reduce((s,c)=>s+c.rating,0)/rated.length;
-}
-function renderItemComments(type,id){
-  const box=gi('dp-comments');if(!box)return;
-  const key=itemCommentKey(type,id);
-  if(!comments[key]){
-    comments[key]=[];
-    loadComments(key).then(()=>renderItemComments(type,id));
-  }
-  const list=comments[key]||[];
-  newCommentRating=5;
-  const avg=avgRating(list);
-  box.innerHTML=`<div style="display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-bottom:1rem"><h3 style="margin:0">نظرات کاربران</h3>
-    <span class="avg-rating"><span class="avg-rating-num">${avg?avg.toFixed(1):'—'}</span><span class="avg-rating-stars">${starsHtml(Math.round(avg),false)}</span><span class="avg-rating-count">(${list.filter(c=>c.rating).length})</span></span></div>
-    <div class="comment-form">
-      <input id="cf-name" placeholder="نام شما"/>
-      <div class="star-picker" id="cf-stars">${starsHtml(newCommentRating,true)}</div>
-      <textarea id="cf-text" placeholder="نظر خود را بنویسید..."></textarea>
-      <button onclick="submitComment('${key}')">ارسال نظر</button>
-    </div>
-    <div class="comment-list">
-    ${list.length?list.map(c=>`<div class="comment-item"><div class="ct"><strong>${esc(c.name)}</strong>${c.rating?`<span class="comment-stars">${starsHtml(c.rating,false)}</span>`:''}<p>${esc(c.text)}</p></div><button class="comment-del" onclick="delComment('${key}',${c.id})">حذف</button></div>`).join(''):'<p style="color:var(--mid);font-size:.85rem">هنوز نظری ثبت نشده.</p>'}
-    </div>`;
-}
-function submitComment(key){
-  const name=gv('cf-name')||'ناشناس';
-  const text=gv('cf-text');
-  if(!text){alert('لطفاً متن نظر را بنویسید');return;}
-  if(!comments[key])comments[key]=[];
-  const c={id:Date.now(),name,text,rating:newCommentRating};
-  comments[key].push(c);
-  fbSetComment(key,c);
-  const [type,id]=key.split('_');
-  renderItemComments(type,Number(id));
-}
-function delComment(key,id){
-  if(!isAdmin)return;
-  if(!confirm('این نظر حذف شود؟'))return;
-  comments[key]=(comments[key]||[]).filter(c=>c.id!==id);
-  fbDeleteComment(key,id);
-  const [type,iid]=key.split('_');
-  renderItemComments(type,Number(iid));
-}
 
 /* ======= ARTICLES ======= */
 function renderArticles(){
@@ -2223,42 +2093,6 @@ function replyGrief(id){
   renderAPGrief();renderGrief();
 }
 function delGrief(id){if(confirm('حذف شود؟')){grief=grief.filter(g=>g.id!==id);fbDelete('grief',id);renderAPGrief();renderGrief();}}
-function placeTestimonials(){
-  const sec=gi('testimonials-section');
-  const anchors={
-    'after-hero':document.querySelector('.hero'),
-    'after-intro':gi('about'),
-    'after-cta':gi('next-step'),
-    'after-about':document.querySelector('.about-website')
-  };
-  const target=anchors[S.testimonialsPlacement]||anchors['after-cta'];
-  target.insertAdjacentElement('afterend',sec);
-}
-function renderTestimonials(){
-  placeTestimonials();
-  gi('testimonials-section').classList.toggle('hidden',!S.showTestimonials);
-  gi('testimonials-grid').innerHTML=testimonials.map(t=>`<div class="testimonial-card reveal"><p>${esc(t.text)}</p><strong>${esc(t.name)}</strong></div>`).join('');
-}
-function renderAPTestimonials(){
-  gi('s-show-testimonials').checked=!!S.showTestimonials;
-  gi('s-testimonials-place').value=S.testimonialsPlacement;
-  const l=gi('ap-testimonials-list');if(!testimonials.length){l.innerHTML='<p style="color:var(--mid)">نظری ثبت نشده.</p>';return}
-  l.innerHTML=testimonials.map(t=>`<div class="ap-item"><div class="ap-it"><strong>${esc(t.name)}</strong><span>${esc(t.text)}</span></div><div class="ap-ia"><button class="del" onclick="delTestimonial(${t.id})">حذف</button></div></div>`).join('');
-}
-function toggleTestimonials(){
-  S.showTestimonials=gi('s-show-testimonials').checked;
-  S.testimonialsPlacement=gi('s-testimonials-place').value;
-  renderTestimonials();
-}
-function addTestimonial(){
-  const name=gv('ts-name'),text=gv('ts-text');if(!name||!text){alert('نام و متن نظر الزامی');return}
-  const t={id:Date.now(),name,text};
-  testimonials.push(t);fbSet('testimonials',t);
-  gi('ts-name').value='';gi('ts-text').value='';
-  renderAPTestimonials();renderTestimonials();
-}
-function delTestimonial(id){if(confirm('حذف شود؟')){testimonials=testimonials.filter(t=>t.id!==id);fbDelete('testimonials',id);renderAPTestimonials();renderTestimonials();}}
-
 /* ======= WORKSHOP REGISTRATION (public form + submit) ======= */
 function openRegisterForm(){
   if(!dpCurrent||dpCurrent.type!=='workshop'){alert('خطا: کارگاهی انتخاب نشده است.');return;}
@@ -2373,7 +2207,7 @@ function saveTgUrl(){
 }
 
 /* ======= HELPERS ======= */
-function renderAll(){renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();renderFilms();renderGrief();renderTestimonials();}
+function renderAll(){renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();renderFilms();renderGrief();}
 function gi(id){return document.getElementById(id)}
 function gv(id){const el=gi(id);return el?el.value.trim():''}
 function setText(id,v){const el=gi(id);if(el)el.textContent=v}
