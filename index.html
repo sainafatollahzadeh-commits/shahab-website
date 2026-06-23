@@ -212,8 +212,8 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .section-title-row{display:flex;align-items:center;gap:1rem}
 
 /* rewind clock (history page) */
-.clock-anim{position:relative;width:46px;height:46px;border-radius:50%;border:2px solid var(--ink);flex-shrink:0}
-.clock-anim::before,.clock-anim::after{content:'';position:absolute;left:50%;bottom:50%;background:var(--ink);transform-origin:bottom center;border-radius:1px}
+.clock-anim{position:relative;width:46px;height:46px;border-radius:50%;border:2px solid #fff;flex-shrink:0}
+.clock-anim::before,.clock-anim::after{content:'';position:absolute;left:50%;bottom:50%;background:#fff;transform-origin:bottom center;border-radius:1px}
 .clock-anim::before{width:2px;height:14px;margin-left:-1px;animation:clockHourRewind 6s linear infinite}
 .clock-anim::after{width:2px;height:18px;margin-left:-1px;animation:clockMinRewind 3s linear infinite}
 @keyframes clockHourRewind{from{transform:rotate(360deg)}to{transform:rotate(0deg)}}
@@ -375,7 +375,7 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .nl-form input::placeholder{color:rgba(255,255,255,.3)}
 .nl-form button{background:var(--gold);color:#fff;border:none;padding:0 1.3rem;cursor:pointer;border-radius:2px 0 0 2px;font-family:'Vazirmatn',sans-serif;font-weight:500}
 footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
-.about-website{max-width:780px;margin:0 auto;padding:5rem 2rem;text-align:center}
+.about-website{max-width:780px;margin:0 auto;padding:5rem 2rem;text-align:right}
 .about-website h2{font-size:1.6rem;font-weight:600;margin-bottom:1.3rem}
 .about-website p{font-size:.95rem;line-height:2;color:var(--text2);font-weight:300}
 .footer-col h4{font-size:.7rem;color:var(--black);margin-bottom:1.1rem;font-weight:600}
@@ -624,6 +624,13 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
     <div id="tab-testimonials" class="hidden">
       <div class="aps"><h3>نمایش بخش نظرات کاربران</h3><div class="af">
         <label><input type="checkbox" id="s-show-testimonials" onchange="toggleTestimonials()"/> نمایش این بخش در صفحه اصلی</label>
+        <label>محل نمایش در صفحه اصلی</label>
+        <select id="s-testimonials-place" onchange="toggleTestimonials()">
+          <option value="after-hero">بعد از بخش اصلی (Hero)</option>
+          <option value="after-intro">بعد از معرفی دکتر</option>
+          <option value="after-cta">بعد از رزرو جلسه</option>
+          <option value="after-about">بعد از درباره وب‌سایت</option>
+        </select>
       </div></div>
       <div class="aps"><h3>افزودن نظر جدید</h3><div class="af">
         <label class="req">نام</label><input id="ts-name" placeholder="نام کاربر"/>
@@ -1024,7 +1031,7 @@ const S={
   'grief-intro':'اگر تجربه‌ای از دست دادن داشته‌اید، این فضا برای شماست. دکتر یوسفی شخصاً هر پیام را می‌خواند و پاسخ می‌دهد.',
   'grief-img':'','grief-img-caption':'توضیحی برای این تصویر بنویسید.',
   'about-website-h':'درباره وب‌سایت','about-website-text':'این وب‌سایت فضایی برای آشنایی با دکتر شهاب یوسفی، خدمات درمانی ایشان، و منابعی در زمینه سوگ، تروما و سلامت روان است.',
-  showTestimonials:false
+  showTestimonials:false,testimonialsPlacement:'after-cta'
 };
 let testimonials=[];
 let bioSections=[
@@ -2217,17 +2224,31 @@ function replyGrief(id){
   renderAPGrief();renderGrief();
 }
 function delGrief(id){if(confirm('حذف شود؟')){grief=grief.filter(g=>g.id!==id);fbDelete('grief',id);renderAPGrief();renderGrief();}}
+function placeTestimonials(){
+  const sec=gi('testimonials-section');
+  const anchors={
+    'after-hero':document.querySelector('.hero'),
+    'after-intro':gi('about'),
+    'after-cta':gi('next-step'),
+    'after-about':document.querySelector('.about-website')
+  };
+  const target=anchors[S.testimonialsPlacement]||anchors['after-cta'];
+  target.insertAdjacentElement('afterend',sec);
+}
 function renderTestimonials(){
+  placeTestimonials();
   gi('testimonials-section').classList.toggle('hidden',!S.showTestimonials);
   gi('testimonials-grid').innerHTML=testimonials.map(t=>`<div class="testimonial-card reveal"><p>${esc(t.text)}</p><strong>${esc(t.name)}</strong></div>`).join('');
 }
 function renderAPTestimonials(){
   gi('s-show-testimonials').checked=!!S.showTestimonials;
+  gi('s-testimonials-place').value=S.testimonialsPlacement;
   const l=gi('ap-testimonials-list');if(!testimonials.length){l.innerHTML='<p style="color:var(--mid)">نظری ثبت نشده.</p>';return}
   l.innerHTML=testimonials.map(t=>`<div class="ap-item"><div class="ap-it"><strong>${esc(t.name)}</strong><span>${esc(t.text)}</span></div><div class="ap-ia"><button class="del" onclick="delTestimonial(${t.id})">حذف</button></div></div>`).join('');
 }
 function toggleTestimonials(){
   S.showTestimonials=gi('s-show-testimonials').checked;
+  S.testimonialsPlacement=gi('s-testimonials-place').value;
   renderTestimonials();
 }
 function addTestimonial(){
