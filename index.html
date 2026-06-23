@@ -9,7 +9,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--black:#F3EFEA;--white:#1E2D3D;--mid:#9FB7C9;--light:#3A5266;--bg:#263B4E;--gold:#16a34a;--blue:#5FA8D3;--surface:#33495E;--surface2:#2A3C4F;--text2:#C7D8E3;--ink:#15212C}
+:root{--black:#F3EFEA;--white:#1E2D3D;--mid:#9FB7C9;--light:#3A5266;--bg:#263B4E;--gold:#D9C2A0;--blue:#5FA8D3;--surface:#33495E;--surface2:#2A3C4F;--text2:#C7D8E3;--ink:#15212C}
 body{font-family:'Vazirmatn',sans-serif;background:var(--white);color:var(--black);overflow-x:hidden;direction:rtl}
 a{text-decoration:none;color:inherit}
 .hidden{display:none!important}
@@ -102,7 +102,7 @@ body:not(.admin-mode) .no-copy .editable,body:not(.admin-mode) .no-copy .eimg-ba
 .abtn{background:var(--ink);color:#fff;border:none;padding:.62rem 1.7rem;border-radius:3px;cursor:pointer;font-family:'Vazirmatn',sans-serif;font-size:.84rem;margin-top:.9rem}
 .abtn.gold{background:var(--gold);color:#fff}
 .abtn.red{background:#e53e3e;color:#fff}
-.abtn.green{background:#22c55e;color:#fff}
+.abtn.green{background:var(--gold);color:var(--ink)}
 .abtn.blue{background:var(--blue);color:#fff}
 .ap-items{margin-top:1rem;display:flex;flex-direction:column;gap:.7rem}
 .ap-item{border:1px solid var(--light);border-radius:4px;padding:.9rem;font-size:.84rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
@@ -113,7 +113,7 @@ body:not(.admin-mode) .no-copy .editable,body:not(.admin-mode) .no-copy .eimg-ba
 .ap-ia button{padding:.28rem .75rem;border:1px solid #ccc;border-radius:2px;cursor:pointer;font-family:'Vazirmatn',sans-serif;font-size:.73rem;background:var(--surface)}
 .ap-ia button.del{border-color:#e53e3e;color:#e53e3e}
 .ap-ia button.edit-b{border-color:var(--blue);color:var(--blue)}
-.ap-ia button.ok{border-color:#22c55e;color:#22c55e}
+.ap-ia button.ok{border-color:var(--gold);color:var(--gold)}
 .ap-ia button.rej{border-color:#e53e3e;color:#e53e3e}
 .badge{display:inline-block;padding:.12rem .55rem;border-radius:10px;font-size:.67rem;font-weight:500}
 .badge.new{background:#fef3c7;color:#92400e}
@@ -163,7 +163,7 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .search-no-results{padding:1.2rem;text-align:center;font-size:.84rem;color:var(--mid)}
 /* hero */
 .hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:0 3.5rem;padding-top:4rem;gap:3.5rem}
-.hero-eyebrow{font-size:.77rem;color:var(--gold);margin-bottom:1.4rem;font-weight:500}
+.hero-eyebrow{font-size:1.15rem;color:var(--gold);margin-bottom:1.4rem;font-weight:600}
 .hero-headline{font-size:clamp(2rem,3.5vw,3.2rem);line-height:1.45;font-weight:700;margin-bottom:1.6rem}
 .hero-headline em{font-style:normal;color:var(--mid);font-weight:300}
 .hero-sub{font-size:.97rem;line-height:2;color:var(--mid);max-width:430px;margin-bottom:2.4rem;font-weight:300}
@@ -325,11 +325,19 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 /* grief */
 .grief-section{padding:5.5rem 3.5rem;background:var(--bg)}
 .grief-intro p{font-size:.93rem;line-height:2;color:var(--mid);font-weight:300;margin-top:.7rem;max-width:580px}
-.grief-form-box{background:var(--surface);border-radius:6px;padding:1.8rem;border:1px solid var(--light);margin:1.8rem 0}
+.grief-form-row{display:grid;grid-template-columns:1fr 1fr;gap:1.8rem;margin:1.8rem 0;align-items:start}
+.grief-form-box{background:var(--surface);border-radius:6px;padding:1.8rem;border:1px solid var(--light)}
 .grief-form-box h3{font-size:.92rem;font-weight:600;margin-bottom:1.1rem}
 .grief-form-box input,.grief-form-box textarea{width:100%;padding:.72rem 1rem;border:1px solid var(--light);border-radius:3px;font-family:'Vazirmatn',sans-serif;font-size:.87rem;margin-bottom:.7rem;direction:rtl;text-align:right}
 .grief-form-box textarea{min-height:95px;resize:vertical}
 .grief-form-box button{background:var(--ink);color:#fff;border:none;padding:.72rem 1.8rem;border-radius:3px;font-family:'Vazirmatn',sans-serif;font-size:.84rem;cursor:pointer}
+.grief-image-box{background:var(--surface);border-radius:6px;padding:1.8rem;border:1px solid var(--light)}
+.grief-image-box h3{font-size:.92rem;font-weight:600;margin-bottom:1.1rem}
+.grief-image-upload{width:100%;height:180px;border-radius:4px;overflow:hidden;position:relative;background:var(--surface2)}
+.grief-image-upload img{width:100%;height:100%;object-fit:cover;display:none}
+.grief-image-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--mid);gap:.4rem}
+.grief-image-caption{margin-top:1rem;font-size:.87rem;line-height:1.9;color:var(--text2);font-weight:300}
+@media (max-width:760px){.grief-form-row{grid-template-columns:1fr}}
 .grief-posts{display:flex;flex-direction:column;gap:1.3rem}
 .grief-post{background:var(--surface);border-radius:6px;padding:1.6rem;border:1px solid var(--light)}
 .grief-post-name{font-weight:600;font-size:.92rem;margin-bottom:.7rem}
@@ -338,6 +346,14 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .grief-reply-label{font-size:.7rem;color:var(--gold);font-weight:600;margin-bottom:.45rem}
 .grief-reply-text{font-size:.86rem;line-height:1.9;color:var(--text2);font-weight:300}
 .grief-success{background:#d1fae5;color:#065f46;padding:.75rem 1.1rem;border-radius:3px;font-size:.84rem;margin-top:.5rem}
+/* testimonials */
+.testimonials-section{padding:5.5rem 3.5rem;background:var(--bg)}
+.testimonials-section h2{font-size:1.6rem;font-weight:600;margin-bottom:2.2rem;text-align:center}
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem}
+@media (max-width:900px){.testimonials-grid{grid-template-columns:1fr}}
+.testimonial-card{background:var(--surface);border-radius:6px;padding:1.6rem;border:1px solid var(--light)}
+.testimonial-card p{font-size:.88rem;line-height:2;color:var(--text2);font-weight:300;margin-bottom:.9rem}
+.testimonial-card strong{font-size:.88rem;font-weight:600}
 /* cta/footer etc */
 .cta-strip{padding:5.5rem 3.5rem;background:var(--white);display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:center}
 .cta-left h2{font-size:clamp(1.7rem,2.3vw,2.2rem);font-weight:700;line-height:1.5;margin-bottom:.9rem}
@@ -359,9 +375,9 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .nl-form input::placeholder{color:rgba(255,255,255,.3)}
 .nl-form button{background:var(--gold);color:#fff;border:none;padding:0 1.3rem;cursor:pointer;border-radius:2px 0 0 2px;font-family:'Vazirmatn',sans-serif;font-weight:500}
 footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
-.footer-top{display:grid;grid-template-columns:1fr;gap:2.8rem;margin-bottom:2.8rem}
-.footer-brand .logo{font-size:.98rem;font-weight:600;margin-bottom:.7rem}
-.footer-brand p{font-size:.78rem;line-height:2;color:var(--mid);font-weight:300;max-width:230px}
+.about-website{max-width:780px;margin:0 auto;padding:5rem 2rem;text-align:center}
+.about-website h2{font-size:1.6rem;font-weight:600;margin-bottom:1.3rem}
+.about-website p{font-size:.95rem;line-height:2;color:var(--text2);font-weight:300}
 .footer-col h4{font-size:.7rem;color:var(--black);margin-bottom:1.1rem;font-weight:600}
 .footer-col a{display:block;font-size:.8rem;color:var(--mid);margin-bottom:.55rem}
 .footer-bottom{border-top:1px solid var(--light);padding-top:1.4rem;display:flex;justify-content:space-between;align-items:center}
@@ -527,6 +543,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
       <button class="ap-tab" onclick="switchTab('workshops',this)">🛠️ کارگاه‌ها</button>
       <button class="ap-tab" onclick="switchTab('films',this)">🎬 تحلیل فیلم</button>
       <button class="ap-tab" onclick="switchTab('grief',this)">💬 پیام‌ها</button>
+      <button class="ap-tab" onclick="switchTab('testimonials',this)">⭐ نظرات کاربران</button>
       <button class="ap-tab" onclick="switchTab('site',this)">🌐 تنظیمات</button>
     </div>
     <!-- BOOKS -->
@@ -603,6 +620,17 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
     <div id="tab-grief" class="hidden">
       <div class="aps"><h3>پیام‌های کاربران</h3><p style="font-size:.78rem;color:var(--mid);margin-bottom:.9rem">تمام پیام‌های ارسالی از بخش «اشتراک‌گذاری تجربه سوگ» اینجا نمایش داده می‌شود. پاسخ شما پس از ارسال، به‌صورت عمومی در صفحه اشتراک‌گذاری منتشر می‌شود.</p><div class="ap-items" id="ap-grief-list"></div></div>
     </div>
+    <!-- TESTIMONIALS -->
+    <div id="tab-testimonials" class="hidden">
+      <div class="aps"><h3>نمایش بخش نظرات کاربران</h3><div class="af">
+        <label><input type="checkbox" id="s-show-testimonials" onchange="toggleTestimonials()"/> نمایش این بخش در صفحه اصلی</label>
+      </div></div>
+      <div class="aps"><h3>افزودن نظر جدید</h3><div class="af">
+        <label class="req">نام</label><input id="ts-name" placeholder="نام کاربر"/>
+        <label class="req">متن نظر</label><textarea id="ts-text" placeholder="متن نظر..."></textarea>
+      </div><button class="abtn" onclick="addTestimonial()">+ افزودن</button></div>
+      <div class="aps"><h3>نظرات موجود</h3><div class="ap-items" id="ap-testimonials-list"></div></div>
+    </div>
     <!-- SITE -->
     <div id="tab-site" class="hidden">
       <div class="aps"><h3>🖼️ عکس پروفایل</h3><div class="af">
@@ -631,7 +659,11 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
         <label>توضیح</label><textarea id="s-fdesc"></textarea>
         <label>تلگرام</label><input id="s-tg"/>
         <label>لینکدین</label><input id="s-li"/>
+        <label>اینستاگرام</label><input id="s-ig"/>
       </div><button class="abtn" onclick="saveFooter()">ذخیره</button></div>
+      <div class="aps"><h3>📞 صفحه رزرو جلسه (تلگرام)</h3><div class="af">
+        <label>آدرس مقصد هنگام کلیک روی آیدی</label><input id="s-tgurl" placeholder="https://t.me/shahab_yousefii"/>
+      </div><button class="abtn" onclick="saveTgUrl()">ذخیره</button></div>
     </div>
   </div>
 </div>
@@ -703,7 +735,7 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
     <div class="paper-plane-anim" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" width="46" height="46"><path d="M22.05 2.4 1.96 10.3c-1.37.55-1.36 1.32-.25 1.66l5.15 1.6 11.93-7.5c.56-.34 1.07-.16.65.21l-9.68 8.74h-.01l.01.01-.37 5.45c.54 0 .78-.25 1.08-.55l2.6-2.52 5.4 3.98c.99.55 1.7.27 1.95-.92l3.53-16.6c.36-1.45-.55-2.1-1.9-1.46z"/></svg></div>
     <h2 class="editable" onclick="inlineEdit('tg-h')" id="tg-h" style="font-size:1.25rem;font-weight:700;margin-bottom:1rem">رزرو جلسه از طریق تلگرام</h2>
     <p class="editable" onclick="inlineEdit('tg-text')" id="tg-text" style="font-size:.92rem;line-height:2.1;color:var(--mid);margin-bottom:1.8rem">لطفاً اطلاعات خود — شامل نام، نوع جلسه (داخل یا خارج از کشور) و زمان پیشنهادی — را به آیدی تلگرام زیر ارسال کنید. دکتر یوسفی پس از بررسی با شما هماهنگ خواهد کرد.</p>
-    <div class="editable" onclick="inlineEdit('tg-id')" id="tg-id-box" style="background:var(--bg);border:2px dashed var(--gold);border-radius:6px;padding:1.3rem;font-size:1.15rem;font-weight:700;color:var(--black);direction:ltr">@shahab_yousefii</div>
+    <div class="editable" onclick="handleTgIdClick()" id="tg-id-box" style="background:var(--bg);border:2px dashed var(--gold);border-radius:6px;padding:1.3rem;font-size:1.15rem;font-weight:700;color:var(--black);direction:ltr;cursor:pointer">@shahab_yousefii</div>
   </div>
 </div>
 
@@ -782,8 +814,19 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
     <span style="font-size:.82rem;color:var(--mid)">اشتراک‌گذاری تجربه سوگ</span>
   </div>
   <section class="grief-section" style="padding-top:3rem">
-    <div class="grief-intro"><div class="section-title-row"><div class="chat-anim" aria-hidden="true"><div class="ca-bubble ca-1"></div><div class="ca-bubble ca-2"></div><div class="ca-bubble ca-3"></div></div><h2 class="section-title" id="grief-title">اشتراک‌گذاری تجربه سوگ</h2></div><p>اگر تجربه‌ای از دست دادن داشته‌اید، این فضا برای شماست. دکتر یوسفی شخصاً هر پیام را می‌خواند و پاسخ می‌دهد.</p></div>
-    <div class="grief-form-box"><h3>تجربه خود را بنویسید</h3><input type="text" id="grief-name" placeholder="نام شما"/><textarea id="grief-text" placeholder="تجربه‌ای از سوگ یا فقدان..."></textarea><button onclick="submitGrief()">ارسال</button><div id="grief-ok" class="grief-success hidden">✓ پیام شما دریافت شد.</div></div>
+    <div class="grief-intro"><div class="section-title-row"><div class="chat-anim" aria-hidden="true"><div class="ca-bubble ca-1"></div><div class="ca-bubble ca-2"></div><div class="ca-bubble ca-3"></div></div><h2 class="section-title" id="grief-title">اشتراک‌گذاری تجربه سوگ</h2></div><p class="editable" onclick="inlineEdit('grief-intro')" id="grief-intro-text">اگر تجربه‌ای از دست دادن داشته‌اید، این فضا برای شماست. دکتر یوسفی شخصاً هر پیام را می‌خواند و پاسخ می‌دهد.</p></div>
+    <div class="grief-form-row">
+      <div class="grief-form-box"><h3>تجربه خود را بنویسید</h3><input type="text" id="grief-name" placeholder="نام شما"/><textarea id="grief-text" placeholder="تجربه‌ای از سوگ یا فقدان..."></textarea><button onclick="submitGrief()">ارسال</button><div id="grief-ok" class="grief-success hidden">✓ پیام شما دریافت شد.</div></div>
+      <div class="grief-image-box eimg"><h3>تصویر</h3>
+        <div class="grief-image-upload">
+          <img id="grief-img" src=""/>
+          <div class="grief-image-ph" id="grief-img-ph"><span style="font-size:2rem">🖼️</span><span style="font-size:.78rem">تصویری وجود ندارد</span></div>
+          <div class="eimg-badge" onclick="if(isAdmin)gi('grief-img-file').click()"><span style="font-size:1.5rem">📷</span><span>تغییر تصویر</span></div>
+        </div>
+        <input type="file" id="grief-img-file" accept="image/*" style="display:none" onchange="handleGriefImg(event)"/>
+        <p class="grief-image-caption editable" onclick="inlineEdit('grief-img-caption')" id="grief-img-caption">توضیحی برای این تصویر بنویسید.</p>
+      </div>
+    </div>
     <div class="grief-posts" id="grief-posts"></div>
   </section>
 </div>
@@ -936,15 +979,23 @@ footer{padding:3.5rem 3.5rem 1.8rem;background:var(--bg)}
   </div>
 </section>
 
+<section class="testimonials-section reveal hidden" id="testimonials-section">
+  <h2>نظرات کاربران</h2>
+  <div class="testimonials-grid" id="testimonials-grid"></div>
+</section>
+
+<section class="about-website reveal">
+  <h2 class="editable" onclick="inlineEdit('about-website-h')" id="about-website-h">درباره وب‌سایت</h2>
+  <p class="editable" onclick="inlineEdit('about-website-text')" id="about-website-text">این وب‌سایت فضایی برای آشنایی با دکتر شهاب یوسفی، خدمات درمانی ایشان، و منابعی در زمینه سوگ، تروما و سلامت روان است.</p>
+</section>
+
 <footer class="reveal">
-  <div class="footer-top">
-    <div class="footer-brand"><div class="logo">دکتر شهاب یوسفی</div><p class="editable" onclick="inlineEdit('footer-desc')" id="footer-desc">فضایی دلسوزانه برای غم، تروما، و شخصیت.</p></div>
-  </div>
   <div class="footer-bottom">
     <p>© ۱۴۰۵ دکتر شهاب یوسفی.</p>
     <div class="social-links">
       <a href="#" id="lnk2-li" target="_blank" rel="noopener" title="لینکدین" aria-label="لینکدین"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a>
       <a href="#" id="lnk2-tg" target="_blank" rel="noopener" title="تلگرام" aria-label="تلگرام"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M22.05 2.4 1.96 10.3c-1.37.55-1.36 1.32-.25 1.66l5.15 1.6 11.93-7.5c.56-.34 1.07-.16.65.21l-9.68 8.74h-.01l.01.01-.37 5.45c.54 0 .78-.25 1.08-.55l2.6-2.52 5.4 3.98c.99.55 1.7.27 1.95-.92l3.53-16.6c.36-1.45-.55-2.1-1.9-1.46z"/></svg></a>
+      <a href="#" id="lnk2-ig" target="_blank" rel="noopener" title="اینستاگرام" aria-label="اینستاگرام"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.24 2.22.41.56.21.96.47 1.38.89.42.42.68.82.89 1.38.17.42.36 1.05.41 2.22.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.24 1.8-.41 2.22-.21.56-.47.96-.89 1.38-.42.42-.82.68-1.38.89-.42.17-1.05.36-2.22.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.24-2.22-.41-.56-.21-.96-.47-1.38-.89-.42-.42-.68-.82-.89-1.38-.17-.42-.36-1.05-.41-2.22-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.24-1.8.41-2.22.21-.56.47-.96.89-1.38.42-.42.82-.68 1.38-.89.42-.17 1.05-.36 2.22-.41 1.27-.06 1.65-.07 4.85-.07M12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56a5.88 5.88 0 0 0-2.13 1.39A5.88 5.88 0 0 0 .62 4.14c-.3.76-.5 1.63-.56 2.91C0 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.39 2.13.67.67 1.34 1.08 2.13 1.39.76.3 1.63.5 2.91.56C8.33 24 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56a5.88 5.88 0 0 0 2.13-1.39 5.88 5.88 0 0 0 1.39-2.13c.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91a5.88 5.88 0 0 0-1.39-2.13A5.88 5.88 0 0 0 19.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84zM12 16a4 4 0 1 1 4-4 4 4 0 0 1-4 4zm6.41-11.85a1.44 1.44 0 1 0 1.44 1.44 1.44 1.44 0 0 0-1.44-1.44z"/></svg></a>
     </div>
   </div>
 </footer>
@@ -962,14 +1013,20 @@ const S={
   'about-p2':'او معتقد است هر انسانی داستانی دارد که ارزش شنیدن دارد.',
   'cta-h':'قدم بعدی شما با یک مکالمه آغاز می‌شود.','cta-p':'چه در آغاز مسیر درمان باشید، در دکتر یوسفی باز است.',
   'nl-h':'بینش‌هایی درباره درمان، مستقیم برای شما.','nl-p':'تأملاتی درباره غم، تروما، و معنای زندگی.',
-  'footer-desc':'فضایی دلسوزانه برای غم، تروما، و شخصیت.',
   tg:'https://t.me/Shahab_yousefii',li:'https://www.linkedin.com/in/shahab-yousefi-58508b126?utm_source=share_via&utm_content=profile&utm_medium=member_ios',
+  ig:'https://www.instagram.com/',
+  'tg-id-url':'https://t.me/shahab_yousefii',
   paymentInstructions:'لطفاً مبلغ ۲,۰۰۰,۰۰۰ تومان را به شماره کارت ۱۲۳۴-۵۶۷۸-۹۰۱۲-۳۴۵۶ (بانک ملت، به نام شهاب یوسفی) واریز کرده و تصویر رسید پرداخت را به آیدی تلگرام @shahab_yousefii ارسال کنید.',
   bioIntro:'',
   'tg-text':'لطفاً اطلاعات خود — شامل نام، نوع جلسه (داخل یا خارج از کشور) و زمان پیشنهادی — را به آیدی تلگرام زیر ارسال کنید. دکتر یوسفی پس از بررسی با شما هماهنگ خواهد کرد.',
   'tg-id':'@shahab_yousefii',
-  'tg-h':'رزرو جلسه از طریق تلگرام'
+  'tg-h':'رزرو جلسه از طریق تلگرام',
+  'grief-intro':'اگر تجربه‌ای از دست دادن داشته‌اید، این فضا برای شماست. دکتر یوسفی شخصاً هر پیام را می‌خواند و پاسخ می‌دهد.',
+  'grief-img':'','grief-img-caption':'توضیحی برای این تصویر بنویسید.',
+  'about-website-h':'درباره وب‌سایت','about-website-text':'این وب‌سایت فضایی برای آشنایی با دکتر شهاب یوسفی، خدمات درمانی ایشان، و منابعی در زمینه سوگ، تروما و سلامت روان است.',
+  showTestimonials:false
 };
+let testimonials=[];
 let bioSections=[
   {t:'تحصیلات',p:'دکترای روان‌شناسی بالینی از دانشگاه تهران. کارشناسی ارشد روان‌پزشکی از دانشگاه علوم پزشکی ایران.'},
   {t:'تجربه بالینی',p:'بیش از ۱۵ سال تجربه در حوزه سوگ، تروما، و اختلالات شخصیت. همکاری با مراکز مشاوره معتبر تهران.'},
@@ -1070,8 +1127,9 @@ async function loadAllFromFirestore(){
     articles=await fbLoadCollection('articles');
     psychoHistory=await fbLoadCollection('psychoHistory');
     workshops=await fbLoadCollection('workshops');
+    testimonials=await fbLoadCollection('testimonials');
     if(isAdmin)for(const w of workshops)await loadWorkshopRegistrations(w);
-    renderAll();renderAPBooks();renderAPArticles();renderAPPsychoHistory();renderAPWorkshops();renderAPFilms();
+    renderAll();renderAPBooks();renderAPArticles();renderAPPsychoHistory();renderAPWorkshops();renderAPFilms();renderAPTestimonials();
   }catch(e){
     console.error('Firestore load failed, keeping local defaults',e);
   }
@@ -1270,7 +1328,7 @@ function openPanel(){
 }
 function closePanel(){gi('admin-panel').classList.add('hidden')}
 function switchTab(n,el){
-  ['books','articles','history','workshops','films','grief','site'].forEach(t=>gi('tab-'+t).classList.add('hidden'));
+  ['books','articles','history','workshops','films','grief','testimonials','site'].forEach(t=>gi('tab-'+t).classList.add('hidden'));
   document.querySelectorAll('.ap-tab').forEach(b=>b.classList.remove('active'));
   gi('tab-'+n).classList.remove('hidden');el.classList.add('active');
 }
@@ -1524,6 +1582,15 @@ function handleHero(e){
   };r.readAsDataURL(f);
 }
 function handleHeroPanel(e){handleHero(e)}
+/* ======= GRIEF IMAGE ======= */
+function handleGriefImg(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=ev=>{
+    S['grief-img']=ev.target.result;
+    const img=gi('grief-img');img.src=ev.target.result;img.style.display='block';
+    gi('grief-img-ph').style.display='none';
+  };r.readAsDataURL(f);
+}
 function enableDrag(img){
   let drag=false,sy=0,sp=30,pos=30;
   img.style.objectPosition=`center ${pos}%`;
@@ -1552,12 +1619,19 @@ const EM={
   'cta-p':{lbl:'متن CTA',t:'textarea',g:()=>S['cta-p'],s:v=>{S['cta-p']=v;setText('cta-p',v)}},
   'nl-h':{lbl:'عنوان خبرنامه',t:'input',g:()=>S['nl-h'],s:v=>{S['nl-h']=v;setText('nl-h',v)}},
   'nl-p':{lbl:'متن خبرنامه',t:'textarea',g:()=>S['nl-p'],s:v=>{S['nl-p']=v;setText('nl-p',v)}},
-  'footer-desc':{lbl:'توضیح فوتر',t:'textarea',g:()=>S['footer-desc'],s:v=>{S['footer-desc']=v;setText('footer-desc',v)}},
   headline:{lbl:'تیتر',t:'headline',g:()=>({h1:S.h1,hem:S.hem,h2:S.h2}),s:v=>{S.h1=v.h1;S.hem=v.hem;S.h2=v.h2;setText('h-l1',v.h1);setText('h-em',v.hem);setText('h-l2',v.h2)}},
   'tg-text':{lbl:'متن صفحه رزرو تلگرام',t:'textarea',g:()=>S['tg-text'],s:v=>{S['tg-text']=v;setText('tg-text',v)}},
   'tg-id':{lbl:'آیدی تلگرام',t:'input',g:()=>S['tg-id'],s:v=>{S['tg-id']=v;setText('tg-id-box',v)}},
-  'tg-h':{lbl:'عنوان صفحه رزرو تلگرام',t:'input',g:()=>S['tg-h'],s:v=>{S['tg-h']=v;setText('tg-h',v)}}
+  'tg-h':{lbl:'عنوان صفحه رزرو تلگرام',t:'input',g:()=>S['tg-h'],s:v=>{S['tg-h']=v;setText('tg-h',v)}},
+  'grief-intro':{lbl:'متن معرفی بخش اشتراک‌گذاری',t:'textarea',g:()=>S['grief-intro'],s:v=>{S['grief-intro']=v;setText('grief-intro-text',v)}},
+  'grief-img-caption':{lbl:'توضیح تصویر',t:'textarea',g:()=>S['grief-img-caption'],s:v=>{S['grief-img-caption']=v;setText('grief-img-caption',v)}},
+  'about-website-h':{lbl:'عنوان بخش درباره وب‌سایت',t:'input',g:()=>S['about-website-h'],s:v=>{S['about-website-h']=v;setText('about-website-h',v)}},
+  'about-website-text':{lbl:'متن بخش درباره وب‌سایت',t:'textarea',g:()=>S['about-website-text'],s:v=>{S['about-website-text']=v;setText('about-website-text',v)}}
 };
+function handleTgIdClick(){
+  if(isAdmin){inlineEdit('tg-id');return}
+  window.open(S['tg-id-url']||'https://t.me/shahab_yousefii','_blank');
+}
 function inlineEdit(key){
   if(!isAdmin)return;
   const m=EM[key];if(!m)return;
@@ -2143,6 +2217,27 @@ function replyGrief(id){
   renderAPGrief();renderGrief();
 }
 function delGrief(id){if(confirm('حذف شود؟')){grief=grief.filter(g=>g.id!==id);fbDelete('grief',id);renderAPGrief();renderGrief();}}
+function renderTestimonials(){
+  gi('testimonials-section').classList.toggle('hidden',!S.showTestimonials);
+  gi('testimonials-grid').innerHTML=testimonials.map(t=>`<div class="testimonial-card reveal"><p>${esc(t.text)}</p><strong>${esc(t.name)}</strong></div>`).join('');
+}
+function renderAPTestimonials(){
+  gi('s-show-testimonials').checked=!!S.showTestimonials;
+  const l=gi('ap-testimonials-list');if(!testimonials.length){l.innerHTML='<p style="color:var(--mid)">نظری ثبت نشده.</p>';return}
+  l.innerHTML=testimonials.map(t=>`<div class="ap-item"><div class="ap-it"><strong>${esc(t.name)}</strong><span>${esc(t.text)}</span></div><div class="ap-ia"><button class="del" onclick="delTestimonial(${t.id})">حذف</button></div></div>`).join('');
+}
+function toggleTestimonials(){
+  S.showTestimonials=gi('s-show-testimonials').checked;
+  renderTestimonials();
+}
+function addTestimonial(){
+  const name=gv('ts-name'),text=gv('ts-text');if(!name||!text){alert('نام و متن نظر الزامی');return}
+  const t={id:Date.now(),name,text};
+  testimonials.push(t);fbSet('testimonials',t);
+  gi('ts-name').value='';gi('ts-text').value='';
+  renderAPTestimonials();renderTestimonials();
+}
+function delTestimonial(id){if(confirm('حذف شود؟')){testimonials=testimonials.filter(t=>t.id!==id);fbDelete('testimonials',id);renderAPTestimonials();renderTestimonials();}}
 
 /* ======= WORKSHOP REGISTRATION (public form + submit) ======= */
 function openRegisterForm(){
@@ -2239,7 +2334,7 @@ function loadSiteForm(){
   const sv=(id,v)=>{const el=gi(id);if(el)el.value=v||''};
   sv('s-eyebrow',S.eyebrow);sv('s-h1',S.h1);sv('s-hem',S.hem);sv('s-h2',S.h2);sv('s-sub',S.sub);sv('s-cta',S.cta);
   sv('s-about-h',S['about-h']);sv('s-about-p1',S['about-p1']);sv('s-about-p2',S['about-p2']);
-  sv('s-fdesc',S['footer-desc']);sv('s-tg',S.tg);sv('s-li',S.li);
+  sv('s-tg',S.tg);sv('s-li',S.li);sv('s-ig',S.ig);sv('s-tgurl',S['tg-id-url']);
   sv('s-payinfo',S.paymentInstructions);
   bioSections.forEach((s,i)=>{sv('bio-t'+(i+1),s.t);sv('bio-p'+(i+1),s.p);});
 }
@@ -2247,15 +2342,18 @@ function savePayInfo(){S.paymentInstructions=gv('s-payinfo');alert('ذخیره �
 function saveHero(){S.eyebrow=gv('s-eyebrow');S.h1=gv('s-h1');S.hem=gv('s-hem');S.h2=gv('s-h2');S.sub=gv('s-sub');S.cta=gv('s-cta');setText('hero-eyebrow',S.eyebrow);setText('h-l1',S.h1);setText('h-em',S.hem);setText('h-l2',S.h2);setText('hero-sub',S.sub);setText('hero-cta-btn',S.cta);alert('ذخیره شد!');}
 function saveAbout(){S['about-h']=gv('s-about-h');S['about-p1']=gv('s-about-p1');S['about-p2']=gv('s-about-p2');if(S['about-h'])setText('about-heading',S['about-h']);if(S['about-p1'])setText('about-p1',S['about-p1']);if(S['about-p2'])setText('about-p2',S['about-p2']);alert('ذخیره شد!');}
 function saveFooter(){
-  S['footer-desc']=gv('s-fdesc');S.tg=gv('s-tg');S.li=gv('s-li');
-  setText('footer-desc',S['footer-desc']);
-  const tg=gi('lnk2-tg'),li=gi('lnk2-li');
-  if(tg)tg.href=S.tg||'#';if(li)li.href=S.li||'#';
+  S.tg=gv('s-tg');S.li=gv('s-li');S.ig=gv('s-ig');
+  const tg=gi('lnk2-tg'),li=gi('lnk2-li'),ig=gi('lnk2-ig');
+  if(tg)tg.href=S.tg||'#';if(li)li.href=S.li||'#';if(ig)ig.href=S.ig||'#';
+  alert('ذخیره شد!');
+}
+function saveTgUrl(){
+  S['tg-id-url']=gv('s-tgurl');
   alert('ذخیره شد!');
 }
 
 /* ======= HELPERS ======= */
-function renderAll(){renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();renderFilms();renderGrief();}
+function renderAll(){renderBooks();renderArticles();renderPsychoHistory();renderWorkshops();renderFilms();renderGrief();renderTestimonials();}
 function gi(id){return document.getElementById(id)}
 function gv(id){const el=gi(id);return el?el.value.trim():''}
 function setText(id,v){const el=gi(id);if(el)el.textContent=v}
@@ -2265,7 +2363,7 @@ function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').repla
 setNotesReadonly();
 renderAll();
 loadAllFromFirestore();
-(function(){const tg=gi('lnk2-tg'),li=gi('lnk2-li');if(tg)tg.href=S.tg;if(li)li.href=S.li;})();
+(function(){const tg=gi('lnk2-tg'),li=gi('lnk2-li'),ig=gi('lnk2-ig');if(tg)tg.href=S.tg;if(li)li.href=S.li;if(ig)ig.href=S.ig;})();
 </script>
 </body>
 </html>
